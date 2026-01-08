@@ -94,7 +94,7 @@
         .comp-table { width: 100%; border-collapse: collapse; margin-top: 30px; background: var(--card-bg); border-radius: 20px; overflow: hidden; }
         .comp-table th { background: rgba(255,255,255,0.05); text-align: left; padding: 25px; color: var(--orange); font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
         .comp-table td { padding: 30px 25px; border-bottom: 1px solid #111; font-family: 'JetBrains Mono'; font-size: 20px; }
-        .diff-tag { inline-block; font-size: 14px; margin-top: 10px; font-weight: 800; padding: 6px 12px; border-radius: 6px; }
+        .diff-tag { display: inline-block; font-size: 14px; margin-top: 10px; font-weight: 800; padding: 6px 12px; border-radius: 6px; }
         .diff-pos { background: rgba(0, 255, 136, 0.1); color: var(--pos); }
         .diff-neg { background: rgba(255, 68, 68, 0.1); color: var(--neg); }
     </style>
@@ -104,7 +104,7 @@
 <div class="container">
     <header class="header">
         <div class="logo">xSmileyy's <span>DPS Analytics</span></div>
-        <div style="font-size: 14px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Premium Combat Analytics</div>
+        <div style="font-size: 14px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Persistent Combat Analytics</div>
     </header>
 
     <div class="main-grid">
@@ -147,7 +147,7 @@
             </div>
             
             <div class="section-title">Matrix Capture</div>
-            <div class="input-block" style="background: rgba(255,102,0,0.08); border: 1px dashed var(--orange);">
+            <div class="input-block" style="background: rgba(255,102,0,0.08); border: 1px dashed var(--orange); padding: 35px;">
                 <div class="group" style="grid-column: span 2;"><label>Build Name</label><input type="text" id="build-name" placeholder="Name entering..."></div>
                 <div class="group" style="justify-content: flex-end;"><button class="btn-capture" onclick="captureBuild()">Add to Matrix</button></div>
             </div>
@@ -201,7 +201,7 @@
                     <tbody id="comp-body"><tr><td colspan="100%" style="text-align:center; padding:80px; font-size: 22px;">Capture builds for data comparison.</td></tr></tbody>
                 </table>
             </div>
-            <button class="toggle-btn" style="width:auto; margin-top: 20px;" onclick="clearCompare()">Reset Matrix</button>
+            <button class="toggle-btn" style="width:auto; margin-top: 20px;" onclick="clearCompare()">Reset Matrix (Clear All)</button>
         </div>
     </div>
 </div>
@@ -210,19 +210,24 @@
     let vMode = 'dta';
     let capturedBuilds = [];
 
+    // Daten aus LocalStorage laden beim Start
+    function loadMatrix() {
+        const saved = localStorage.getItem('xSmileyy_Matrix');
+        if (saved) {
+            capturedBuilds = JSON.parse(saved);
+            renderCompare();
+        }
+    }
+
     // FIX: Automatisches Markieren und Leeren der Null
     document.querySelectorAll('input[type="number"]').forEach(input => {
         input.addEventListener('focus', function() {
-            if (this.value === "0") {
-                this.value = ""; // Leeren für Direkteingabe
-            } else {
-                this.select(); // Markieren falls schon was drin steht
-            }
+            if (this.value === "0") this.value = ""; 
+            else this.select(); 
         });
-        
         input.addEventListener('blur', function() {
             if (this.value === "") {
-                this.value = "0"; // Zurück auf 0 falls leer verlassen
+                this.value = "0";
                 calculateAll();
             }
         });
@@ -276,17 +281,26 @@
         const name = document.getElementById('build-name').value || "Build " + (capturedBuilds.length + 1);
         capturedBuilds.push({ name, ...stats });
         document.getElementById('build-name').value = "";
+        
+        // Speichern
+        localStorage.setItem('xSmileyy_Matrix', JSON.stringify(capturedBuilds));
         renderCompare();
     }
 
-    function clearCompare() { if(confirm("Clear Matrix?")) { capturedBuilds = []; renderCompare(); } }
+    function clearCompare() { 
+        if(confirm("Permanently delete all saved builds in the matrix?")) { 
+            capturedBuilds = []; 
+            localStorage.removeItem('xSmileyy_Matrix');
+            renderCompare(); 
+        } 
+    }
 
     function renderCompare() {
         const header = document.getElementById('comp-header');
         const body = document.getElementById('comp-body');
         if(capturedBuilds.length === 0) {
             header.innerHTML = '<th>Metric</th>';
-            body.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:80px; font-size:22px;">No data captured.</td></tr>';
+            body.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:80px; font-size:22px;">No data captured. Data is saved in this browser.</td></tr>';
             return;
         }
         header.innerHTML = '<th>Performance Metric</th>';
@@ -317,7 +331,10 @@
     }
 
     document.querySelectorAll('input, select').forEach(i => i.addEventListener('input', calculateAll));
-    window.onload = calculateAll;
+    window.onload = function() {
+        calculateAll();
+        loadMatrix();
+    };
 </script>
 </body>
 </html>
