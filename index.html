@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>xSmileyy's DPS Analytics</title>
+    <title>xSmileyy's DPS Analyzer</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -103,8 +103,8 @@
 
 <div class="container">
     <header class="header">
-        <div class="logo">xSmileyy's <span>DPS Analytics</span></div>
-        <div style="font-size: 14px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Persistent Combat Analytics</div>
+        <div class="logo">xSmileyy's <span>DPS Analyzer</span></div>
+        <div style="font-size: 14px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Premium Division 2 Tooling</div>
     </header>
 
     <div class="main-grid">
@@ -162,7 +162,7 @@
             <div class="range-display">
                 <div class="range-result-row"><span>Body Hit</span><b id="val-body">-</b></div>
                 <div class="range-result-row"><span>Body Crit</span><b id="val-body-crit" style="color:var(--crit)">-</b></div>
-                <div class="range-result-row"><span>Headshot</span><b id="val-head">-</b></div>
+                <div class="range-result-row"><span>Headshot Hit</span><b id="val-head">-</b></div>
                 <div class="range-result-row"><span>Headshot Crit</span><b id="val-head-crit" style="color:var(--neg)">-</b></div>
             </div>
 
@@ -210,7 +210,6 @@
     let vMode = 'dta';
     let capturedBuilds = [];
 
-    // Daten aus LocalStorage laden beim Start
     function loadMatrix() {
         const saved = localStorage.getItem('xSmileyy_Matrix');
         if (saved) {
@@ -219,7 +218,6 @@
         }
     }
 
-    // FIX: Automatisches Markieren und Leeren der Null
     document.querySelectorAll('input[type="number"]').forEach(input => {
         input.addEventListener('focus', function() {
             if (this.value === "0") this.value = ""; 
@@ -281,8 +279,6 @@
         const name = document.getElementById('build-name').value || "Build " + (capturedBuilds.length + 1);
         capturedBuilds.push({ name, ...stats });
         document.getElementById('build-name').value = "";
-        
-        // Speichern
         localStorage.setItem('xSmileyy_Matrix', JSON.stringify(capturedBuilds));
         renderCompare();
     }
@@ -300,7 +296,7 @@
         const body = document.getElementById('comp-body');
         if(capturedBuilds.length === 0) {
             header.innerHTML = '<th>Metric</th>';
-            body.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:80px; font-size:22px;">No data captured. Data is saved in this browser.</td></tr>';
+            body.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:80px; font-size:22px;">No data captured.</td></tr>';
             return;
         }
         header.innerHTML = '<th>Performance Metric</th>';
