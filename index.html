@@ -37,6 +37,9 @@
         .input-block { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; background: var(--glass); padding: 18px; border-radius: 12px; margin-bottom: 15px; }
         .group { display: flex; flex-direction: column; }
         
+        .hint-text { font-size: 11px; color: #888; margin-top: -10px; margin-bottom: 15px; padding-left: 5px; font-style: italic; }
+        .hint-text i { color: var(--orange); margin-right: 5px; }
+
         label { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; text-transform: uppercase; }
         input, select { background: #000; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 15px; font-family: 'JetBrains Mono'; }
         
@@ -88,11 +91,12 @@
     <div class="main-grid">
         <div class="card">
             <div class="section-title">0. Calculate Base Damage</div>
+            <div class="hint-text"><i class="fas fa-info-circle"></i>Ingame: Open Inventory → Stats → Copy "Weapon Damage" & "Weapon Type Damage Bonus"</div>
             <div class="input-block">
                 <div class="group"><label>Menu Damage</label><input type="number" id="menu-dmg" placeholder=""></div>
-                <div class="group"><label>Menu AWD %</label><input type="number" id="menu-awd" placeholder=""></div>
-                <div class="group"><label>Menu SWD %</label><input type="number" id="menu-swd" placeholder=""></div>
-                <div class="group"><label style="color:var(--orange)">Calc. Base</label><input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;"></div>
+                <div class="group"><label>AWD (All Weapon Dmg) %</label><input type="number" id="menu-awd" placeholder=""></div>
+                <div class="group"><label>SWD (Weapon Type Dmg) %</label><input type="number" id="menu-swd" placeholder=""></div>
+                <div class="group"><label style="color:var(--orange)">Result: Base Damage</label><input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;"></div>
             </div>
 
             <div class="section-title">Weapon Presets (Base Dmg Only)</div>
@@ -181,7 +185,7 @@
                 <button class="t-btn" id="t-health" onclick="toggleTarget('health')">Target: Health (DtH)</button>
             </div>
             <div class="range-grid">
-                <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body" style="color:var(--ingame-blue)">-</span></div>
+                <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body" style="color:#fff">-</span></div>
                 <div class="range-box"><label>Crit Body</label><span class="range-val" id="st-crit" style="color:var(--crit)">-</span></div>
                 <div class="range-box"><label>Headshot</label><span class="range-val" id="st-head" style="color:var(--orange)">-</span></div>
                 <div class="range-box"><label>Crit Head</label><span class="range-val" id="st-head-crit" style="color:var(--head)">-</span></div>
@@ -230,6 +234,14 @@
         currentTarget = t;
         document.getElementById('t-elite').classList.toggle('active', t === 'elite');
         document.getElementById('t-health').classList.toggle('active', t === 'health');
+        
+        const bodyHitDisplay = document.getElementById('st-body');
+        if(t === 'elite') {
+            bodyHitDisplay.style.color = 'var(--ingame-blue)';
+        } else {
+            bodyHitDisplay.style.color = '#fff';
+        }
+        
         calculate();
     }
 
@@ -261,6 +273,7 @@
             builds = JSON.parse(saved);
             renderMatrix();
         }
+        toggleTarget('elite');
         calculate();
     };
 
@@ -295,14 +308,12 @@
         const m = (1+(parseFloat(document.getElementById('m1').value)||0)/100)*(1+(parseFloat(document.getElementById('m2').value)||0)/100)*(1+(parseFloat(document.getElementById('m3').value)||0)/100)*(1+(parseFloat(document.getElementById('m4').value)||0)/100);
 
         const wDmg = b * (1 + (awd + swd)/100) * (1 + twd/100);
-        
         const stMult = (1 + ooc) * (currentTarget === 'elite' ? (1 + dta) : (1 + dth)) * m;
 
         const omkElement = document.getElementById('res-omk');
         const omkBox = document.getElementById('omk-box');
 
         if(b > 0) {
-            // Updated Shooting Range Logic with Math.floor to match Ingame rounding
             document.getElementById('st-body').innerText = Math.floor(wDmg * stMult).toLocaleString();
             document.getElementById('st-crit').innerText = Math.floor(wDmg * stMult * (1 + chd)).toLocaleString();
             document.getElementById('st-head').innerText = Math.floor(wDmg * stMult * (1 + hsd)).toLocaleString();
