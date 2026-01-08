@@ -11,6 +11,7 @@
             --bg: #030303; --card-bg: rgba(15, 15, 15, 0.95); 
             --glass: rgba(255, 255, 255, 0.05); --border: #222; 
             --text-main: #ffffff; --crit: #ffcc00; --head: #ff4444; --pos: #00ff88; --neg: #ff4444;
+            --ingame-blue: #3399ff;
         }
         body { font-family: 'Inter', sans-serif; background: var(--bg); background-image: radial-gradient(circle at 50% 0%, #1a0d00 0%, #030303 70%); color: var(--text-main); margin: 0; padding: 30px; min-height: 100vh; }
         .container { max-width: 1700px; margin: auto; }
@@ -180,7 +181,7 @@
                 <button class="t-btn" id="t-health" onclick="toggleTarget('health')">Target: Health (DtH)</button>
             </div>
             <div class="range-grid">
-                <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body">-</span></div>
+                <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body" style="color:var(--ingame-blue)">-</span></div>
                 <div class="range-box"><label>Crit Body</label><span class="range-val" id="st-crit" style="color:var(--crit)">-</span></div>
                 <div class="range-box"><label>Headshot</label><span class="range-val" id="st-head" style="color:var(--orange)">-</span></div>
                 <div class="range-box"><label>Crit Head</label><span class="range-val" id="st-head-crit" style="color:var(--head)">-</span></div>
@@ -301,10 +302,11 @@
         const omkBox = document.getElementById('omk-box');
 
         if(b > 0) {
-            document.getElementById('st-body').innerText = Math.round(wDmg * stMult).toLocaleString();
-            document.getElementById('st-crit').innerText = Math.round(wDmg * stMult * (1 + chd)).toLocaleString();
-            document.getElementById('st-head').innerText = Math.round(wDmg * stMult * (1 + hsd)).toLocaleString();
-            document.getElementById('st-head-crit').innerText = Math.round(wDmg * stMult * (1 + hsd + chd)).toLocaleString();
+            // Updated Shooting Range Logic with Math.floor to match Ingame rounding
+            document.getElementById('st-body').innerText = Math.floor(wDmg * stMult).toLocaleString();
+            document.getElementById('st-crit').innerText = Math.floor(wDmg * stMult * (1 + chd)).toLocaleString();
+            document.getElementById('st-head').innerText = Math.floor(wDmg * stMult * (1 + hsd)).toLocaleString();
+            document.getElementById('st-head-crit').innerText = Math.floor(wDmg * stMult * (1 + hsd + chd)).toLocaleString();
 
             const avg = wDmg * (1 + (chc*chd) + (hsd*hr)) * (1 + (ooc*or)) * (1 + (dta*ar)) * m;
             const burst = (rpm/60) * avg, mDmgV = avg * mag;
