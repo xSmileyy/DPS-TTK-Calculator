@@ -303,11 +303,12 @@
             const finalBase = Number.isInteger(cb) ? cb : cb.toFixed(1);
             document.getElementById('calc-base-res').value = finalBase;
             
-            // AUTOMATIC INJECTION TO SECTION 1 & 2
+            // AUTO-INJECTION: Übertrage AWD und SWD automatisch in Sektion 2
             document.getElementById('base').value = finalBase;
             document.getElementById('awd').value = mAwdI;
             document.getElementById('swd').value = mSwdI;
         } else {
+            // Falls Sektion 0 nicht vollständig ist, berechnen wir das Resultat-Feld leer
             document.getElementById('calc-base-res').value = "";
         }
 
@@ -446,4 +447,3 @@
 </script>
 </body>
 </html>
-
