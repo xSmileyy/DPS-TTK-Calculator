@@ -28,22 +28,45 @@
         .group { display: flex; flex-direction: column; }
         label { font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 4px; text-transform: uppercase; }
         input, select { background: #000; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 15px; font-family: 'JetBrains Mono'; width: 100%; box-sizing: border-box; }
+        
         .range-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
         .range-box { background: #050505; border: 1px solid #1a1a1a; padding: 12px; border-radius: 10px; text-align: center; }
         .range-val { font-family: 'JetBrains Mono'; font-size: 18px; font-weight: 800; display: block; margin-top: 4px; }
+        
         .target-toggle { display: flex; gap: 10px; margin-bottom: 15px; }
         .t-btn { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #333; background: #111; color: #888; cursor: pointer; font-weight: 800; font-size: 12px; text-transform: uppercase; }
         .t-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); }
+
+        /* Kill Efficiency Layout Korrektur */
         .results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-        .res-box { background: #0a0a0a; border: 1px solid var(--border); padding: 15px; border-radius: 12px; }
-        .res-label { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 700; }
-        .res-val { font-size: 20px; font-weight: 800; font-family: 'JetBrains Mono'; color: #fff; }
+        .res-box { 
+            background: #0a0a0a; 
+            border: 1px solid var(--border); 
+            padding: 15px 20px; 
+            border-radius: 12px; 
+            display: flex; 
+            justify-content: flex-start; 
+            align-items: center; 
+            gap: 10px;
+        }
+        .res-label { 
+            font-size: 11px; 
+            color: #888; 
+            text-transform: uppercase; 
+            font-weight: 700; 
+            white-space: nowrap;
+        }
+        .res-val { 
+            font-size: 22px; 
+            font-weight: 800; 
+            font-family: 'JetBrains Mono'; 
+            color: #fff; 
+        }
+
         .btn-capture { background: #fff; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px; }
         .comp-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         .comp-table th { background: rgba(255,255,255,0.05); text-align: left; padding: 12px; color: var(--orange); border-bottom: 1px solid var(--border); }
         .comp-table td { padding: 12px; border-bottom: 1px solid #111; font-family: 'JetBrains Mono'; color: #fff; }
-        .best-cell { color: var(--pos) !important; font-weight: 800; background: rgba(0, 255, 136, 0.05); }
-        .fail-cell { color: var(--neg) !important; font-weight: 800; background: rgba(255, 68, 68, 0.05); }
         .del-btn { color: #ff4444; cursor: pointer; font-size: 10px; margin-left: 8px; border: 1px solid #ff4444; padding: 0px 4px; border-radius: 3px; }
     </style>
 </head>
@@ -194,15 +217,6 @@
     }
 
     function calculate() {
-        const mDmg = parseFloat(document.getElementById('menu-dmg').value);
-        const mAwd = parseFloat(document.getElementById('menu-awd').value);
-        const mSwd = parseFloat(document.getElementById('menu-swd').value);
-        
-        if(!isNaN(mDmg) && !isNaN(mAwd) && !isNaN(mSwd)) {
-            const cb = mDmg / (1 + (mAwd + mSwd)/100);
-            document.getElementById('calc-base-res').value = cb.toFixed(1);
-        }
-
         const b = parseFloat(document.getElementById('base').value)||0;
         const rpm = parseFloat(document.getElementById('rpm').value)||0;
         const mag = parseFloat(document.getElementById('mag').value)||0;
@@ -230,21 +244,15 @@
             const headHit = Math.floor(wDmg * stMult * (1 + hsd));
             const headCritHit = Math.floor(wDmg * stMult * (1 + hsd + chd));
 
-            const bodyEl = document.getElementById('st-body');
-            const critEl = document.getElementById('st-crit');
-            const headEl = document.getElementById('st-head');
-            const hCritEl = document.getElementById('st-head-crit');
+            document.getElementById('st-body').innerText = bodyHit.toLocaleString();
+            document.getElementById('st-crit').innerText = critHit.toLocaleString();
+            document.getElementById('st-head').innerText = headHit.toLocaleString();
+            document.getElementById('st-head-crit').innerText = headCritHit.toLocaleString();
 
-            bodyEl.innerText = bodyHit.toLocaleString();
-            critEl.innerText = critHit.toLocaleString();
-            headEl.innerText = headHit.toLocaleString();
-            hCritEl.innerText = headCritHit.toLocaleString();
-
-            // FARBANPASSUNG
-            bodyEl.style.color = (currentTarget === 'elite') ? "#3399ff" : "#ffffff";
-            critEl.style.color = "#ffcc00";
-            headEl.style.color = "#ff6600";
-            hCritEl.style.color = "#ff4444";
+            document.getElementById('st-body').style.color = (currentTarget === 'elite') ? "#3399ff" : "#ffffff";
+            document.getElementById('st-crit').style.color = "#ffcc00";
+            document.getElementById('st-head').style.color = "#ff6600";
+            document.getElementById('st-head-crit').style.color = "#ff4444";
 
             const avg = wDmg * (1 + (chc*chd) + (hsd*hr)) * (1 + (ooc*or)) * (1 + (dta*ar)) * m;
             const burst = (rpm/60) * avg, mDmgV = avg * mag;
@@ -253,7 +261,7 @@
             const ttkb = (ehp/burst), ttks = mDmgV >= ehp ? ttkb : ttkb + (Math.ceil(ehp/mDmgV)-1)*rel;
 
             document.getElementById('res-omk').innerText = mDmgV >= ehp ? "YES" : "NO";
-            document.getElementById('omk-box').style.backgroundColor = mDmgV >= ehp ? "rgba(0, 255, 136, 0.05)" : "rgba(255, 68, 68, 0.05)";
+            document.getElementById('omk-box').style.borderColor = mDmgV >= ehp ? "var(--pos)" : "var(--neg)";
             document.getElementById('res-kpm').innerText = (mDmgV/ehp).toFixed(2);
             document.getElementById('res-ttkb').innerText = ttkb.toFixed(3) + "s";
             document.getElementById('res-ttks').innerText = ttks.toFixed(3) + "s";
