@@ -45,6 +45,10 @@
         .range-box { background: #050505; border: 1px solid #1a1a1a; padding: 12px; border-radius: 10px; text-align: center; }
         .range-val { font-family: 'JetBrains Mono'; font-size: 18px; font-weight: 800; display: block; margin-top: 4px; }
 
+        .target-toggle { display: flex; gap: 10px; margin-bottom: 15px; }
+        .t-btn { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #333; background: #111; color: #888; cursor: pointer; font-weight: 800; font-size: 12px; text-transform: uppercase; }
+        .t-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); }
+
         .results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
         .res-box { background: #0a0a0a; border: 1px solid var(--border); padding: 15px; border-radius: 12px; }
         .res-label { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px; }
@@ -93,7 +97,7 @@
             <div class="section-title">Weapon Presets (Base Dmg Only)</div>
             <div class="input-block">
                 <div class="group" style="grid-column: span 4;">
-                    <label>Select Weapon Template</label>
+                    <label>Select Weapon Template for Base Damage</label>
                     <select id="preset-select" onchange="applyPreset()">
                         <option value="">-- Choose a Weapon --</option>
                         <optgroup label="Assault Rifles">
@@ -135,7 +139,7 @@
             <div class="input-block">
                 <div class="group"><label>AWD (All Weapon Damage) %</label><input type="number" id="awd" placeholder=""></div>
                 <div class="group"><label>SWD (e.g. AR-Damage Bonus) %</label><input type="number" id="swd" placeholder=""></div>
-                <div class="group"><label>TWD (Talents e.g. Obliterate, Vigiliance, etc.) %</label><input type="number" id="twd" placeholder=""></div>
+                <div class="group"><label>TWD (e.g. Obliterate) %</label><input type="number" id="twd" placeholder=""></div>
             </div>
 
             <div class="section-title">3. Combat Stats & Rates</div>
@@ -145,6 +149,7 @@
                 <div class="group"><label>HSD %</label><input type="number" id="hsd" placeholder=""></div>
                 <div class="group"><label>DttOOC %</label><input type="number" id="dttooc" placeholder=""></div>
                 <div class="group"><label>DtA %</label><input type="number" id="dta" placeholder=""></div>
+                <div class="group"><label>DtH %</label><input type="number" id="dth" placeholder=""></div>
             </div>
             <div class="input-block">
                 <div class="group"><label style="color:var(--orange)">HS-Rate %</label><input type="number" id="h-rate" placeholder="" style="border-color:var(--orange)"></div>
@@ -154,10 +159,10 @@
 
             <div class="section-title">4. Amplifiers</div>
             <div class="input-block">
-                <div class="group"><label>Amp 1 (e.g. Striker, Glass Canon) %</label><input type="number" id="m1" placeholder=""></div>
-                <div class="group"><label>Amp 2 (e.g. Striker, Glass Canon) %</label><input type="number" id="m2" placeholder=""></div>
-                <div class="group"><label>Amp 3 (e.g. Striker, Glass Canon) %</label><input type="number" id="m3" placeholder=""></div>
-                <div class="group"><label>Amp 4 (e.g. Striker, Glass Canon) %</label><input type="number" id="m4" placeholder=""></div>
+                <div class="group"><label>Amp 1 (e.g. Striker, Glass Cannon) %</label><input type="number" id="m1" placeholder=""></div>
+                <div class="group"><label>Amp 2 (e.g. Striker, Glass Cannon) %</label><input type="number" id="m2" placeholder=""></div>
+                <div class="group"><label>Amp 3 (e.g. Striker, Glass Cannon) %</label><input type="number" id="m3" placeholder=""></div>
+                <div class="group"><label>Amp 4 (e.g. Striker, Glass Cannon) %</label><input type="number" id="m4" placeholder=""></div>
             </div>
             
             <div class="input-block" style="border: 1px dashed var(--orange);">
@@ -168,6 +173,10 @@
 
         <div class="card">
             <div class="section-title">Shooting Range (Max Numbers)</div>
+            <div class="target-toggle">
+                <button class="t-btn active" id="t-elite" onclick="toggleTarget('elite')">Target: Elite (DtA)</button>
+                <button class="t-btn" id="t-health" onclick="toggleTarget('health')">Target: Health (DtH)</button>
+            </div>
             <div class="range-grid">
                 <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body">-</span></div>
                 <div class="range-box"><label>Crit Body</label><span class="range-val" id="st-crit" style="color:var(--crit)">-</span></div>
@@ -212,6 +221,15 @@
 </div>
 
 <script>
+    let currentTarget = 'elite';
+
+    function toggleTarget(t) {
+        currentTarget = t;
+        document.getElementById('t-elite').classList.toggle('active', t === 'elite');
+        document.getElementById('t-health').classList.toggle('active', t === 'health');
+        calculate();
+    }
+
     const weaponPresets = {
         "lexington": { b: 48699.5 },
         "st-elmos": { b: 46917.5 },
@@ -260,7 +278,7 @@
         
         if(!isNaN(mDmgI) && !isNaN(mAwdI) && !isNaN(mSwdI)) {
             const cb = mDmgI / (1 + (mAwdI + mSwdI)/100);
-            document.getElementById('calc-base-res').value = Math.round(cb);
+            document.getElementById('calc-base-res').value = Number.isInteger(cb) ? cb : cb.toFixed(1);
         } else {
             document.getElementById('calc-base-res').value = "";
         }
@@ -270,20 +288,22 @@
         const awd = parseFloat(document.getElementById('awd').value)||0, swd = parseFloat(document.getElementById('swd').value)||0, twd = parseFloat(document.getElementById('twd').value)||0;
         const chc = Math.min(60, parseFloat(document.getElementById('chc').value)||0)/100, chd = (parseFloat(document.getElementById('chd').value)||0)/100, hsd = (parseFloat(document.getElementById('hsd').value)||0)/100;
         const hr = (parseFloat(document.getElementById('h-rate').value)||0)/100, ooc = (parseFloat(document.getElementById('dttooc').value)||0)/100, or = (parseFloat(document.getElementById('d-rate').value)||0)/100;
-        const dta = (parseFloat(document.getElementById('dta').value)||0)/100, ar = (parseFloat(document.getElementById('a-rate').value)||0)/100;
+        const dta = (parseFloat(document.getElementById('dta').value)||0)/100, dth = (parseFloat(document.getElementById('dth').value)||0)/100, ar = (parseFloat(document.getElementById('a-rate').value)||0)/100;
         const m = (1+(parseFloat(document.getElementById('m1').value)||0)/100)*(1+(parseFloat(document.getElementById('m2').value)||0)/100)*(1+(parseFloat(document.getElementById('m3').value)||0)/100)*(1+(parseFloat(document.getElementById('m4').value)||0)/100);
 
         const wDmg = b * (1 + (awd + swd)/100) * (1 + twd/100);
-        const maxMult = (1 + ooc) * (1 + dta) * m;
+        
+        // Target Logic for Shooting Range
+        const stMult = (1 + ooc) * (currentTarget === 'elite' ? (1 + dta) : (1 + dth)) * m;
 
         const omkElement = document.getElementById('res-omk');
         const omkBox = document.getElementById('omk-box');
 
         if(b > 0) {
-            document.getElementById('st-body').innerText = Math.round(wDmg * maxMult).toLocaleString();
-            document.getElementById('st-crit').innerText = Math.round(wDmg * maxMult * (1 + chd)).toLocaleString();
-            document.getElementById('st-head').innerText = Math.round(wDmg * maxMult * (1 + hsd)).toLocaleString();
-            document.getElementById('st-head-crit').innerText = Math.round(wDmg * maxMult * (1 + hsd + chd)).toLocaleString();
+            document.getElementById('st-body').innerText = Math.round(wDmg * stMult).toLocaleString();
+            document.getElementById('st-crit').innerText = Math.round(wDmg * stMult * (1 + chd)).toLocaleString();
+            document.getElementById('st-head').innerText = Math.round(wDmg * stMult * (1 + hsd)).toLocaleString();
+            document.getElementById('st-head-crit').innerText = Math.round(wDmg * stMult * (1 + hsd + chd)).toLocaleString();
 
             const avg = wDmg * (1 + (chc*chd) + (hsd*hr)) * (1 + (ooc*or)) * (1 + (dta*ar)) * m;
             const burst = (rpm/60) * avg, mDmgV = avg * mag;
