@@ -94,8 +94,8 @@
             <div class="hint-text"><i class="fas fa-info-circle"></i>Ingame: Open Inventory → Stats → Copy "Weapon Damage" & "Weapon Type Damage Bonus"</div>
             <div class="input-block">
                 <div class="group"><label>Weapon Damage</label><input type="number" id="menu-dmg" placeholder=""></div>
-                <div class="group"><label>AWD (All) %</label><input type="number" id="menu-awd" placeholder=""></div>
-                <div class="group"><label>SWD (Type) %</label><input type="number" id="menu-swd" placeholder=""></div>
+                <div class="group"><label>AWD (All Weapon Damage %)</label><input type="number" id="menu-awd" placeholder=""></div>
+                <div class="group"><label>SWD (Specific Weapon Damage % e.g. AR, SMG)</label><input type="number" id="menu-swd" placeholder=""></div>
                 <div class="group"><label style="color:var(--orange)">Result: Base Damage</label><input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;"></div>
             </div>
 
@@ -296,7 +296,13 @@
         
         if(!isNaN(mDmgI) && !isNaN(mAwdI) && !isNaN(mSwdI)) {
             const cb = mDmgI / (1 + (mAwdI + mSwdI)/100);
-            document.getElementById('calc-base-res').value = Number.isInteger(cb) ? cb : cb.toFixed(1);
+            const finalBase = Number.isInteger(cb) ? cb : cb.toFixed(1);
+            document.getElementById('calc-base-res').value = finalBase;
+            
+            // AUTOMATIC INJECTION TO SECTION 1 & 2
+            document.getElementById('base').value = finalBase;
+            document.getElementById('awd').value = mAwdI;
+            document.getElementById('swd').value = mSwdI;
         } else {
             document.getElementById('calc-base-res').value = "";
         }
@@ -436,4 +442,3 @@
 </script>
 </body>
 </html>
-
