@@ -34,14 +34,14 @@
         .section-title:first-child { margin-top: 0; }
         .section-title::after { content: ''; height: 1px; flex-grow: 1; background: var(--border); }
 
-        .input-block { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; background: var(--glass); padding: 18px; border-radius: 12px; margin-bottom: 15px; }
+        .input-block { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; background: var(--glass); padding: 18px; border-radius: 12px; margin-bottom: 15px; }
         .group { display: flex; flex-direction: column; }
         
         .hint-text { font-size: 11px; color: #888; margin-top: -10px; margin-bottom: 15px; padding-left: 5px; font-style: italic; }
         .hint-text i { color: var(--orange); margin-right: 5px; }
 
-        label { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; text-transform: uppercase; }
-        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 15px; font-family: 'JetBrains Mono'; }
+        label { font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 4px; text-transform: uppercase; white-space: nowrap; }
+        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 15px; font-family: 'JetBrains Mono'; width: 100%; box-sizing: border-box; }
         
         input:focus { border-color: var(--orange); outline: none; }
 
@@ -94,8 +94,8 @@
             <div class="hint-text"><i class="fas fa-info-circle"></i>Ingame: Open Inventory → Stats → Copy "Weapon Damage" & "Weapon Type Damage Bonus"</div>
             <div class="input-block">
                 <div class="group"><label>Menu Damage</label><input type="number" id="menu-dmg" placeholder=""></div>
-                <div class="group"><label>AWD (All Weapon Dmg) %</label><input type="number" id="menu-awd" placeholder=""></div>
-                <div class="group"><label>SWD (Weapon Type Dmg) %</label><input type="number" id="menu-swd" placeholder=""></div>
+                <div class="group"><label>AWD (All) %</label><input type="number" id="menu-awd" placeholder=""></div>
+                <div class="group"><label>SWD (Type) %</label><input type="number" id="menu-swd" placeholder=""></div>
                 <div class="group"><label style="color:var(--orange)">Result: Base Damage</label><input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;"></div>
             </div>
 
@@ -134,7 +134,7 @@
 
             <div class="section-title">1. Weapon Data</div>
             <div class="input-block">
-                <div class="group"><label>Base Damage</label><input type="number" id="base" placeholder=""></div>
+                <div class="group"><label style="color:var(--orange)">Base Damage</label><input type="number" id="base" placeholder="" style="border-color:var(--orange); color:var(--orange); font-weight:bold;"></div>
                 <div class="group"><label>RPM</label><input type="number" id="rpm" placeholder=""></div>
                 <div class="group"><label>Mag Size</label><input type="number" id="mag" placeholder=""></div>
                 <div class="group"><label>Reload (s)</label><input type="number" id="rel" placeholder=""></div>
@@ -142,9 +142,10 @@
 
             <div class="section-title">2. Weapon Damage %</div>
             <div class="input-block">
-                <div class="group"><label>AWD (All Weapon Damage) %</label><input type="number" id="awd" placeholder=""></div>
-                <div class="group"><label>SWD (e.g. AR-Damage Bonus) %</label><input type="number" id="swd" placeholder=""></div>
-                <div class="group"><label>TWD (e.g. Obliterate) %</label><input type="number" id="twd" placeholder=""></div>
+                <div class="group"><label>AWD (All Weapon) %</label><input type="number" id="awd" placeholder=""></div>
+                <div class="group"><label>SWD (Weapon Type) %</label><input type="number" id="swd" placeholder=""></div>
+                <div class="group"><label>TWD (Total Wep) %</label><input type="number" id="twd" placeholder=""></div>
+                <div class="group"></div>
             </div>
 
             <div class="section-title">3. Combat Stats & Rates</div>
@@ -155,6 +156,7 @@
                 <div class="group"><label>DttOOC %</label><input type="number" id="dttooc" placeholder=""></div>
                 <div class="group"><label>DtA %</label><input type="number" id="dta" placeholder=""></div>
                 <div class="group"><label>DtH %</label><input type="number" id="dth" placeholder=""></div>
+                <div class="group"></div><div class="group"></div>
             </div>
 
             <div class="section-title">4. %-Rate Enemies for Calculation</div>
@@ -162,17 +164,18 @@
                 <div class="group"><label style="color:var(--orange)">HS-Rate %</label><input type="number" id="h-rate" placeholder="" style="border-color:var(--orange)"></div>
                 <div class="group"><label style="color:var(--orange)">DTTOOC-Rate %</label><input type="number" id="d-rate" placeholder="" style="border-color:var(--orange)"></div>
                 <div class="group"><label style="color:var(--orange)">Armor-Rate %</label><input type="number" id="a-rate" placeholder="" style="border-color:var(--orange)"></div>
+                <div class="group"></div>
             </div>
 
             <div class="section-title">5. Amplifiers</div>
             <div class="input-block">
-                <div class="group"><label>Amp 1 (e.g. Striker, Glass Cannon) %</label><input type="number" id="m1" placeholder=""></div>
-                <div class="group"><label>Amp 2 (e.g. Striker, Glass Cannon) %</label><input type="number" id="m2" placeholder=""></div>
-                <div class="group"><label>Amp 3 (e.g. Striker, Glass Cannon) %</label><input type="number" id="m3" placeholder=""></div>
-                <div class="group"><label>Amp 4 (e.g. Striker, Glass Cannon) %</label><input type="number" id="m4" placeholder=""></div>
+                <div class="group"><label>Amp 1 %</label><input type="number" id="m1" placeholder=""></div>
+                <div class="group"><label>Amp 2 %</label><input type="number" id="m2" placeholder=""></div>
+                <div class="group"><label>Amp 3 %</label><input type="number" id="m3" placeholder=""></div>
+                <div class="group"><label>Amp 4 %</label><input type="number" id="m4" placeholder=""></div>
             </div>
             
-            <div class="input-block" style="border: 1px dashed var(--orange);">
+            <div class="input-block" style="border: 1px dashed var(--orange); grid-template-columns: repeat(3, 1fr);">
                 <div class="group" style="grid-column: span 2;"><label>Build Name</label><input type="text" id="build-name" placeholder="Save as..."></div>
                 <div class="group"><button class="btn-capture" onclick="captureBuild()">Add to Matrix</button></div>
             </div>
