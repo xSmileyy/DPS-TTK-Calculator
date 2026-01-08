@@ -2,87 +2,90 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>xSmileyy | DPS Analyzer & Compare</title>
+    <title>xSmileyy's DPS Analytics</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --orange: #ff6600; --orange-glow: rgba(255, 102, 0, 0.4); --bg: #030303; --card-bg: rgba(15, 15, 15, 0.9); --glass: rgba(255, 255, 255, 0.03); --border: #222; --text-main: #ffffff; --text-dim: #888; --pos: #00ff88; --neg: #ff4444; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); background-image: radial-gradient(circle at 50% 0%, #1a0d00 0%, #030303 70%); color: var(--text-main); margin: 0; padding: 20px; min-height: 100vh; }
-        .container { max-width: 1750px; margin: auto; }
+        :root { --orange: #ff6600; --bg: #030303; --card-bg: rgba(15, 15, 15, 0.9); --border: #222; --text-main: #ffffff; --text-dim: #888; --pos: #00ff88; --neg: #ff4444; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); margin: 0; padding: 20px; }
+        .container { max-width: 1600px; margin: auto; }
         
-        /* Tabs */
-        .tab-bar { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .tab-btn { background: none; border: none; color: var(--text-dim); font-size: 16px; font-weight: 800; cursor: pointer; padding: 10px 25px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
-        .tab-btn.active { color: var(--orange); border-bottom: 2px solid var(--orange); }
-
-        .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .logo { font-size: 24px; font-weight: 800; text-transform: uppercase; color: #fff; }
+        /* Nav & Tabs */
+        .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        .logo { font-size: 22px; font-weight: 800; text-transform: uppercase; }
         .logo span { color: var(--orange); }
+        .tab-bar { display: flex; gap: 10px; }
+        .tab-btn { background: #111; border: 1px solid #333; color: var(--text-dim); padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 700; text-transform: uppercase; font-size: 12px; }
+        .tab-btn.active { color: #fff; border-color: var(--orange); background: rgba(255, 102, 0, 0.1); }
 
-        .main-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 30px; }
-        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; backdrop-filter: blur(20px); }
-        .section-title { font-size: 11px; font-weight: 800; color: var(--orange); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        /* Grid Layout */
+        .main-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 25px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 25px; }
+        .hidden { display: none !important; }
+
+        /* Inputs */
+        .section-title { font-size: 11px; font-weight: 800; color: var(--orange); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
         .section-title::after { content: ''; height: 1px; flex-grow: 1; background: var(--border); }
-        
-        .input-block { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; background: var(--glass); padding: 15px; border-radius: 12px; margin-bottom: 20px; }
+        .input-block { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 10px; }
         .group { display: flex; flex-direction: column; }
         label { font-size: 9px; font-weight: 700; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; }
-        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 6px; font-size: 14px; font-family: 'JetBrains Mono'; }
+        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 6px; font-family: 'JetBrains Mono'; font-size: 14px; }
+        input:focus { border-color: var(--orange); outline: none; }
+
+        /* Results */
+        .results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+        .res-box { background: #0a0a0a; border: 1px solid #222; padding: 15px; border-radius: 12px; }
+        .res-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; display: block; }
+        .res-val { font-size: 18px; font-weight: 700; font-family: 'JetBrains Mono'; }
         
-        .btn-capture { background: #fff; color: #000; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 800; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 10px; transition: 0.3s; }
-        .btn-capture:hover { background: var(--orange); color: #fff; }
+        .toggle-btn { flex: 1; background: #111; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .toggle-btn.active { background: var(--orange); border-color: var(--orange); }
 
         /* Comparison Table */
         .comp-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         .comp-table th { text-align: left; padding: 15px; color: var(--text-dim); font-size: 10px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
-        .comp-table td { padding: 20px 15px; border-bottom: 1px solid #111; font-family: 'JetBrains Mono'; vertical-align: top; }
-        .diff-tag { display: block; font-size: 11px; margin-top: 5px; font-weight: 700; }
+        .comp-table td { padding: 18px 15px; border-bottom: 1px solid #111; font-family: 'JetBrains Mono'; }
+        .diff-tag { display: block; font-size: 11px; margin-top: 4px; font-weight: 800; }
         .diff-pos { color: var(--pos); }
         .diff-neg { color: var(--neg); }
-        .best-val { color: var(--orange); text-shadow: 0 0 10px var(--orange-glow); }
 
-        .hidden { display: none !important; }
-        .toggle-btn { flex: 1; background: #111; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-        .toggle-btn.active { background: var(--orange); border-color: var(--orange); }
-        
-        .range-display { background: #000; padding: 15px; border-radius: 12px; border: 1px solid #222; margin-bottom: 20px; }
-        .range-result-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #111; font-size: 16px; font-family: 'JetBrains Mono'; }
-        .results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .res-box { background: #0a0a0a; border: 1px solid var(--border); padding: 15px; border-radius: 12px; }
-        .res-val { font-size: 18px; font-weight: 700; font-family: 'JetBrains Mono'; display: block; }
+        .btn-capture { background: #fff; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: 800; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 10px; }
+        .btn-capture:hover { background: var(--orange); color: #fff; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header class="nav-header">
-        <div class="logo">xSmileyy <span>DPS Lab</span></div>
+        <div class="logo">xSmileyy's <span>DPS Analytics</span></div>
         <div class="tab-bar">
-            <button class="tab-btn active" onclick="showTab('calc')">Calculator</button>
-            <button class="tab-btn" onclick="showTab('compare')">Comparison Matrix</button>
+            <button class="tab-btn active" id="btn-calc" onclick="showTab('calc')">Analyzer</button>
+            <button class="tab-btn" id="btn-compare" onclick="showTab('compare')">Comparison Matrix</button>
         </div>
     </header>
 
     <div id="tab-calc" class="main-grid">
         <div class="card">
-            <div class="section-title">Base & Weapon</div>
+            <div class="section-title">Base Damage Calculator</div>
             <div class="input-block">
                 <div class="group"><label>Menu Damage</label><input type="number" id="h-game"></div>
                 <div class="group"><label>All Wpn %</label><input type="number" id="h-awd"></div>
                 <div class="group"><label>Spec. Wpn %</label><input type="number" id="h-swd"></div>
-                <div class="group"><label>Calculated Base</label><input type="text" id="h-res" readonly onclick="this.select()"></div>
+                <div class="group"><label>Result Base</label><input type="text" id="h-res" readonly onclick="this.select()"></div>
             </div>
+
+            <div class="section-title">Weapon & Core Stats</div>
             <div class="input-block">
                 <div class="group"><label>Base Damage</label><input type="number" id="base"></div>
                 <div class="group"><label>RPM</label><input type="number" id="rpm"></div>
                 <div class="group"><label>Mag Size</label><input type="number" id="mag"></div>
                 <div class="group"><label>Reload (s)</label><input type="number" id="rel"></div>
-            </div>
-
-            <div class="section-title">Bonuses & Multipliers</div>
-            <div class="input-block">
                 <div class="group"><label>AWD %</label><input type="number" id="awd"></div>
                 <div class="group"><label>SWD %</label><input type="number" id="swd"></div>
-                <div class="group"><label>Total Talent %</label><input type="number" id="twd"></div>
+                <div class="group" style="grid-column: span 2;"><label>Total Talent Wpn Dmg %</label><input type="number" id="twd"></div>
+            </div>
+
+            <div class="section-title">Attributes & Multipliers</div>
+            <div class="input-block">
                 <div class="group"><label>CHC %</label><input type="number" id="chc"></div>
                 <div class="group"><label>CHD %</label><input type="number" id="chd"></div>
                 <div class="group"><label>HSD %</label><input type="number" id="hsd"></div>
@@ -91,47 +94,47 @@
                 <div class="group"><label>DtH %</label><input type="number" id="dth"></div>
             </div>
 
-            <div class="section-title">Amplifiers (Multiplier)</div>
+            <div class="section-title">Amplifiers (Multiplicative)</div>
             <div class="input-block">
-                <div class="group"><label>Mult 1 %</label><input type="number" id="m1"></div>
-                <div class="group"><label>Mult 2 %</label><input type="number" id="m2"></div>
-                <div class="group"><label>Mult 3 %</label><input type="number" id="m3"></div>
-                <div class="group"><label>Mult 4 %</label><input type="number" id="m4"></div>
+                <div class="group"><label>Mult 1 %</label><input type="number" id="m1" value="0"></div>
+                <div class="group"><label>Mult 2 %</label><input type="number" id="m2" value="0"></div>
+                <div class="group"><label>Mult 3 %</label><input type="number" id="m3" value="0"></div>
+                <div class="group"><label>Mult 4 %</label><input type="number" id="m4" value="0"></div>
             </div>
 
-            <div class="section-title">Capture Data</div>
-            <div class="group">
-                <input type="text" id="build-name" placeholder="Build Name (e.g. Strikers / High-End)" style="margin-bottom:10px;">
-                <button class="btn-capture" onclick="captureBuild()">Add to Comparison Matrix</button>
-            </div>
+            <div class="section-title">Capture for Comparison</div>
+            <input type="text" id="build-name" placeholder="Build Name (e.g. Ouroboros Strikers)" style="width:94%; margin-bottom:10px;">
+            <button class="btn-capture" onclick="captureBuild()">Add to Comparison Matrix</button>
         </div>
 
         <div class="card" style="border-left: 4px solid var(--orange);">
             <div class="section-title">Range Validator</div>
-            <div style="display:flex; gap:10px; margin-bottom:15px;">
-                <button class="toggle-btn active" id="btn-dta" onclick="toggleMode('dta')">Vs Armor (Inv. Elite)</button>
-                <button class="toggle-btn" id="btn-dth" onclick="toggleMode('dth')">Vs Health (Inv.)</button>
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <button class="toggle-btn active" id="btn-dta" onclick="toggleMode('dta')">Vs Armor (Elite)</button>
+                <button class="toggle-btn" id="btn-dth" onclick="toggleMode('dth')">Vs Health (Dogs/Hull)</button>
             </div>
-            <div class="range-display">
-                <div class="range-result-row"><span>White Hit</span><b id="val-body">-</b></div>
-                <div class="range-result-row"><span>Headshot</span><b id="val-head" style="color: #ff4444;">-</b></div>
+            <div class="input-block" style="background: #000; border: 1px solid #222;">
+                <div class="group"><label>Body Hit</label><span id="val-body" class="res-val">-</span></div>
+                <div class="group"><label>Headshot</label><span id="val-head" class="res-val" style="color:var(--neg)">-</span></div>
             </div>
 
-            <div class="section-title">Current Performance</div>
-            <div class="results-grid" style="margin-bottom: 20px;">
-                <div class="res-box"><span class="res-label">Avg/Shot</span><span class="res-val" id="res-avg">-</span></div>
+            <div class="section-title">Live Performance Metrics</div>
+            <div class="results-grid">
+                <div class="res-box"><span class="res-label">Avg Shot (Crit/Head)</span><span class="res-val" id="res-avg">-</span></div>
                 <div class="res-box"><span class="res-label">Burst DPS</span><span class="res-val" id="res-burst">-</span></div>
+                <div class="res-box"><span class="res-label">Sustain DPS</span><span class="res-val" id="res-sustain">-</span></div>
+                <div class="res-box"><span class="res-label">Full Mag Damage</span><span class="res-val" id="res-mag">-</span></div>
             </div>
 
-            <div class="section-title">Target EHP Analysis</div>
-            <select id="enemy-select" style="width:100%; margin-bottom:15px;">
-                <optgroup label="LEGENDARY">
-                    <option value="25172134">Legendary [4P] - Elite</option>
-                    <option value="72146660">Legendary [4P] - Named</option>
+            <div class="section-title" style="margin-top:25px;">Time to Kill (TTK) Analysis</div>
+            <select id="enemy-select" style="width:100%; margin-bottom:15px; padding:12px;">
+                <optgroup label="HEROIC (4-Player)">
+                    <option value="16905653" selected>Heroic Elite (16.9M)</option>
+                    <option value="47296250">Heroic Named (47.3M)</option>
                 </optgroup>
-                <optgroup label="HEROIC">
-                    <option value="16905653" selected>Heroic [4P] - Elite</option>
-                    <option value="47296250">Heroic [4P] - Named</option>
+                <optgroup label="LEGENDARY (4-Player)">
+                    <option value="25172134">Legendary Elite (25.2M)</option>
+                    <option value="72146660">Legendary Named (72.1M)</option>
                 </optgroup>
             </select>
             <div class="results-grid">
@@ -144,17 +147,14 @@
     <div id="tab-compare" class="card hidden">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div class="section-title">Comparison Matrix</div>
-            <button class="toggle-btn" style="width:auto; padding:5px 15px;" onclick="clearCompare()">Clear All</button>
+            <button class="tab-btn" style="border-color:var(--neg)" onclick="clearCompare()">Reset Matrix</button>
         </div>
-        <table class="comp-table">
-            <thead>
-                <tr id="comp-header">
-                    <th>Metric</th>
-                    </tr>
-            </thead>
-            <tbody id="comp-body">
-                </tbody>
-        </table>
+        <div style="overflow-x:auto">
+            <table class="comp-table">
+                <thead><tr id="comp-header"><th>Metric</th></tr></thead>
+                <tbody id="comp-body"></tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -165,7 +165,8 @@
     function showTab(tab) {
         document.getElementById('tab-calc').classList.toggle('hidden', tab !== 'calc');
         document.getElementById('tab-compare').classList.toggle('hidden', tab !== 'compare');
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(tab)));
+        document.getElementById('btn-calc').classList.toggle('active', tab === 'calc');
+        document.getElementById('btn-compare').classList.toggle('active', tab === 'compare');
         if(tab === 'compare') renderCompare();
     }
 
@@ -182,9 +183,11 @@
     }
 
     function calculateAll() {
-        const hRes = getVal('h-game') / (1 + (getVal('h-awd')+getVal('h-swd'))/100);
+        // Base Calc
+        const hRes = getVal('h-game') / (1 + (getVal('h-awd') + getVal('h-swd'))/100);
         document.getElementById('h-res').value = hRes > 0 ? hRes.toFixed(1) : "0";
 
+        // Logic
         const base = getVal('base'), awd = getVal('awd'), swd = getVal('swd'), twd = getVal('twd');
         const chc = Math.min(60, getVal('chc'))/100, chd = getVal('chd')/100, hsd = getVal('hsd')/100;
         const dttooc = getVal('dttooc')/100, dta = getVal('dta')/100, dth = getVal('dth')/100;
@@ -196,28 +199,32 @@
         document.getElementById('val-body').innerText = Math.round(vBody).toLocaleString();
         document.getElementById('val-head').innerText = Math.round(vBody * (1+hsd)).toLocaleString();
 
-        const avgShot = vBody * (1 + (chc*chd)) * (1 + (0.2 * hsd)); // Sim 20% HSD
+        const avgShot = vBody * (1 + (chc*chd)) * (1 + (0.2 * hsd)); // 20% Headshot Sim
         const rpm = getVal('rpm'), mag = getVal('mag'), rel = getVal('rel');
         const burstDps = (rpm/60) * avgShot;
-        const sustainDps = (mag > 0) ? (mag * avgShot) / (rel + (mag/(rpm/60))) : 0;
+        const sustainDps = (mag > 0 && rpm > 0) ? (mag * avgShot) / (rel + (mag/(rpm/60))) : 0;
         const targetEHP = parseFloat(document.getElementById('enemy-select').value);
 
         document.getElementById('res-avg').innerText = Math.round(avgShot).toLocaleString();
         document.getElementById('res-burst').innerText = Math.round(burstDps).toLocaleString();
+        document.getElementById('res-sustain').innerText = Math.round(sustainDps).toLocaleString();
+        document.getElementById('res-mag').innerText = Math.round(avgShot * mag).toLocaleString();
         document.getElementById('res-ttkb').innerText = burstDps > 0 ? (targetEHP/burstDps).toFixed(2) + "s" : "-";
-        document.getElementById('res-kpm').innerText = (targetEHP > 0) ? ( (avgShot*mag)/targetEHP ).toFixed(2) : "-";
+        document.getElementById('res-kpm').innerText = (targetEHP > 0) ? ((avgShot*mag)/targetEHP).toFixed(2) : "-";
 
-        return { avgShot, burstDps, sustainDps, ttk: targetEHP/burstDps };
+        return { avgShot, burstDps, sustainDps, magDmg: avgShot*mag, ttk: targetEHP/burstDps };
     }
 
     function captureBuild() {
         const stats = calculateAll();
+        if(stats.avgShot <= 0) return alert("Stats input incomplete.");
         const name = document.getElementById('build-name').value || "Build " + (capturedBuilds.length + 1);
         capturedBuilds.push({ name, ...stats });
-        alert(name + " captured!");
+        document.getElementById('build-name').value = "";
+        alert("Build captured!");
     }
 
-    function clearCompare() { capturedBuilds = []; renderCompare(); }
+    function clearCompare() { if(confirm("Clear Matrix?")) { capturedBuilds = []; renderCompare(); } }
 
     function renderCompare() {
         const header = document.getElementById('comp-header');
@@ -226,17 +233,18 @@
         body.innerHTML = '';
 
         if(capturedBuilds.length === 0) {
-            body.innerHTML = '<tr><td colspan="5">No builds captured yet. Go to Calculator and click "Add to Comparison".</td></tr>';
+            body.innerHTML = '<tr><td colspan="10">No builds captured.</td></tr>';
             return;
         }
 
         capturedBuilds.forEach(b => { header.innerHTML += `<th>${b.name}</th>`; });
 
         const metrics = [
-            { label: 'Avg Shot Damage', key: 'avgShot', higherBetter: true },
-            { label: 'Burst DPS', key: 'burstDps', higherBetter: true },
-            { label: 'Sustain DPS', key: 'sustainDps', higherBetter: true },
-            { label: 'TTK (Burst)', key: 'ttk', higherBetter: false }
+            { label: 'Avg Shot Damage', key: 'avgShot', high: true },
+            { label: 'Burst DPS', key: 'burstDps', high: true },
+            { label: 'Sustain DPS', key: 'sustainDps', high: true },
+            { label: 'Total Mag Damage', key: 'magDmg', high: true },
+            { label: 'TTK (Burst)', key: 'ttk', high: false }
         ];
 
         metrics.forEach(m => {
@@ -244,20 +252,14 @@
             capturedBuilds.forEach((b, i) => {
                 const val = b[m.key];
                 let diffHtml = '';
-                
                 if(i > 0) {
-                    const baseVal = capturedBuilds[0][m.key];
-                    const diff = ((val - baseVal) / baseVal) * 100;
-                    const isPos = m.higherBetter ? diff > 0 : diff < 0;
+                    const diff = ((val - capturedBuilds[0][m.key]) / capturedBuilds[0][m.key]) * 100;
+                    const isPos = m.high ? diff > 0 : diff < 0;
                     diffHtml = `<span class="diff-tag ${isPos ? 'diff-pos' : 'diff-neg'}">${diff > 0 ? '+' : ''}${diff.toFixed(1)}%</span>`;
-                } else {
-                    diffHtml = `<span class="diff-tag" style="color:var(--text-dim)">BASIS</span>`;
                 }
-
-                row += `<td>${Math.round(val).toLocaleString()}${diffHtml}</td>`;
+                row += `<td>${m.label.includes('TTK') ? val.toFixed(2)+'s' : Math.round(val).toLocaleString()}${diffHtml}</td>`;
             });
-            row += '</tr>';
-            body.innerHTML += row;
+            body.innerHTML += row + '</tr>';
         });
     }
 
