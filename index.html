@@ -74,6 +74,10 @@
 
         .del-btn { color: #ff4444; cursor: pointer; font-size: 10px; margin-left: 8px; border: 1px solid #ff4444; padding: 0px 4px; border-radius: 3px; vertical-align: middle; }
         .del-btn:hover { background: #ff4444; color: #fff; }
+        
+        .action-row { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-small { flex: 1; padding: 8px; font-size: 11px; font-weight: 800; text-transform: uppercase; cursor: pointer; border-radius: 6px; border: 1px solid #333; background: #222; color: #fff; }
+        .btn-small:hover { background: #333; }
     </style>
 </head>
 <body>
@@ -189,7 +193,7 @@
             </div>
 
             <div class="section-title">Kill Efficiency</div>
-            <select id="enemy-select" style="width:100%; margin-bottom:15px;">
+            <select id="enemy-select" style="width:100%; margin-bottom:15px;" onchange="calculate()">
                 <optgroup label="Heroic (1-Player)">
                     <option value="6050000">Heroic 1P Elite (6.0M)</option>
                     <option value="12500000">Heroic 1P Named (12.5M)</option>
@@ -225,20 +229,18 @@
                     <tbody id="comp-body"></tbody>
                 </table>
             </div>
-            <button class="btn-capture" style="background:#222; color:#fff; margin-top:15px;" onclick="clearMatrix()">Reset Entire Matrix</button>
+            
+            <div class="action-row">
+                <button class="btn-small" onclick="clearMatrix()" style="color:#ff4444;">Reset Matrix</button>
+                <button class="btn-small" onclick="exportData()">Export Matrix (JSON)</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
     let currentTarget = 'elite';
-
-    function toggleTarget(t) {
-        currentTarget = t;
-        document.getElementById('t-elite').classList.toggle('active', t === 'elite');
-        document.getElementById('t-health').classList.toggle('active', t === 'health');
-        calculate();
-    }
+    let builds = [];
 
     const weaponPresets = {
         "lexington": { b: 48699.5 }, "st-elmos": { b: 46917.5 }, "eagle-bearer": { b: 47364.5 },
@@ -246,13 +248,22 @@
         "lady-death": { b: 35409.0 }
     };
 
-    let builds = [];
-
+    // WICHTIG: Sofortiges Laden der Matrix beim Start
     window.onload = function() {
         const saved = localStorage.getItem('dps_matrix_builds');
-        if (saved) { builds = JSON.parse(saved); renderMatrix(); }
+        if (saved) { 
+            builds = JSON.parse(saved); 
+            renderMatrix(); 
+        }
         calculate();
     };
+
+    function toggleTarget(t) {
+        currentTarget = t;
+        document.getElementById('t-elite').classList.toggle('active', t === 'elite');
+        document.getElementById('t-health').classList.toggle('active', t === 'health');
+        calculate();
+    }
 
     function applyPreset() {
         const key = document.getElementById('preset-select').value;
@@ -264,21 +275,16 @@
     }
 
     function calculate() {
+        // ... (Berechnungslogik bleibt gleich wie in deinem Code)
         const mAwd = document.getElementById('menu-awd').value;
         const mSwd = document.getElementById('menu-swd').value;
         const mDmg = document.getElementById('menu-dmg').value;
-
         const awdField = document.getElementById('awd');
         const swdField = document.getElementById('swd');
         const bField = document.getElementById('base');
 
-        awdField.value = mAwd;
-        if (mAwd !== "") { awdField.classList.add('auto-highlight'); } 
-        else { awdField.classList.remove('auto-highlight'); }
-
-        swdField.value = mSwd;
-        if (mSwd !== "") { swdField.classList.add('auto-highlight'); } 
-        else { swdField.classList.remove('auto-highlight'); }
+        if(mAwd !== "") awdField.value = mAwd;
+        if(mSwd !== "") swdField.value = mSwd;
 
         const d = parseFloat(mDmg), a = parseFloat(mAwd), s = parseFloat(mSwd);
         if(!isNaN(d) && !isNaN(a) && !isNaN(s)) {
@@ -286,13 +292,6 @@
             const finalBase = Number.isInteger(cb) ? cb : cb.toFixed(1);
             document.getElementById('calc-base-res').value = finalBase;
             bField.value = finalBase;
-            bField.classList.add('auto-highlight');
-        } else {
-            document.getElementById('calc-base-res').value = "";
-            if (mDmg === "" || mAwd === "" || mSwd === "") {
-                bField.value = "";
-                bField.classList.remove('auto-highlight');
-            }
         }
 
         const b = parseFloat(bField.value)||0, rpm = parseFloat(document.getElementById('rpm').value)||0;
@@ -326,7 +325,10 @@
             document.getElementById('res-ttks').innerText = isFinite(ttks) ? ttks.toFixed(3) + "s" : "-";
             return { n: "", mDmg: mDmgV, omk: isOMK ? "YES" : "NO", kpm: parseFloat((mDmgV/ehp).toFixed(2)), burst, ttkb, sustain, ttks };
         } else {
-            ['st-body', 'st-crit', 'st-head', 'st-head-crit', 'res-omk', 'res-kpm', 'res-ttkb', 'res-ttks'].forEach(id => document.getElementById(id).innerText = "-");
+            ['st-body', 'st-crit', 'st-head', 'st-head-crit', 'res-omk', 'res-kpm', 'res-ttkb', 'res-ttks'].forEach(id => {
+                let el = document.getElementById(id);
+                if(el) el.innerText = "-";
+            });
             document.getElementById('omk-box').style.backgroundColor = "";
         }
         return null;
@@ -336,40 +338,58 @@
         const s = calculate();
         if(s) {
             s.n = document.getElementById('build-name').value || "Build " + (builds.length+1);
-            builds.push(s); saveToLocal(); renderMatrix();
+            builds.push(s); 
+            saveToLocal(); 
+            renderMatrix();
         }
     }
 
     function removeBuild(index) { builds.splice(index, 1); saveToLocal(); renderMatrix(); }
-    function clearMatrix() { builds = []; saveToLocal(); renderMatrix(); }
+    function clearMatrix() { if(confirm("Clear all comparison data?")) { builds = []; saveToLocal(); renderMatrix(); } }
     function saveToLocal() { localStorage.setItem('dps_matrix_builds', JSON.stringify(builds)); }
+
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(builds, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "dps_analyzer_builds.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    }
 
     function renderMatrix() {
         const h = document.getElementById('comp-header'), b = document.getElementById('comp-body');
+        if(!h || !b) return;
+
         h.innerHTML = '<th>Metric</th>';
         builds.forEach((x, i) => h.innerHTML += `<th>${x.n}<span class="del-btn" onclick="removeBuild(${i})">X</span></th>`);
+        
         const rows = [
             {l: 'MAG Damage', k: 'mDmg', goal: 'max'}, {l: 'One Mag-Kill?', k: 'omk', goal: 'yes'},
             {l: 'Kills / Mag', k: 'kpm', goal: 'max'}, {l: 'Burst DPS', k: 'burst', goal: 'max'},
             {l: 'TTK Burst', k: 'ttkb', goal: 'min'}, {l: 'Sustain DPS', k: 'sustain', goal: 'max'},
             {l: 'TTK Sustain', k: 'ttks', goal: 'min'}
         ];
+        
         b.innerHTML = '';
         rows.forEach(r => {
             let tr = `<tr><td><strong>${r.l}</strong></td>`;
             let bestVal;
             if(builds.length > 0 && r.goal !== 'yes') {
-                if(r.goal === 'max') bestVal = Math.max(...builds.map(x => x[r.k]));
-                if(r.goal === 'min') bestVal = Math.min(...builds.map(x => x[r.k]));
+                const validVals = builds.map(x => x[r.k]).filter(v => isFinite(v));
+                if(validVals.length > 0) {
+                    bestVal = (r.goal === 'max') ? Math.max(...validVals) : Math.min(...validVals);
+                }
             }
             builds.forEach(x => {
                 let val = x[r.k], cellClass = '', diff = '';
                 if(r.k === 'omk') cellClass = (val === "YES") ? 'best-cell' : 'fail-cell';
-                else if(builds.length > 1) {
+                else if(builds.length > 1 && isFinite(val) && isFinite(bestVal)) {
                     if(val === bestVal) cellClass = 'best-cell';
                     else {
                         let p = ((val / bestVal) - 1) * 100;
-                        diff = `<span class="diff-tag">${r.goal === 'min' ? '+' : ''}${p.toFixed(1)}%${r.goal === 'min' ? ' slower' : ''}</span>`;
+                        diff = `<span class="diff-tag">${r.goal === 'min' && p > 0 ? '+' : ''}${p.toFixed(1)}%</span>`;
                     }
                 }
                 let disp = typeof val === 'number' ? (r.l.includes('TTK') ? (isFinite(val) ? val.toFixed(3)+'s' : "-") : (r.l.includes('/') ? val.toFixed(2) : Math.round(val).toLocaleString())) : val;
@@ -383,5 +403,3 @@
 </script>
 </body>
 </html>
-
-
