@@ -10,7 +10,7 @@
             --orange: #ff6600; --orange-glow: rgba(255, 102, 0, 0.4); 
             --bg: #030303; --card-bg: rgba(15, 15, 15, 0.95); 
             --glass: rgba(255, 255, 255, 0.05); --border: #222; 
-            --text-main: #ffffff; --crit: #ffcc00; --head: #ff4444; --pos: #00ff88;
+            --text-main: #ffffff; --crit: #ffcc00; --head: #ff4444; --pos: #00ff88; --neg: #ff4444;
         }
         body { font-family: 'Inter', sans-serif; background: var(--bg); background-image: radial-gradient(circle at 50% 0%, #1a0d00 0%, #030303 70%); color: var(--text-main); margin: 0; padding: 30px; min-height: 100vh; }
         .container { max-width: 1700px; margin: auto; }
@@ -37,7 +37,6 @@
         .group { display: flex; flex-direction: column; }
         
         label { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; text-transform: uppercase; }
-        .sub-label { font-size: 10px; color: var(--orange); font-weight: 800; margin-bottom: 4px; }
         input, select { background: #000; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 15px; font-family: 'JetBrains Mono'; }
         
         input:focus { border-color: var(--orange); outline: none; }
@@ -54,10 +53,12 @@
         .btn-capture { background: #fff; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; transition: 0.2s; margin-top: 10px; }
         .btn-capture:hover { background: var(--orange); color: #fff; }
 
-        .comp-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+        /* Schriftgröße in Matrix erhöht */
+        .comp-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 15px; }
         .comp-table th { background: rgba(255,255,255,0.05); text-align: left; padding: 12px; color: var(--orange); border-bottom: 1px solid var(--border); position: relative; }
         .comp-table td { padding: 12px; border-bottom: 1px solid #111; font-family: 'JetBrains Mono'; color: #fff; transition: 0.3s; }
         .best-cell { color: var(--pos) !important; font-weight: 800; background: rgba(0, 255, 136, 0.05); }
+        .diff-tag { display: block; font-size: 11px; font-weight: 800; color: var(--neg); margin-top: 2px; }
 
         .del-btn { color: #ff4444; cursor: pointer; font-size: 10px; margin-left: 8px; border: 1px solid #ff4444; padding: 0px 4px; border-radius: 3px; vertical-align: middle; }
         .del-btn:hover { background: #ff4444; color: #fff; }
@@ -82,12 +83,12 @@
             <div class="section-title">0. Calculate Base Damage</div>
             <div class="input-block">
                 <div class="group"><label>Menu Damage</label><input type="number" id="menu-dmg" value="233346"></div>
-                <div class="group"><label>Menu AWD %</label><span class="sub-label">(e.g. 150%)</span><input type="number" id="menu-awd" value="150"></div>
-                <div class="group"><label>Menu SWD %</label><span class="sub-label">(e.g. 30%)</span><input type="number" id="menu-swd" value="30"></div>
+                <div class="group"><label>Menu AWD %</label><input type="number" id="menu-awd" value="150"></div>
+                <div class="group"><label>Menu SWD %</label><input type="number" id="menu-swd" value="30"></div>
                 <div class="group"><label style="color:var(--orange)">Calc. Base</label><input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;"></div>
             </div>
 
-            <div class="section-title">Some Weapon Presets</div>
+            <div class="section-title">Weapon Presets</div>
             <div class="input-block">
                 <div class="group" style="grid-column: span 4;">
                     <label>Select Weapon Template</label>
@@ -143,9 +144,9 @@
                 <div class="group"><label>DtA %</label><input type="number" id="dta" value="10"></div>
             </div>
             <div class="input-block">
-                <div class="group"><label>HS-Rate %</label><input type="number" id="h-rate" value="20"></div>
-                <div class="group"><label>OOC-Rate %</label><input type="number" id="d-rate" value="60"></div>
-                <div class="group"><label>Armor-Rate %</label><input type="number" id="a-rate" value="80"></div>
+                <div class="group"><label style="color:var(--orange)">HS-Rate %</label><input type="number" id="h-rate" value="20" style="border-color:var(--orange)"></div>
+                <div class="group"><label style="color:var(--orange)">OOC-Rate %</label><input type="number" id="d-rate" value="60" style="border-color:var(--orange)"></div>
+                <div class="group"><label style="color:var(--orange)">Armor-Rate %</label><input type="number" id="a-rate" value="80" style="border-color:var(--orange)"></div>
             </div>
 
             <div class="section-title">4. Amplifiers</div>
@@ -173,10 +174,20 @@
 
             <div class="section-title">Kill Efficiency</div>
             <select id="enemy-select" style="width:100%; margin-bottom:15px;">
-                <option value="16905653" selected>Heroic 4P Elite (16.9M)</option>
-                <option value="47296250">Heroic 4P Named (47.3M)</option>
-                <option value="25172134">Legendary 4P Elite (25.2M)</option>
-                <option value="72146660">Legendary 4P Named (72.1M)</option>
+                <optgroup label="Heroic (Scalings)">
+                    <option value="11200000">Heroic 1P Elite (11.2M)</option>
+                    <option value="16905653" selected>Heroic 4P Elite (16.9M)</option>
+                    <option value="32000000">Heroic 1P Named (32.0M)</option>
+                    <option value="47296250">Heroic 4P Named (47.3M)</option>
+                    <option value="25000000">Heroic 4P Chugger (25.0M)</option>
+                </optgroup>
+                <optgroup label="Legendary (Scalings)">
+                    <option value="16500000">Legendary 1P Elite (16.5M)</option>
+                    <option value="25172134">Legendary 4P Elite (25.2M)</option>
+                    <option value="48000000">Legendary 1P Named (48.0M)</option>
+                    <option value="72146660">Legendary 4P Named (72.1M)</option>
+                    <option value="38000000">Legendary 4P Chugger (38.0M)</option>
+                </optgroup>
             </select>
             <div class="results-grid">
                 <div class="res-box"><span class="res-label">One-Mag Kill?</span><span class="res-val" id="res-omk">-</span></div>
@@ -198,7 +209,6 @@
 </div>
 
 <script>
-    // Presets Daten aus den Screenshots
     const weaponPresets = {
         "st-elmos": { b: 46917.5, rpm: 850, mag: 70, rel: 1.87 },
         "eagle-bearer": { b: 47364.5, rpm: 850, mag: 60, rel: 1.95 },
@@ -220,7 +230,6 @@
 
     let builds = [];
 
-    // Local Storage beim Laden initialisieren
     window.onload = function() {
         const saved = localStorage.getItem('dps_matrix_builds');
         if (saved) {
@@ -251,7 +260,6 @@
         if(mDmgI > 0) {
             const cb = mDmgI / (1 + (mAwdI + mSwdI)/100);
             document.getElementById('calc-base-res').value = Math.round(cb);
-            // Wir überschreiben das Base-Feld nur, wenn kein Preset aktiv ausgewählt wurde
             if (!document.getElementById('preset-select').value) {
                 document.getElementById('base').value = Math.round(cb);
             }
@@ -334,21 +342,38 @@
                 if(r.goal === 'max') bestVal = Math.max(...builds.map(x => x[r.k]));
                 if(r.goal === 'min') bestVal = Math.min(...builds.map(x => x[r.k]));
             }
+
             builds.forEach(x => {
                 let currentVal = x[r.k];
                 let isBest = false;
+                let diffHtml = '';
+
                 if(builds.length > 1) {
-                    if(r.goal === 'max' && currentVal === bestVal) isBest = true;
-                    if(r.goal === 'min' && currentVal === bestVal) isBest = true;
+                    if(r.goal === 'max') {
+                        if(currentVal === bestVal) isBest = true;
+                        else {
+                            let p = ((currentVal / bestVal) - 1) * 100;
+                            diffHtml = `<span class="diff-tag">${p.toFixed(1)}%</span>`;
+                        }
+                    }
+                    if(r.goal === 'min') {
+                        if(currentVal === bestVal) isBest = true;
+                        else {
+                            let p = ((currentVal / bestVal) - 1) * 100;
+                            diffHtml = `<span class="diff-tag">+${p.toFixed(1)}% slower</span>`;
+                        }
+                    }
                     if(r.goal === 'yes' && currentVal === "YES") isBest = true;
                 }
+
                 let display = currentVal;
                 if(typeof currentVal === 'number') {
                     if(r.l.includes('TTK')) display = currentVal.toFixed(3) + 's';
                     else display = Math.round(currentVal).toLocaleString();
                     if(r.l.includes('/') ) display = currentVal.toFixed(2);
                 }
-                tr += `<td class="${isBest ? 'best-cell' : ''}">${display}</td>`;
+
+                tr += `<td class="${isBest ? 'best-cell' : ''}">${display}${diffHtml}</td>`;
             });
             b.innerHTML += tr + '</tr>';
         });
