@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>xSmileyy | Heroic & Legendary DPS Analyzer</title>
+    <title>xSmileyy | DPS Analyzer</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { --orange: #ff6600; --orange-glow: rgba(255, 102, 0, 0.4); --bg: #030303; --card-bg: rgba(15, 15, 15, 0.9); --glass: rgba(255, 255, 255, 0.03); --border: #222; --text-main: #ffffff; --text-dim: #888; }
@@ -22,8 +22,7 @@
         .group { display: flex; flex-direction: column; }
         label { font-size: 10px; font-weight: 700; color: var(--text-dim); margin-bottom: 6px; text-transform: uppercase; }
         input, select { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-size: 16px; font-family: 'JetBrains Mono'; transition: 0.3s; }
-        optgroup { background: #111; color: var(--orange); font-style: normal; }
-        option { background: #000; color: #fff; }
+        optgroup { background: #111; color: var(--orange); }
         input[readonly] { color: var(--orange); border-color: rgba(255,102,0,0.3); }
         .toggle-btn { flex: 1; background: #111; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 13px; text-transform: uppercase; }
         .toggle-btn.active { background: var(--orange); border-color: var(--orange); box-shadow: 0 0 15px var(--orange-glow); }
@@ -120,40 +119,35 @@
                 <div class="res-box"><span class="res-label">Sustain DPS</span><span class="res-val" id="res-sustain">-</span></div>
             </div>
 
-            <div class="section-title">Target EHP Analysis</div>
+            <div class="section-title">Target EHP Analysis (Final Scales)</div>
             <div class="group" style="margin-bottom:20px;">
                 <label>Select Difficulty & Team Size</label>
                 <select id="enemy-select" onchange="calculateAll()">
-                    <optgroup label="HEROIC DIFFICULTY">
-                        <option value="2827032">Heroic: Normal (Red) - 1-4P</option>
-                        <option value="6360822">Heroic: Veteran (Purple) - Solo</option>
-                        <option value="9894612">Heroic: Elite (Yellow) - Solo</option>
-                        <option value="19789226">Heroic: Named (Boss) - Solo</option>
-                        <option value="7632986">Heroic: Veteran (Purple) - 2P</option>
-                        <option value="12580292">Heroic: Elite (Yellow) - 2P</option>
-                        <option value="27648374">Heroic: Named (Boss) - 2P</option>
-                        <option value="9018232">Heroic: Veteran (Purple) - 3P</option>
-                        <option value="14672297">Heroic: Elite (Yellow) - 3P</option>
-                        <option value="38673802">Heroic: Named (Boss) - 3P</option>
-                        <option value="10544830">Heroic: Veteran (Purple) - 4P</option>
-                        <option value="16905653" selected>Heroic: Elite (Yellow) - 4P</option>
-                        <option value="47296250">Heroic: Named (Boss) - 4P</option>
+                    <optgroup label="HEROIC - SOLO">
+                        <option value="2827032">Heroic Solo: Normal</option>
+                        <option value="6360822">Heroic Solo: Veteran</option>
+                        <option value="9894612">Heroic Solo: Elite</option>
+                        <option value="19789226">Heroic Solo: Named</option>
                     </optgroup>
-                    <optgroup label="LEGENDARY DIFFICULTY">
-                        <option value="13023223">Legendary: Elite (Yellow) - Solo</option>
-                        <option value="16511211">Legendary: Elite (Yellow) - 2P</option>
-                        <option value="19163200">Legendary: Elite (Yellow) - 3P</option>
-                        <option value="21950450">Legendary: Elite (Yellow) - 4P</option>
-                        <option value="56250000">Legendary: Heavy (Chungus) - 4P</option>
+                    <optgroup label="HEROIC - 4-PLAYER">
+                        <option value="4890766">Heroic 4P: Normal</option>
+                        <option value="10544830">Heroic 4P: Veteran</option>
+                        <option value="16905653" selected>Heroic 4P: Elite</option>
+                        <option value="47296250">Heroic 4P: Named</option>
+                    </optgroup>
+                    <optgroup label="LEGENDARY - 4-PLAYER">
+                        <option value="25172134">Legendary 4P: Elite</option>
+                        <option value="72146660">Legendary 4P: Named</option>
+                        <option value="56250000">Legendary 4P: Heavy (Plates)</option>
                     </optgroup>
                 </select>
             </div>
 
             <div class="results-grid">
-                <div class="res-box"><span class="res-label">One-Mag Kill?</span><span class="res-val" id="res-omk">-</span></div>
-                <div class="res-box"><span class="res-label">TTK (Burst)</span><span class="res-val" id="res-ttkb">-</span></div>
-                <div class="res-box primary"><span class="res-label">TTK (Sustain)</span><span class="res-val" id="res-ttks">-</span></div>
+                <div class="res-box primary"><span class="res-label">Bullets to Kill (Avg)</span><span class="res-val" id="res-btk">-</span></div>
                 <div class="res-box"><span class="res-label">Kills per Magazine</span><span class="res-val" id="res-kpm">-</span></div>
+                <div class="res-box"><span class="res-label">TTK (Burst)</span><span class="res-val" id="res-ttkb">-</span></div>
+                <div class="res-box"><span class="res-label">TTK (Sustain)</span><span class="res-val" id="res-ttks">-</span></div>
             </div>
         </div>
     </div>
@@ -223,9 +217,8 @@
         document.getElementById('res-burst').innerText = formatGameNum(burstDps);
         document.getElementById('res-sustain').innerText = formatGameNum(sustainDps);
 
-        const canKill = magDmg >= targetEHP;
-        document.getElementById('res-omk').innerText = canKill ? "YES" : "NO";
-        document.getElementById('res-omk').style.color = canKill ? "#00ff88" : "#ff4444";
+        const btk = avgShot > 0 ? Math.ceil(targetEHP / avgShot) : 0;
+        document.getElementById('res-btk').innerText = btk > 0 ? btk : "-";
         
         document.getElementById('res-ttkb').innerText = burstDps > 0 ? (targetEHP / burstDps).toFixed(2) + "s" : "0.00s";
         document.getElementById('res-ttks').innerText = sustainDps > 0 ? (targetEHP / sustainDps).toFixed(2) + "s" : "0.00s";
