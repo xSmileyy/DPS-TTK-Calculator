@@ -2,37 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>xSmileyy's DPS Analyzer | Precision Mode</title>
+    <title>xSmileyy's DPS Analyzer | Ultimate Suite</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { 
             --orange: #ff6600; --orange-glow: rgba(255, 102, 0, 0.4); 
             --bg: #030303; --card-bg: rgba(15, 15, 15, 0.95); 
             --glass: rgba(255, 255, 255, 0.05); --border: #222; 
-            --text-main: #ffffff; --crit: #ffcc00;
+            --text-main: #ffffff; --crit: #ffcc00; --head: #ff4444; --pos: #00ff88;
         }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); margin: 0; padding: 30px; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); background-image: radial-gradient(circle at 50% 0%, #1a0d00 0%, #030303 70%); color: var(--text-main); margin: 0; padding: 30px; min-height: 100vh; }
         .container { max-width: 1700px; margin: auto; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
         .logo { font-size: 28px; font-weight: 800; text-transform: uppercase; }
         .logo span { color: var(--orange); text-shadow: 0 0 15px var(--orange-glow); }
-        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
-        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; }
-        .section-title { font-size: 18px; font-weight: 800; color: var(--orange); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 25px; backdrop-filter: blur(20px); }
+        
+        .section-title { font-size: 16px; font-weight: 800; color: var(--orange); text-transform: uppercase; letter-spacing: 2px; margin: 25px 0 15px 0; display: flex; align-items: center; gap: 15px; }
+        .section-title:first-child { margin-top: 0; }
         .section-title::after { content: ''; height: 1px; flex-grow: 1; background: var(--border); }
-        .input-block { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; background: var(--glass); padding: 20px; border-radius: 15px; margin-bottom: 20px; }
+
+        .input-block { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; background: var(--glass); padding: 18px; border-radius: 12px; margin-bottom: 15px; }
         .group { display: flex; flex-direction: column; }
-        label { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 5px; text-transform: uppercase; }
-        .sub-label { font-size: 10px; color: var(--orange); font-weight: 800; margin-bottom: 4px; }
-        input, select { background: #000; border: 1px solid #444; color: #fff; padding: 10px; border-radius: 8px; font-size: 15px; font-family: 'JetBrains Mono'; }
-        .results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .res-box { background: #0a0a0a; border: 1px solid var(--border); padding: 20px; border-radius: 15px; }
-        .res-label { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 5px; }
-        .res-val { font-size: 22px; font-weight: 800; font-family: 'JetBrains Mono'; color: #fff; }
-        .comp-table { width: 100%; border-collapse: collapse; margin-top: 25px; background: var(--card-bg); border-radius: 15px; overflow: hidden; }
-        .comp-table th { background: rgba(255,255,255,0.05); text-align: left; padding: 15px; color: var(--orange); font-size: 12px; border-bottom: 1px solid var(--border); }
-        .comp-table td { padding: 15px; border-bottom: 1px solid #111; font-family: 'JetBrains Mono'; font-size: 16px; }
-        .btn-capture { background: #fff; color: #000; border: none; padding: 15px; border-radius: 10px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 10px; }
+        label { font-size: 12px; font-weight: 700; color: #bbb; margin-bottom: 4px; text-transform: uppercase; }
+        .sub-label { font-size: 9px; color: var(--orange); font-weight: 800; margin-bottom: 4px; }
+        
+        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 14px; font-family: 'JetBrains Mono'; }
+        input:focus { border-color: var(--orange); outline: none; }
+
+        .range-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+        .range-box { background: #050505; border: 1px solid #1a1a1a; padding: 12px; border-radius: 10px; text-align: center; }
+        .range-val { font-family: 'JetBrains Mono'; font-size: 18px; font-weight: 800; display: block; margin-top: 4px; }
+
+        .results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .res-box { background: #0a0a0a; border: 1px solid var(--border); padding: 15px; border-radius: 12px; }
+        .res-label { font-size: 10px; color: #888; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px; }
+        .res-val { font-size: 20px; font-weight: 800; font-family: 'JetBrains Mono'; color: #fff; }
+
+        .btn-capture { background: #fff; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; transition: 0.2s; margin-top: 10px; }
+        .btn-capture:hover { background: var(--orange); color: #fff; }
+
+        .comp-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+        .comp-table th { background: rgba(255,255,255,0.05); text-align: left; padding: 12px; color: var(--orange); border-bottom: 1px solid var(--border); }
+        .comp-table td { padding: 12px; border-bottom: 1px solid #111; font-family: 'JetBrains Mono'; color: #fff; }
     </style>
 </head>
 <body>
@@ -40,12 +54,12 @@
 <div class="container">
     <header class="header">
         <div class="logo">xSmileyy's <span>DPS Analyzer</span></div>
-        <div style="font-size: 12px; color: #888; font-weight: 800;">ZERO-ROUNDING MATHEMATICS</div>
+        <div style="font-size: 12px; color: #888; font-weight: 800;">ULTIMATE PRECISION V3.1</div>
     </header>
 
     <div class="main-grid">
         <div class="card">
-            <div class="section-title">Weapon Configuration</div>
+            <div class="section-title">1. Weapon Data</div>
             <div class="input-block">
                 <div class="group"><label>Base Damage</label><input type="number" id="base" value="54604"></div>
                 <div class="group"><label>RPM</label><input type="number" id="rpm" value="1088"></div>
@@ -53,114 +67,163 @@
                 <div class="group"><label>Reload (s)</label><input type="number" id="rel" value="1.0"></div>
             </div>
 
+            <div class="section-title">2. Weapon Damage %</div>
             <div class="input-block">
                 <div class="group"><label>AWD %</label><span class="sub-label">(incl. Expertise)</span><input type="number" id="awd" value="150"></div>
-                <div class="group"><label>SWD %</label><span class="sub-label">(e.g. AR-Dmg Bonus)</span><input type="number" id="swd" value="30"></div>
+                <div class="group"><label>SWD %</label><span class="sub-label">(e.g. AR-Dmg)</span><input type="number" id="swd" value="30"></div>
                 <div class="group"><label>TWD %</label><span class="sub-label">(e.g. Obliterate)</span><input type="number" id="twd" value="24"></div>
             </div>
 
-            <div class="section-title">Stats & Precision Rates</div>
-            <div class="input-block" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="section-title">3. Combat Stats & Rates</div>
+            <div class="input-block">
                 <div class="group"><label>CHC %</label><input type="number" id="chc" value="60"></div>
                 <div class="group"><label>CHD %</label><input type="number" id="chd" value="100"></div>
-                <div class="group"><label>HSD %</label><input type="number" id="hsd" value="100"><span class="sub-label">HS-Rate %</span><input type="number" id="h-rate" value="20"></div>
-                <div class="group"><label>DttOOC %</label><input type="number" id="dttooc" value="10"><span class="sub-label">OOC-Rate %</span><input type="number" id="d-rate" value="60"></div>
-                <div class="group"><label>DtA %</label><input type="number" id="dta" value="10"><span class="sub-label">Armor-Rate %</span><input type="number" id="a-rate" value="80"></div>
+                <div class="group"><label>HSD %</label><input type="number" id="hsd" value="100"></div>
+                <div class="group"><label>DttOOC %</label><input type="number" id="dttooc" value="10"></div>
+                <div class="group"><label>DtA %</label><input type="number" id="dta" value="10"></div>
                 <div class="group"><label>DtH %</label><input type="number" id="dth" value="0"></div>
             </div>
 
-            <div class="section-title">Amplifiers</div>
             <div class="input-block">
-                <div class="group"><label>Amp 1 %</label><span class="sub-label">(e.g. Striker)</span><input type="number" id="m1" value="0"></div>
-                <div class="group"><label>Amp 2 %</label><span class="sub-label">(Amplified)</span><input type="number" id="m2" value="0"></div>
-                <div class="group"><label>Amp 3 %</label><span class="sub-label">(Amplified)</span><input type="number" id="m3" value="0"></div>
-                <div class="group"><label>Amp 4 %</label><span class="sub-label">(Amplified)</span><input type="number" id="m4" value="0"></div>
+                <div class="group"><label>HS-Rate %</label><input type="number" id="h-rate" value="20"></div>
+                <div class="group"><label>OOC-Rate %</label><input type="number" id="d-rate" value="60"></div>
+                <div class="group"><label>Armor-Rate %</label><input type="number" id="a-rate" value="80"></div>
             </div>
-            <button class="btn-capture" onclick="captureBuild()">Add to Matrix</button>
+
+            <div class="section-title">4. Amplifiers</div>
+            <div class="input-block">
+                <div class="group"><label>Amp 1 %</label><input type="number" id="m1" value="0"></div>
+                <div class="group"><label>Amp 2 %</label><input type="number" id="m2" value="0"></div>
+                <div class="group"><label>Amp 3 %</label><input type="number" id="m3" value="0"></div>
+                <div class="group"><label>Amp 4 %</label><input type="number" id="m4" value="0"></div>
+            </div>
+            
+            <div class="input-block" style="border: 1px dashed var(--orange);">
+                <div class="group" style="grid-column: span 2;"><label>Build Name</label><input type="text" id="build-name" placeholder="Save as..."></div>
+                <div class="group"><button class="btn-capture" onclick="captureBuild()">Add to Matrix</button></div>
+            </div>
         </div>
 
-        <div class="card" style="border-top: 4px solid var(--orange);">
-            <div class="section-title">Performance Analysis</div>
-            <div class="results-grid" style="margin-bottom: 30px;">
-                <div class="res-box"><span class="res-label">Simulated Avg. Shot</span><span class="res-val" id="res-avg">-</span></div>
+        <div class="card">
+            <div class="section-title">Shooting Range (Max Numbers)</div>
+            <div class="range-grid">
+                <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body">-</span></div>
+                <div class="range-box"><label>Crit Body</label><span class="range-val" id="st-crit" style="color:var(--crit)">-</span></div>
+                <div class="range-box"><label>Headshot</label><span class="range-val" id="st-head">-</span></div>
+                <div class="range-box"><label>Crit Head</label><span class="range-val" id="st-head-crit" style="color:var(--head)">-</span></div>
+            </div>
+
+            <div class="section-title">Combat Performance (Weighted)</div>
+            <div class="results-grid">
+                <div class="res-box"><span class="res-label">Avg. Shot</span><span class="res-val" id="res-avg">-</span></div>
                 <div class="res-box"><span class="res-label">Mag Damage</span><span class="res-val" id="res-mag">-</span></div>
                 <div class="res-box"><span class="res-label">Burst DPS</span><span class="res-val" id="res-burst">-</span></div>
                 <div class="res-box"><span class="res-label">Sustain DPS</span><span class="res-val" id="res-sustain">-</span></div>
             </div>
 
-            <div class="section-title">Kill Efficiency (Exact Numbers)</div>
-            <select id="enemy-select" style="width:100%; margin-bottom:20px;">
-                <optgroup label="HEROIC (EXACT)">
-                    <option value="6502174">Heroic 1P Elite (6.5M)</option>
-                    <option value="18542100">Heroic 1P Named (18.5M)</option>
-                    <option value="16905653" selected>Heroic 4P Elite (16.9M)</option>
-                    <option value="47296250">Heroic 4P Named (47.3M)</option>
-                    <option value="36500000">Heroic 4P Chugger (36.5M)</option>
-                </optgroup>
-                <optgroup label="LEGENDARY (EXACT)">
-                    <option value="10100450">Legendary 1P Elite (10.1M)</option>
-                    <option value="28510000">Legendary 1P Named (28.5M)</option>
-                    <option value="25172134">Legendary 4P Elite (25.2M)</option>
-                    <option value="72146660">Legendary 4P Named (72.1M)</option>
-                    <option value="56400000">Legendary 4P Chugger (56.4M)</option>
-                </optgroup>
+            <div class="section-title">Kill Efficiency</div>
+            <select id="enemy-select" style="width:100%; margin-bottom:15px;">
+                <option value="16905653" selected>Heroic 4P Elite (16.9M)</option>
+                <option value="47296250">Heroic 4P Named (47.3M)</option>
+                <option value="25172134">Legendary 4P Elite (25.2M)</option>
+                <option value="72146660">Legendary 4P Named (72.1M)</option>
             </select>
             <div class="results-grid">
                 <div class="res-box"><span class="res-label">One-Mag Kill?</span><span class="res-val" id="res-omk">-</span></div>
-                <div class="res-box" style="border-color: var(--orange);"><span class="res-label">TTK (Burst)</span><span class="res-val" id="res-ttkb">-</span></div>
+                <div class="res-box"><span class="res-label">Kills / Mag</span><span class="res-val" id="res-kpm">-</span></div>
+                <div class="res-box" style="border-color:var(--orange)"><span class="res-label">TTK Burst</span><span class="res-val" id="res-ttkb">-</span></div>
+                <div class="res-box" style="border-color:var(--orange)"><span class="res-label">TTK Sustain</span><span class="res-val" id="res-ttks">-</span></div>
             </div>
+
+            <div class="section-title">Comparison Matrix</div>
+            <div style="overflow-x: auto;">
+                <table class="comp-table">
+                    <thead><tr id="comp-header"><th>Metric</th></tr></thead>
+                    <tbody id="comp-body"></tbody>
+                </table>
+            </div>
+            <button class="btn-capture" style="background:#222; color:#fff; margin-top:15px;" onclick="clearMatrix()">Reset Matrix</button>
         </div>
     </div>
 </div>
 
 <script>
-    function calculateAll() {
-        // Inputs
-        const b = parseFloat(document.getElementById('base').value) || 0;
-        const rpm = parseFloat(document.getElementById('rpm').value) || 0;
-        const mag = parseFloat(document.getElementById('mag').value) || 0;
-        const rel = parseFloat(document.getElementById('rel').value) || 0;
+    let builds = [];
+
+    function calculate() {
+        const b = parseFloat(document.getElementById('base').value)||0, rpm = parseFloat(document.getElementById('rpm').value)||0;
+        const mag = parseFloat(document.getElementById('mag').value)||0, rel = parseFloat(document.getElementById('rel').value)||0;
+        const awd = parseFloat(document.getElementById('awd').value)||0, swd = parseFloat(document.getElementById('swd').value)||0, twd = parseFloat(document.getElementById('twd').value)||0;
+        const chc = Math.min(60, parseFloat(document.getElementById('chc').value)||0)/100, chd = (parseFloat(document.getElementById('chd').value)||0)/100, hsd = (parseFloat(document.getElementById('hsd').value)||0)/100;
+        const hr = (parseFloat(document.getElementById('h-rate').value)||0)/100, ooc = (parseFloat(document.getElementById('dttooc').value)||0)/100, or = (parseFloat(document.getElementById('d-rate').value)||0)/100;
+        const dta = (parseFloat(document.getElementById('dta').value)||0)/100, ar = (parseFloat(document.getElementById('a-rate').value)||0)/100;
+        const m = (1+parseFloat(document.getElementById('m1').value)/100)*(1+parseFloat(document.getElementById('m2').value)/100)*(1+parseFloat(document.getElementById('m3').value)/100)*(1+parseFloat(document.getElementById('m4').value)/100);
+
+        const wDmg = b * (1 + (awd + swd)/100) * (1 + twd/100);
+        const maxMult = (1 + ooc) * (1 + dta) * m;
+
+        // Shooting Range
+        document.getElementById('st-body').innerText = Math.round(wDmg * maxMult).toLocaleString();
+        document.getElementById('st-crit').innerText = Math.round(wDmg * maxMult * (1 + chd)).toLocaleString();
+        document.getElementById('st-head').innerText = Math.round(wDmg * maxMult * (1 + hsd)).toLocaleString();
+        document.getElementById('st-head-crit').innerText = Math.round(wDmg * maxMult * (1 + hsd + chd)).toLocaleString();
+
+        // Stats
+        const avg = wDmg * (1 + (chc*chd) + (hsd*hr)) * (1 + (ooc*or)) * (1 + (dta*ar)) * m;
+        const burst = (rpm/60) * avg, mDmg = avg * mag;
+        const sustain = mDmg / ((mag/(rpm/60)) + rel);
+        const ehp = parseFloat(document.getElementById('enemy-select').value);
+
+        // Results
+        document.getElementById('res-avg').innerText = Math.round(avg).toLocaleString();
+        document.getElementById('res-mag').innerText = Math.round(mDmg).toLocaleString();
+        document.getElementById('res-burst').innerText = Math.round(burst).toLocaleString();
+        document.getElementById('res-sustain').innerText = Math.round(sustain).toLocaleString();
+        document.getElementById('res-omk').innerText = mDmg >= ehp ? "YES" : "NO";
+        document.getElementById('res-kpm').innerText = (mDmg/ehp).toFixed(2);
+        document.getElementById('res-ttkb').innerText = (ehp/burst).toFixed(3) + "s";
         
-        const awd = parseFloat(document.getElementById('awd').value) || 0;
-        const swd = parseFloat(document.getElementById('swd').value) || 0;
-        const twd = parseFloat(document.getElementById('twd').value) || 0;
-        
-        // Exact Weapon Damage (Floating Point)
-        const wpnDmg = b * (1 + (awd + swd)/100) * (1 + twd/100);
+        let ttkS = mDmg >= ehp ? (ehp/burst) : (ehp/burst) + (Math.ceil(ehp/mDmg)-1)*rel;
+        document.getElementById('res-ttks').innerText = ttkS.toFixed(3) + "s";
 
-        const chc = Math.min(60, parseFloat(document.getElementById('chc').value) || 0) / 100;
-        const chd = (parseFloat(document.getElementById('chd').value) || 0) / 100;
-        const hsd = (parseFloat(document.getElementById('hsd').value) || 0) / 100;
-        const hr  = (parseFloat(document.getElementById('h-rate').value) || 0) / 100;
-        const ooc = (parseFloat(document.getElementById('dttooc').value) || 0) / 100;
-        const or  = (parseFloat(document.getElementById('d-rate').value) || 0) / 100;
-        const dta = (parseFloat(document.getElementById('dta').value) || 0) / 100;
-        const ar  = (parseFloat(document.getElementById('a-rate').value) || 0) / 100;
-        
-        const m1 = (parseFloat(document.getElementById('m1').value) || 0) / 100 + 1;
-        const m2 = (parseFloat(document.getElementById('m2').value) || 0) / 100 + 1;
-        const m3 = (parseFloat(document.getElementById('m3').value) || 0) / 100 + 1;
-        const m4 = (parseFloat(document.getElementById('m4').value) || 0) / 100 + 1;
-
-        // MATH CORE (Unrounded)
-        const avgShot = wpnDmg * (1 + (chc * chd) + (hsd * hr)) * (1 + (ooc * or)) * (1 + (dta * ar)) * m1 * m2 * m3 * m4;
-        const burstDps = (rpm / 60) * avgShot;
-        const magDmg = avgShot * mag;
-        const sustainDps = magDmg / ((mag / (rpm/60)) + rel);
-
-        const targetEHP = parseFloat(document.getElementById('enemy-select').value);
-
-        // Display with Locale Formatting (Rounding ONLY for display)
-        document.getElementById('res-avg').innerText = Math.round(avgShot).toLocaleString();
-        document.getElementById('res-mag').innerText = Math.round(magDmg).toLocaleString();
-        document.getElementById('res-burst').innerText = Math.round(burstDps).toLocaleString();
-        document.getElementById('res-sustain').innerText = Math.round(sustainDps).toLocaleString();
-        document.getElementById('res-omk').innerText = magDmg >= targetEHP ? "JA" : "NEIN";
-        document.getElementById('res-ttkb').innerText = (targetEHP / burstDps).toFixed(4) + "s";
+        return { n: "", avg, burst, sustain, mDmg, ttkb: (ehp/burst), ttks: ttkS };
     }
 
-    document.querySelectorAll('input, select').forEach(i => i.addEventListener('input', calculateAll));
-    window.onload = calculateAll;
+    function captureBuild() {
+        const s = calculate();
+        s.n = document.getElementById('build-name').value || "Build " + (builds.length+1);
+        builds.push(s);
+        renderMatrix();
+    }
+
+    function clearMatrix() { builds = []; renderMatrix(); }
+
+    function renderMatrix() {
+        const h = document.getElementById('comp-header'), b = document.getElementById('comp-body');
+        h.innerHTML = '<th>Metric</th>';
+        builds.forEach(x => h.innerHTML += `<th>${x.n}</th>`);
+        
+        const rows = [
+            {l: 'Avg. Shot', k: 'avg'},
+            {l: 'Burst DPS', k: 'burst'},
+            {l: 'Sustain DPS', k: 'sustain'},
+            {l: 'Mag Damage', k: 'mDmg'},
+            {l: 'TTK Burst', k: 'ttkb'}
+        ];
+        
+        b.innerHTML = '';
+        rows.forEach(r => {
+            let tr = `<tr><td><strong>${r.l}</strong></td>`;
+            builds.forEach(x => {
+                let val = r.k.includes('ttk') ? x[r.k].toFixed(3)+'s' : Math.round(x[r.k]).toLocaleString();
+                tr += `<td>${val}</td>`;
+            });
+            b.innerHTML += tr + '</tr>';
+        });
+    }
+
+    document.querySelectorAll('input, select').forEach(i => i.addEventListener('input', calculate));
+    window.onload = calculate;
 </script>
 </body>
 </html>
