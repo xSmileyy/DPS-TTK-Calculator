@@ -124,6 +124,14 @@
             <div class="group" style="margin-bottom:20px;">
                 <label>Select Enemy Scenario</label>
                 <select id="enemy-select">
+                    <optgroup label="LEGENDARY DIFFICULTY">
+                        <option value="14752329">Legendary [1-Player] - Elite</option>
+                        <option value="18756532">Legendary [2-Player] - Elite</option>
+                        <option value="21875598">Legendary [3-Player] - Elite</option>
+                        <option value="25172134">Legendary [4-Player] - Elite</option>
+                        <option value="72146660">Legendary [4-Player] - Named</option>
+                        <option value="56250000">Legendary [4-Player] - Heavy (Plates)</option>
+                    </optgroup>
                     <optgroup label="HEROIC DIFFICULTY">
                         <option value="9894612">Heroic [1-Player] - Elite</option>
                         <option value="19789226">Heroic [1-Player] - Named</option>
@@ -133,26 +141,6 @@
                         <option value="38673802">Heroic [3-Player] - Named</option>
                         <option value="16905653" selected>Heroic [4-Player] - Elite</option>
                         <option value="47296250">Heroic [4-Player] - Named</option>
-                    </optgroup>
-                    <optgroup label="LEGENDARY DIFFICULTY">
-                        <option value="14752329">Legendary [1-Player] - Elite</option>
-                        <option value="18756532">Legendary [2-Player] - Elite</option>
-                        <option value="21875598">Legendary [3-Player] - Elite</option>
-                        <option value="25172134">Legendary [4-Player] - Elite</option>
-                        <option value="72146660">Legendary [4-Player] - Named</option>
-                        <option value="56250000">Legendary [4-Player] - Heavy (Plates)</option>
-                    </optgroup>
-                    <optgroup label="CHALLENGING DIFFICULTY">
-                        <option value="5853150">Challenging [1P] - Elite</option>
-                        <option value="7443152">Challenging [2P] - Elite</option>
-                        <option value="8681285">Challenging [3P] - Elite</option>
-                        <option value="10003000">Challenging [4P] - Elite</option>
-                    </optgroup>
-                    <optgroup label="HARD/NORMAL">
-                        <option value="4320182">Hard [1P] - Elite</option>
-                        <option value="7370000">Hard [4P] - Elite</option>
-                        <option value="2787215">Normal [1P] - Elite</option>
-                        <option value="4750000">Normal [4P] - Elite</option>
                     </optgroup>
                 </select>
             </div>
@@ -181,11 +169,11 @@
     function saveInputs() {
         const data = {};
         inputs.forEach(i => { if(i.id) data[i.id] = i.value; });
-        localStorage.setItem('dps_calc_data_v3', JSON.stringify(data));
+        localStorage.setItem('dps_calc_data_vFinal', JSON.stringify(data));
     }
 
     function loadInputs() {
-        const data = JSON.parse(localStorage.getItem('dps_calc_data_v3'));
+        const data = JSON.parse(localStorage.getItem('dps_calc_data_vFinal'));
         if(data) {
             Object.keys(data).forEach(id => {
                 const el = document.getElementById(id);
@@ -195,25 +183,25 @@
     }
 
     function formatGameNum(num) {
-        if (!isFinite(num) || isNaN(num)) return "-";
+        if (!isFinite(num) || isNaN(num) || num <= 0) return "-";
         if (num >= 1000000) return (num / 1000000).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " M";
         if (num >= 1000) return (num / 1000).toLocaleString('en-US', {maximumFractionDigits: 1}) + " K";
         return Math.round(num).toLocaleString('en-US');
     }
 
-    function calculateAll() {
-        // Safe Number Parser to prevent NaN
-        const getVal = (id) => {
-            const val = parseFloat(document.getElementById(id).value);
-            return isNaN(val) ? 0 : val;
-        };
+    function getVal(id) {
+        const input = document.getElementById(id);
+        const val = parseFloat(input.value);
+        return isNaN(val) ? 0 : val;
+    }
 
+    function calculateAll() {
         const hG = getVal('h-game');
         const hA = getVal('h-awd');
         const hS = getVal('h-swd');
         const hRes = hG / (1 + (hA+hS)/100);
         
-        // Removed thousands separator from Calculated Base for easy copy-paste
+        // Fix: Outputting as pure number string for copy-paste
         document.getElementById('h-res').value = hRes > 0 ? hRes.toFixed(1) : "0";
 
         const base = getVal('base');
@@ -227,15 +215,20 @@
         const dta = getVal('dta') / 100;
         const dth = getVal('dth') / 100;
         
-        const mMult = [1,2,3,4].reduce((acc, i) => acc * (getVal('m'+i)/100 + 1), 1);
+        // Multiplier fix: If empty, it defaults to 1.0 multiplier (0% bonus)
+        const m1 = getVal('m1') / 100 + 1;
+        const m2 = getVal('m2') / 100 + 1;
+        const m3 = getVal('m3') / 100 + 1;
+        const m4 = getVal('m4') / 100 + 1;
+        const mMult = m1 * m2 * m3 * m4;
 
         const rangeArmor = vMode === 'dta' ? (1 + dta) : (1 + dth);
         const vBody = base * (1 + (awd+swd)/100) * (1 + twd/100) * (1 + dttooc) * rangeArmor * mMult;
         
-        document.getElementById('val-body').innerText = Math.round(vBody).toLocaleString('en-US');
-        document.getElementById('val-body-crit').innerText = Math.round(vBody * (1 + chd)).toLocaleString('en-US');
-        document.getElementById('val-head').innerText = Math.round(vBody * (1 + hsd)).toLocaleString('en-US');
-        document.getElementById('val-head-crit').innerText = Math.round(vBody * (1 + chd + hsd)).toLocaleString('en-US');
+        document.getElementById('val-body').innerText = vBody > 0 ? Math.round(vBody).toLocaleString('en-US') : "-";
+        document.getElementById('val-body-crit').innerText = vBody > 0 ? Math.round(vBody * (1 + chd)).toLocaleString('en-US') : "-";
+        document.getElementById('val-head').innerText = vBody > 0 ? Math.round(vBody * (1 + hsd)).toLocaleString('en-US') : "-";
+        document.getElementById('val-head-crit').innerText = vBody > 0 ? Math.round(vBody * (1 + chd + hsd)).toLocaleString('en-US') : "-";
 
         const rHs = getVal('r-hs') / 100;
         const rOoc = getVal('r-ooc') / 100;
