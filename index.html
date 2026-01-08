@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V3.8</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V3.9</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -87,6 +87,38 @@
                 <div class="group"><label style="color:var(--orange)">Calc. Base</label><input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;"></div>
             </div>
 
+            <div class="section-title">Some Weapon Presets</div>
+            <div class="input-block">
+                <div class="group" style="grid-column: span 4;">
+                    <label>Select Weapon Template</label>
+                    <select id="preset-select" onchange="applyPreset()">
+                        <option value="">-- Choose a Weapon --</option>
+                        <optgroup label="Assault Rifles">
+                            <option value="st-elmos">St. Elmo's Engine</option>
+                            <option value="eagle-bearer">Eagle Bearer</option>
+                            <option value="the-bighorn">The Bighorn</option>
+                            <option value="capacitor">Capacitor</option>
+                            <option value="strega">Strega</option>
+                            <option value="chameleon">Chameleon</option>
+                        </optgroup>
+                        <optgroup label="SMGs">
+                            <option value="ouroboros">Ouroboros</option>
+                            <option value="lady-death">Lady Death</option>
+                            <option value="backfire">Backfire</option>
+                            <option value="chatterbox">The Chatterbox</option>
+                            <option value="oxpecker">Oxpecker</option>
+                        </optgroup>
+                        <optgroup label="LMGs">
+                            <option value="bullet-king">Bullet King</option>
+                            <option value="bluescreen">Bluescreen</option>
+                            <option value="iron-lung">Iron Lung</option>
+                            <option value="pestilence">Pestilence</option>
+                            <option value="pakhan">Pakhan</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+
             <div class="section-title">1. Weapon Data</div>
             <div class="input-block">
                 <div class="group"><label>Base Damage</label><input type="number" id="base" value="54604"></div>
@@ -166,7 +198,50 @@
 </div>
 
 <script>
+    // Presets Daten aus den Screenshots
+    const weaponPresets = {
+        "st-elmos": { b: 46917.5, rpm: 850, mag: 70, rel: 1.87 },
+        "eagle-bearer": { b: 47364.5, rpm: 850, mag: 60, rel: 1.95 },
+        "the-bighorn": { b: 57218.0, rpm: 800, mag: 42, rel: 1.66 },
+        "capacitor": { b: 57617.5, rpm: 700, mag: 41, rel: 1.70 },
+        "strega": { b: 57646.0, rpm: 700, mag: 40, rel: 1.78 },
+        "chameleon": { b: 44670.5, rpm: 900, mag: 50, rel: 2.18 },
+        "ouroboros": { b: 38300.5, rpm: 1403, mag: 50, rel: 1.53 },
+        "lady-death": { b: 35409.0, rpm: 900, mag: 32, rel: 1.60 },
+        "backfire": { b: 50998.5, rpm: 850, mag: 50, rel: 1.90 },
+        "chatterbox": { b: 39457.0, rpm: 850, mag: 60, rel: 1.31 },
+        "oxpecker": { b: 46405.5, rpm: 950, mag: 50, rel: 1.45 },
+        "bullet-king": { b: 54604.0, rpm: 750, mag: 1000, rel: 0.00 },
+        "bluescreen": { b: 62361.0, rpm: 720, mag: 200, rel: 2.07 },
+        "iron-lung": { b: 54322.0, rpm: 800, mag: 85, rel: 2.69 },
+        "pestilence": { b: 48300.0, rpm: 935, mag: 100, rel: 4.13 },
+        "pakhan": { b: 71538.0, rpm: 600, mag: 180, rel: 3.33 }
+    };
+
     let builds = [];
+
+    // Local Storage beim Laden initialisieren
+    window.onload = function() {
+        const saved = localStorage.getItem('dps_matrix_builds');
+        if (saved) {
+            builds = JSON.parse(saved);
+            renderMatrix();
+        }
+        calculate();
+    };
+
+    function applyPreset() {
+        const key = document.getElementById('preset-select').value;
+        if (key && weaponPresets[key]) {
+            const p = weaponPresets[key];
+            document.getElementById('base').value = p.b;
+            document.getElementById('rpm').value = p.rpm;
+            document.getElementById('mag').value = p.mag;
+            document.getElementById('rel').value = p.rel;
+            document.getElementById('build-name').value = document.getElementById('preset-select').options[document.getElementById('preset-select').selectedIndex].text;
+            calculate();
+        }
+    }
 
     function calculate() {
         const mDmgI = parseFloat(document.getElementById('menu-dmg').value) || 0;
@@ -176,7 +251,10 @@
         if(mDmgI > 0) {
             const cb = mDmgI / (1 + (mAwdI + mSwdI)/100);
             document.getElementById('calc-base-res').value = Math.round(cb);
-            document.getElementById('base').value = Math.round(cb);
+            // Wir überschreiben das Base-Feld nur, wenn kein Preset aktiv ausgewählt wurde
+            if (!document.getElementById('preset-select').value) {
+                document.getElementById('base').value = Math.round(cb);
+            }
         }
 
         const b = parseFloat(document.getElementById('base').value)||0, rpm = parseFloat(document.getElementById('rpm').value)||0;
@@ -215,15 +293,21 @@
         const s = calculate();
         s.n = document.getElementById('build-name').value || "Build " + (builds.length+1);
         builds.push(s);
+        saveToLocal();
         renderMatrix();
     }
 
     function removeBuild(index) {
         builds.splice(index, 1);
+        saveToLocal();
         renderMatrix();
     }
 
-    function clearMatrix() { builds = []; renderMatrix(); }
+    function clearMatrix() { builds = []; saveToLocal(); renderMatrix(); }
+
+    function saveToLocal() {
+        localStorage.setItem('dps_matrix_builds', JSON.stringify(builds));
+    }
 
     function renderMatrix() {
         const h = document.getElementById('comp-header'), b = document.getElementById('comp-body');
@@ -271,7 +355,6 @@
     }
 
     document.querySelectorAll('input, select').forEach(i => i.addEventListener('input', calculate));
-    window.onload = calculate;
 </script>
 </body>
 </html>
