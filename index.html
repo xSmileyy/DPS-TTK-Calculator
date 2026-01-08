@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>xSmileyy | DPS Analyzer</title>
+    <title>xSmileyy | Ultimate DPS Analyzer</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { --orange: #ff6600; --orange-glow: rgba(255, 102, 0, 0.4); --bg: #030303; --card-bg: rgba(15, 15, 15, 0.9); --glass: rgba(255, 255, 255, 0.03); --border: #222; --text-main: #ffffff; --text-dim: #888; }
@@ -22,7 +22,8 @@
         .group { display: flex; flex-direction: column; }
         label { font-size: 10px; font-weight: 700; color: var(--text-dim); margin-bottom: 6px; text-transform: uppercase; }
         input, select { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-size: 16px; font-family: 'JetBrains Mono'; transition: 0.3s; }
-        optgroup { background: #111; color: var(--orange); }
+        optgroup { background: #1a1a1a; color: var(--orange); font-style: normal; font-weight: 800; }
+        option { background: #000; color: #fff; padding: 5px; }
         input[readonly] { color: var(--orange); border-color: rgba(255,102,0,0.3); }
         .toggle-btn { flex: 1; background: #111; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 13px; text-transform: uppercase; }
         .toggle-btn.active { background: var(--orange); border-color: var(--orange); box-shadow: 0 0 15px var(--orange-glow); }
@@ -48,104 +49,117 @@
 
     <div class="main-grid">
         <div class="card">
-            <h3 style="margin-top:0;">Build Configuration</h3>
+            <h3>Build Configuration</h3>
             
             <div class="section-title">Base Damage Calculation</div>
             <div class="input-block">
-                <div class="group"><label>In-Game Menu Damage</label><input type="number" id="h-game" placeholder="0" oninput="calculateAll()"></div>
-                <div class="group"><label>All Weapon Damage %</label><input type="number" id="h-awd" placeholder="0" oninput="calculateAll()"></div>
-                <div class="group"><label>Specific Weapon Damage %</label><input type="number" id="h-swd" placeholder="0" oninput="calculateAll()"></div>
-                <div class="group"><label>Calculated Base Value</label><input type="text" id="h-res" readonly></div>
+                <div class="group"><label>Menu Damage</label><input type="number" id="h-game" placeholder="0"></div>
+                <div class="group"><label>All Wpn Dmg %</label><input type="number" id="h-awd" placeholder="0"></div>
+                <div class="group"><label>Spec. Wpn Dmg %</label><input type="number" id="h-swd" placeholder="0"></div>
+                <div class="group"><label>Calculated Base</label><input type="text" id="h-res" readonly></div>
             </div>
 
             <div class="section-title">Weapon Stats</div>
             <div class="input-block">
-                <div class="group"><label>Base Damage</label><input type="number" id="base" value="0" oninput="calculateAll()"></div>
-                <div class="group"><label>RPM</label><input type="number" id="rpm" value="0" oninput="calculateAll()"></div>
-                <div class="group"><label>Mag Size</label><input type="number" id="mag" value="0" oninput="calculateAll()"></div>
-                <div class="group"><label>Reload Time (s)</label><input type="number" id="rel" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Base Damage</label><input type="number" id="base" value="0"></div>
+                <div class="group"><label>RPM</label><input type="number" id="rpm" value="0"></div>
+                <div class="group"><label>Mag Size</label><input type="number" id="mag" value="0"></div>
+                <div class="group"><label>Reload (s)</label><input type="number" id="rel" value="0"></div>
             </div>
 
             <div class="section-title">Attributes & Bonuses</div>
             <div class="input-block">
-                <div class="group"><label>All Weapon Damage %</label><input type="number" id="awd" value="0" oninput="calculateAll()"></div>
-                <div class="group"><label>Specific Weapon Damage %</label><input type="number" id="swd" value="0" oninput="calculateAll()"></div>
-                <div class="group" style="grid-column: span 2;"><label>Total Weapon Damage (Talents) %</label><input type="number" id="twd" value="0" oninput="calculateAll()"></div>
-                <div class="group"><label>Crit Hit Chance %</label><input type="number" id="chc" value="0" oninput="calculateAll()"></div>
-                <div class="group"><label>Crit Hit Damage %</label><input type="number" id="chd" value="0" oninput="calculateAll()"></div>
-                <div class="group"><label>Headshot Damage %</label><input type="number" id="hsd" value="0" oninput="calculateAll()"></div>
-                <div class="group"><label>Damage to Target Out of Cover %</label><input type="number" id="dttooc" value="0" oninput="calculateAll()"></div>
-                <div class="group"><label>Damage to Armor %</label><input type="number" id="dta" value="0" oninput="calculateAll()"></div>
-                <div class="group"><label>Damage to Health %</label><input type="number" id="dth" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>AWD %</label><input type="number" id="awd" value="0"></div>
+                <div class="group"><label>SWD %</label><input type="number" id="swd" value="0"></div>
+                <div class="group" style="grid-column: span 2;"><label>Total Wpn Dmg (Talents) %</label><input type="number" id="twd" value="0"></div>
+                <div class="group"><label>CHC %</label><input type="number" id="chc" value="0"></div>
+                <div class="group"><label>CHD %</label><input type="number" id="chd" value="0"></div>
+                <div class="group"><label>HSD %</label><input type="number" id="hsd" value="0"></div>
+                <div class="group"><label>DttOOC %</label><input type="number" id="dttooc" value="0"></div>
+                <div class="group"><label>DtA %</label><input type="number" id="dta" value="0"></div>
+                <div class="group"><label>DtH %</label><input type="number" id="dth" value="0"></div>
             </div>
 
-            <div class="section-title">Simulation Scenario Rates</div>
+            <div class="section-title">Simulation Rates</div>
             <div class="input-block">
-                <div class="group"><label>Headshot Rate %</label><input type="number" id="r-hs" value="20" oninput="calculateAll()"></div>
-                <div class="group"><label>Out of Cover Rate %</label><input type="number" id="r-ooc" value="60" oninput="calculateAll()"></div>
-                <div class="group"><label>Armor Proportion %</label><input type="number" id="r-arm" value="80" oninput="calculateAll()"></div>
+                <div class="group"><label>HSD Rate %</label><input type="number" id="r-hs" value="20"></div>
+                <div class="group"><label>OOC Rate %</label><input type="number" id="r-ooc" value="60"></div>
+                <div class="group"><label>Armor Rate %</label><input type="number" id="r-arm" value="80"></div>
             </div>
 
-            <div class="section-title">Amplifiers (Multipliers)</div>
+            <div class="section-title">Amplifiers</div>
             <div class="input-block">
-                <div class="group"><label>Multiplier 1 %</label><input type="number" id="m1" value="0" oninput="calculateAll()"></div>
-                <div class="group"><label>Multiplier 2 %</label><input type="number" id="m2" value="0" oninput="calculateAll()"></div>
-                <div class="group"><label>Multiplier 3 %</label><input type="number" id="m3" value="0" oninput="calculateAll()"></div>
-                <div class="group"><label>Multiplier 4 %</label><input type="number" id="m4" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Mult 1 %</label><input type="number" id="m1" value="0"></div>
+                <div class="group"><label>Mult 2 %</label><input type="number" id="m2" value="0"></div>
+                <div class="group"><label>Mult 3 %</label><input type="number" id="m3" value="0"></div>
+                <div class="group"><label>Mult 4 %</label><input type="number" id="m4" value="0"></div>
             </div>
         </div>
 
         <div class="card" style="border-left: 4px solid var(--orange);">
-            <h3 style="margin-top:0;">Analysis & Results</h3>
+            <h3>Analysis & Results</h3>
             
-            <div class="section-title">Shooting Range Validator (Exact)</div>
+            <div class="section-title">Range Validator</div>
             <div style="display:flex; gap:10px; margin-bottom:20px;">
-                <button class="toggle-btn active" id="btn-dta" onclick="toggleMode('dta')">Vs Armor (DTA)</button>
-                <button class="toggle-btn" id="btn-dth" onclick="toggleMode('dth')">Vs Health (DTH)</button>
+                <button class="toggle-btn active" id="btn-dta" onclick="toggleMode('dta')">Vs Armor</button>
+                <button class="toggle-btn" id="btn-dth" onclick="toggleMode('dth')">Vs Health</button>
             </div>
 
             <div class="range-display">
-                <div class="range-result-row"><span>Body Hit (White)</span><b id="val-body">-</b></div>
-                <div class="range-result-row"><span>Crit Body (Orange)</span><b id="val-body-crit" style="color: #ffaa00;">-</b></div>
-                <div class="range-result-row"><span>Headshot (Red)</span><b id="val-head" style="color: #ff4444;">-</b></div>
-                <div class="range-result-row"><span>Crit Headshot (Dark Red)</span><b id="val-head-crit" style="color: #ff0000;">-</b></div>
+                <div class="range-result-row"><span>White Hit</span><b id="val-body">-</b></div>
+                <div class="range-result-row"><span>Crit Hit</span><b id="val-body-crit" style="color: #ffaa00;">-</b></div>
+                <div class="range-result-row"><span>Headshot</span><b id="val-head" style="color: #ff4444;">-</b></div>
+                <div class="range-result-row"><span>Crit Headshot</span><b id="val-head-crit" style="color: #ff0000;">-</b></div>
             </div>
 
             <div class="section-title">Simulation Averages</div>
             <div class="results-grid" style="margin-bottom: 30px;">
-                <div class="res-box primary"><span class="res-label">Avg Damage / Shot</span><span class="res-val orange" id="res-avg">-</span></div>
-                <div class="res-box"><span class="res-label">Total Mag Damage</span><span class="res-val" id="res-mag">-</span></div>
+                <div class="res-box primary"><span class="res-label">Avg/Shot</span><span class="res-val" id="res-avg">-</span></div>
+                <div class="res-box"><span class="res-label">Mag Dmg</span><span class="res-val" id="res-mag">-</span></div>
                 <div class="res-box"><span class="res-label">Burst DPS</span><span class="res-val" id="res-burst">-</span></div>
                 <div class="res-box"><span class="res-label">Sustain DPS</span><span class="res-val" id="res-sustain">-</span></div>
             </div>
 
-            <div class="section-title">Target EHP Analysis (Final Scales)</div>
+            <div class="section-title">Target EHP Analysis (Dien Scaling)</div>
             <div class="group" style="margin-bottom:20px;">
-                <label>Select Difficulty & Team Size</label>
-                <select id="enemy-select" onchange="calculateAll()">
-                    <optgroup label="HEROIC - SOLO">
-                        <option value="2827032">Heroic Solo: Normal</option>
-                        <option value="6360822">Heroic Solo: Veteran</option>
-                        <option value="9894612">Heroic Solo: Elite</option>
-                        <option value="19789226">Heroic Solo: Named</option>
+                <label>Select Enemy Scenario</label>
+                <select id="enemy-select">
+                    <optgroup label="HEROIC DIFFICULTY">
+                        <option value="9894612">Heroic [1-Player] - Elite</option>
+                        <option value="19789226">Heroic [1-Player] - Named</option>
+                        <option value="12580292">Heroic [2-Player] - Elite</option>
+                        <option value="27648374">Heroic [2-Player] - Named</option>
+                        <option value="14672297">Heroic [3-Player] - Elite</option>
+                        <option value="38673802">Heroic [3-Player] - Named</option>
+                        <option value="16905653" selected>Heroic [4-Player] - Elite</option>
+                        <option value="47296250">Heroic [4-Player] - Named</option>
                     </optgroup>
-                    <optgroup label="HEROIC - 4-PLAYER">
-                        <option value="4890766">Heroic 4P: Normal</option>
-                        <option value="10544830">Heroic 4P: Veteran</option>
-                        <option value="16905653" selected>Heroic 4P: Elite</option>
-                        <option value="47296250">Heroic 4P: Named</option>
+                    <optgroup label="LEGENDARY DIFFICULTY">
+                        <option value="14752329">Legendary [1-Player] - Elite</option>
+                        <option value="18756532">Legendary [2-Player] - Elite</option>
+                        <option value="21875598">Legendary [3-Player] - Elite</option>
+                        <option value="25172134">Legendary [4-Player] - Elite</option>
+                        <option value="72146660">Legendary [4-Player] - Named</option>
+                        <option value="56250000">Legendary [4-Player] - Heavy (Plates)</option>
                     </optgroup>
-                    <optgroup label="LEGENDARY - 4-PLAYER">
-                        <option value="25172134">Legendary 4P: Elite</option>
-                        <option value="72146660">Legendary 4P: Named</option>
-                        <option value="56250000">Legendary 4P: Heavy (Plates)</option>
+                    <optgroup label="CHALLENGING DIFFICULTY">
+                        <option value="5853150">Challenging [1P] - Elite</option>
+                        <option value="7443152">Challenging [2P] - Elite</option>
+                        <option value="8681285">Challenging [3P] - Elite</option>
+                        <option value="10003000">Challenging [4P] - Elite</option>
+                    </optgroup>
+                    <optgroup label="HARD/NORMAL">
+                        <option value="4320182">Hard [1P] - Elite</option>
+                        <option value="7370000">Hard [4P] - Elite</option>
+                        <option value="2787215">Normal [1P] - Elite</option>
+                        <option value="4750000">Normal [4P] - Elite</option>
                     </optgroup>
                 </select>
             </div>
 
             <div class="results-grid">
-                <div class="res-box primary"><span class="res-label">Bullets to Kill (Avg)</span><span class="res-val" id="res-btk">-</span></div>
-                <div class="res-box"><span class="res-label">Kills per Magazine</span><span class="res-val" id="res-kpm">-</span></div>
+                <div class="res-box primary"><span class="res-label">Bullets to Kill</span><span class="res-val" id="res-btk">-</span></div>
+                <div class="res-box"><span class="res-label">Kills per Mag</span><span class="res-val" id="res-kpm">-</span></div>
                 <div class="res-box"><span class="res-label">TTK (Burst)</span><span class="res-val" id="res-ttkb">-</span></div>
                 <div class="res-box"><span class="res-label">TTK (Sustain)</span><span class="res-val" id="res-ttks">-</span></div>
             </div>
@@ -155,14 +169,34 @@
 
 <script>
     let vMode = 'dta';
-    function toggleMode(m) { vMode = m; document.getElementById('btn-dta').classList.toggle('active', m === 'dta'); document.getElementById('btn-dth').classList.toggle('active', m === 'dth'); calculateAll(); }
+    const inputs = document.querySelectorAll('input, select');
+
+    function toggleMode(m) { 
+        vMode = m; 
+        document.getElementById('btn-dta').classList.toggle('active', m === 'dta'); 
+        document.getElementById('btn-dth').classList.toggle('active', m === 'dth'); 
+        calculateAll(); 
+    }
+
+    function saveInputs() {
+        const data = {};
+        inputs.forEach(i => { if(i.id) data[i.id] = i.value; });
+        localStorage.setItem('dps_calc_data_v2', JSON.stringify(data));
+    }
+
+    function loadInputs() {
+        const data = JSON.parse(localStorage.getItem('dps_calc_data_v2'));
+        if(data) {
+            Object.keys(data).forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.value = data[id];
+            });
+        }
+    }
 
     function formatGameNum(num) {
-        if (num >= 1000000) {
-            return (num / 1000000).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " M";
-        } else if (num >= 1000) {
-            return (num / 1000).toLocaleString('en-US', {maximumFractionDigits: 1}) + " K";
-        }
+        if (num >= 1000000) return (num / 1000000).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " M";
+        if (num >= 1000) return (num / 1000).toLocaleString('en-US', {maximumFractionDigits: 1}) + " K";
         return Math.round(num).toLocaleString('en-US');
     }
 
@@ -171,7 +205,7 @@
         const hA = parseFloat(document.getElementById('h-awd').value) || 0;
         const hS = parseFloat(document.getElementById('h-swd').value) || 0;
         const hRes = hG / (1 + (hA+hS)/100);
-        document.getElementById('h-res').value = hRes > 0 ? hRes.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 1}) : "0.0";
+        document.getElementById('h-res').value = hRes > 0 ? hRes.toLocaleString('en-US', {maximumFractionDigits: 1}) : "0";
 
         const base = parseFloat(document.getElementById('base').value) || 0;
         const awd = parseFloat(document.getElementById('awd').value) || 0;
@@ -185,10 +219,6 @@
         const dth = (parseFloat(document.getElementById('dth').value) || 0) / 100;
         const mMult = [1,2,3,4].reduce((acc, i) => acc * (parseFloat(document.getElementById('m'+i).value)/100 + 1), 1);
 
-        const rHs = (parseFloat(document.getElementById('r-hs').value) || 0) / 100;
-        const rOoc = (parseFloat(document.getElementById('r-ooc').value) || 0) / 100;
-        const rArm = (parseFloat(document.getElementById('r-arm').value) || 0) / 100;
-
         const rangeArmor = vMode === 'dta' ? (1 + dta) : (1 + dth);
         const vBody = base * (1 + (awd+swd)/100) * (1 + twd/100) * (1 + dttooc) * rangeArmor * mMult;
         
@@ -196,6 +226,10 @@
         document.getElementById('val-body-crit').innerText = Math.round(vBody * (1 + chd)).toLocaleString('en-US');
         document.getElementById('val-head').innerText = Math.round(vBody * (1 + hsd)).toLocaleString('en-US');
         document.getElementById('val-head-crit').innerText = Math.round(vBody * (1 + chd + hsd)).toLocaleString('en-US');
+
+        const rHs = (parseFloat(document.getElementById('r-hs').value) || 0) / 100;
+        const rOoc = (parseFloat(document.getElementById('r-ooc').value) || 0) / 100;
+        const rArm = (parseFloat(document.getElementById('r-arm').value) || 0) / 100;
 
         const simArmor = (1 + (dta * rArm) + (dth * (1 - rArm)));
         const simOoc = (1 + (dttooc * rOoc));
@@ -208,23 +242,24 @@
         const targetEHP = parseFloat(document.getElementById('enemy-select').value);
 
         const burstDps = (rpm / 60) * avgShot;
-        const magTime = (rpm > 0) ? mag / (rpm / 60) : 0;
-        const sustainDps = (mag > 0 && (rel + magTime) > 0) ? (mag * avgShot) / (rel + magTime) : 0;
-        const magDmg = avgShot * mag;
+        const sustainDps = (mag > 0 && rpm > 0) ? (mag * avgShot) / (rel + (mag / (rpm/60))) : 0;
 
         document.getElementById('res-avg').innerText = formatGameNum(avgShot);
-        document.getElementById('res-mag').innerText = formatGameNum(magDmg);
+        document.getElementById('res-mag').innerText = formatGameNum(avgShot * mag);
         document.getElementById('res-burst').innerText = formatGameNum(burstDps);
         document.getElementById('res-sustain').innerText = formatGameNum(sustainDps);
-
-        const btk = avgShot > 0 ? Math.ceil(targetEHP / avgShot) : 0;
-        document.getElementById('res-btk').innerText = btk > 0 ? btk : "-";
         
-        document.getElementById('res-ttkb').innerText = burstDps > 0 ? (targetEHP / burstDps).toFixed(2) + "s" : "0.00s";
-        document.getElementById('res-ttks').innerText = sustainDps > 0 ? (targetEHP / sustainDps).toFixed(2) + "s" : "0.00s";
-        document.getElementById('res-kpm').innerText = targetEHP > 0 ? (magDmg / targetEHP).toFixed(2) : "0.00";
+        const btk = avgShot > 0 ? Math.ceil(targetEHP / avgShot) : 0;
+        document.getElementById('res-btk').innerText = btk || "-";
+        document.getElementById('res-kpm').innerText = targetEHP > 0 ? ( (avgShot * mag) / targetEHP).toFixed(2) : "-";
+        document.getElementById('res-ttkb').innerText = (burstDps > 0 && targetEHP > 0) ? (targetEHP / burstDps).toFixed(2) + "s" : "-";
+        document.getElementById('res-ttks').innerText = (sustainDps > 0 && targetEHP > 0) ? (targetEHP / sustainDps).toFixed(2) + "s" : "-";
+        
+        saveInputs();
     }
-    calculateAll();
+
+    inputs.forEach(i => i.addEventListener('input', calculateAll));
+    window.onload = () => { loadInputs(); calculateAll(); };
 </script>
 </body>
 </html>
