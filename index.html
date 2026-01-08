@@ -27,6 +27,7 @@
         .input-block { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; background: var(--glass); padding: 18px; border-radius: 12px; margin-bottom: 15px; }
         .group { display: flex; flex-direction: column; }
         label { font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 4px; text-transform: uppercase; }
+        .label-note { font-size: 9px; color: #888; text-transform: none; margin-bottom: 4px; font-style: italic; }
         input, select { background: #000; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 15px; font-family: 'JetBrains Mono'; width: 100%; box-sizing: border-box; }
         
         .range-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
@@ -37,31 +38,10 @@
         .t-btn { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #333; background: #111; color: #888; cursor: pointer; font-weight: 800; font-size: 12px; text-transform: uppercase; }
         .t-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); }
 
-        /* Kill Efficiency Layout Korrektur */
         .results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-        .res-box { 
-            background: #0a0a0a; 
-            border: 1px solid var(--border); 
-            padding: 15px 20px; 
-            border-radius: 12px; 
-            display: flex; 
-            justify-content: flex-start; 
-            align-items: center; 
-            gap: 10px;
-        }
-        .res-label { 
-            font-size: 11px; 
-            color: #888; 
-            text-transform: uppercase; 
-            font-weight: 700; 
-            white-space: nowrap;
-        }
-        .res-val { 
-            font-size: 22px; 
-            font-weight: 800; 
-            font-family: 'JetBrains Mono'; 
-            color: #fff; 
-        }
+        .res-box { background: #0a0a0a; border: 1px solid var(--border); padding: 15px 20px; border-radius: 12px; display: flex; justify-content: flex-start; align-items: center; gap: 10px; }
+        .res-label { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 700; white-space: nowrap; }
+        .res-val { font-size: 22px; font-weight: 800; font-family: 'JetBrains Mono'; color: #fff; }
 
         .btn-capture { background: #fff; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px; }
         .comp-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
@@ -84,10 +64,11 @@
     <div class="main-grid">
         <div class="card">
             <div class="section-title">0. Calculate Base Damage</div>
+            <div class="label-note" style="margin-left: 10px; margin-bottom: 10px;">*Nur nutzen, wenn nicht in Weapon Presets verfügbar oder manuell berechnet werden muss*</div>
             <div class="input-block">
-                <div class="group"><label>Weapon Damage</label><input type="number" id="menu-dmg"></div>
-                <div class="group"><label>AWD %</label><input type="number" id="menu-awd"></div>
-                <div class="group"><label>SWD %</label><input type="number" id="menu-swd"></div>
+                <div class="group"><label>Weapon Damage (Menu)</label><input type="number" id="menu-dmg"></div>
+                <div class="group"><label>AWD % (Menu)</label><input type="number" id="menu-awd"></div>
+                <div class="group"><label>SWD % (Menu)</label><input type="number" id="menu-swd"></div>
                 <div class="group"><label style="color:var(--orange)">Result: Base</label><input type="text" id="calc-base-res" readonly></div>
             </div>
 
@@ -96,9 +77,15 @@
                 <div class="group" style="grid-column: span 4;">
                     <select id="preset-select" onchange="applyPreset()">
                         <option value="">-- Choose a Weapon --</option>
-                        <option value="lexington">Lexington</option>
-                        <option value="st-elmos">St. Elmo's Engine</option>
-                        <option value="ouroboros">Ouroboros</option>
+                        <option value="lexington">Lexington (700 RPM)</option>
+                        <option value="ouroboros">Ouroboros (1485 RPM)</option>
+                        <option value="st-elmos">St. Elmo's Engine (850 RPM)</option>
+                        <option value="police-m4">Police M4 (850 RPM)</option>
+                        <option value="famas">FAMAS 2010 (900 RPM)</option>
+                        <option value="kingbreaker">Kingbreaker (450 RPM)</option>
+                        <option value="capacitor">Capacitor (700 RPM)</option>
+                        <option value="lady-death">Lady Death (900 RPM)</option>
+                        <option value="eagle-bearer">Eagle Bearer (750 RPM)</option>
                     </select>
                 </div>
             </div>
@@ -113,9 +100,9 @@
 
             <div class="section-title">2. Damage %</div>
             <div class="input-block">
-                <div class="group"><label>AWD %</label><input type="number" id="awd"></div>
-                <div class="group"><label>SWD %</label><input type="number" id="swd"></div>
-                <div class="group" style="grid-column: span 2;"><label>TWD %</label><input type="number" id="twd"></div>
+                <div class="group"><label>AWD % (Menu)</label><input type="number" id="awd"></div>
+                <div class="group"><label>SWD % (Menu)</label><input type="number" id="swd"></div>
+                <div class="group" style="grid-column: span 2;"><label>TWD % (Obliterate/GlassC)</label><input type="number" id="twd"></div>
             </div>
 
             <div class="section-title">3. Stats</div>
@@ -137,10 +124,10 @@
 
             <div class="section-title">5. Amps</div>
             <div class="input-block">
-                <div class="group"><label>Amp 1 %</label><input type="number" id="m1"></div>
-                <div class="group"><label>Amp 2 %</label><input type="number" id="m2"></div>
-                <div class="group"><label>Amp 3 %</label><input type="number" id="m3"></div>
-                <div class="group"><label>Amp 4 %</label><input type="number" id="m4"></div>
+                <div class="group"><label>Amp 1 % (Vigilance)</label><input type="number" id="m1"></div>
+                <div class="group"><label>Amp 2 % (Strained)</label><input type="number" id="m2"></div>
+                <div class="group"><label>Amp 3 % (Striker)</label><input type="number" id="m3"></div>
+                <div class="group"><label>Amp 4 % (Elmo)</label><input type="number" id="m4"></div>
             </div>
             
             <div class="input-block" style="border: 1px dashed var(--orange); grid-template-columns: repeat(3, 1fr);">
@@ -166,7 +153,11 @@
             <select id="enemy-select" style="width:100%; margin-bottom:15px;" onchange="calculate()">
                 <option value="6050000">Heroic 1P Elite (6.0M)</option>
                 <option value="16905653">Heroic 4P Elite (16.9M)</option>
-                <option value="25172134">Legendary 4P Elite (25.2M)</option>
+                <option value="8470000">Legendary 1P Elite (8.4M)</option>
+                <option value="25172134">Legendary 4P Elite (25.1M)</option>
+                <option value="14500000">Heroic 1P Named (14.5M)</option>
+                <option value="42000000">Heroic 4P Named (42.0M)</option>
+                <option value="28000000">Elite Heavy / Chugger (28.0M)</option>
             </select>
             <div class="results-grid">
                 <div class="res-box" id="omk-box"><span class="res-label">One-Mag Kill?</span><span class="res-val" id="res-omk">-</span></div>
@@ -192,7 +183,15 @@
     let builds = [];
 
     const weaponPresets = {
-        "lexington": { b: 48699.5 }, "st-elmos": { b: 46917.5 }, "ouroboros": { b: 38300.5 }
+        "lexington": { b: 48699.5, rpm: 700, mag: 30, rel: 2.0 },
+        "ouroboros": { b: 38300.5, rpm: 1485, mag: 50, rel: 1.8 },
+        "st-elmos": { b: 46917.5, rpm: 850, mag: 70, rel: 2.2 },
+        "police-m4": { b: 43200.0, rpm: 850, mag: 30, rel: 2.1 },
+        "famas": { b: 41500.0, rpm: 900, mag: 30, rel: 2.3 },
+        "kingbreaker": { b: 62000.0, rpm: 450, mag: 30, rel: 2.4 },
+        "capacitor": { b: 47500.0, rpm: 700, mag: 40, rel: 2.1 },
+        "lady-death": { b: 42000.0, rpm: 900, mag: 32, rel: 1.9 },
+        "eagle-bearer": { b: 51000.0, rpm: 750, mag: 60, rel: 2.3 }
     };
 
     window.onload = function() {
@@ -211,12 +210,28 @@
     function applyPreset() {
         const key = document.getElementById('preset-select').value;
         if (key && weaponPresets[key]) {
-            document.getElementById('base').value = weaponPresets[key].b;
+            const p = weaponPresets[key];
+            document.getElementById('base').value = p.b;
+            document.getElementById('rpm').value = p.rpm;
+            document.getElementById('mag').value = p.mag;
+            document.getElementById('rel').value = p.rel;
             calculate();
         }
     }
 
     function calculate() {
+        const mDmg = parseFloat(document.getElementById('menu-dmg').value);
+        const mAwd = parseFloat(document.getElementById('menu-awd').value);
+        const mSwd = parseFloat(document.getElementById('menu-swd').value);
+        
+        if(!isNaN(mDmg) && !isNaN(mAwd) && !isNaN(mSwd)) {
+            const cb = mDmg / (1 + (mAwd + mSwd)/100);
+            document.getElementById('calc-base-res').value = cb.toFixed(1);
+            // AUTO TRANSFER
+            document.getElementById('awd').value = mAwd;
+            document.getElementById('swd').value = mSwd;
+        }
+
         const b = parseFloat(document.getElementById('base').value)||0;
         const rpm = parseFloat(document.getElementById('rpm').value)||0;
         const mag = parseFloat(document.getElementById('mag').value)||0;
@@ -255,17 +270,24 @@
             document.getElementById('st-head-crit').style.color = "#ff4444";
 
             const avg = wDmg * (1 + (chc*chd) + (hsd*hr)) * (1 + (ooc*or)) * (1 + (dta*ar)) * m;
-            const burst = (rpm/60) * avg, mDmgV = avg * mag;
-            const sustain = mDmgV / ((mag/(rpm/60)) + rel);
+            const rps = rpm / 60;
+            const burst = rps * avg;
+            const mDmgV = avg * mag;
             const ehp = parseFloat(document.getElementById('enemy-select').value);
-            const ttkb = (ehp/burst), ttks = mDmgV >= ehp ? ttkb : ttkb + (Math.ceil(ehp/mDmgV)-1)*rel;
+            
+            let ttkb = 0, ttks = 0;
+            if (rps > 0 && avg > 0) {
+                ttkb = ehp / burst;
+                ttks = mDmgV >= ehp ? ttkb : ttkb + (Math.ceil(ehp/mDmgV)-1)*rel;
+            }
 
             document.getElementById('res-omk').innerText = mDmgV >= ehp ? "YES" : "NO";
             document.getElementById('omk-box').style.borderColor = mDmgV >= ehp ? "var(--pos)" : "var(--neg)";
-            document.getElementById('res-kpm').innerText = (mDmgV/ehp).toFixed(2);
+            document.getElementById('res-kpm').innerText = ehp > 0 ? (mDmgV/ehp).toFixed(2) : "0.00";
             document.getElementById('res-ttkb').innerText = ttkb.toFixed(3) + "s";
             document.getElementById('res-ttks').innerText = ttks.toFixed(3) + "s";
-            return { n: "", mDmg: mDmgV, omk: mDmgV >= ehp ? "YES" : "NO", kpm: (mDmgV/ehp), burst, ttkb, sustain, ttks };
+            
+            return { n: "", mDmg: mDmgV, omk: mDmgV >= ehp ? "YES" : "NO", kpm: (mDmgV/ehp), burst, ttkb, sustain: mDmgV / ((mag/rps) + rel) || 0, ttks };
         }
         return null;
     }
