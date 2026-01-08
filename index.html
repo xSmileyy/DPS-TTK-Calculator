@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V3.7</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V3.8</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -16,9 +16,12 @@
         .container { max-width: 1700px; margin: auto; }
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        .logo-group { display: flex; align-items: center; gap: 20px; }
         .logo { font-size: 28px; font-weight: 800; text-transform: uppercase; }
         .logo span { color: var(--orange); text-shadow: 0 0 15px var(--orange-glow); }
         
+        .version-tag { font-size: 12px; color: #888; font-weight: 800; letter-spacing: 1px; }
+
         .discord-info { display: flex; align-items: center; gap: 10px; background: var(--glass); padding: 8px 15px; border-radius: 50px; border: 1px solid #333; }
         .discord-info i { color: #5865F2; font-size: 18px; }
         .discord-info span { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 14px; color: #fff; }
@@ -64,7 +67,10 @@
 
 <div class="container">
     <header class="header">
-        <div class="logo">xSmileyy's <span>DPS Analyzer</span></div>
+        <div class="logo-group">
+            <div class="logo">xSmileyy's <span>DPS Analyzer</span></div>
+            <div class="version-tag">ALPHA 1.0 WIP</div>
+        </div>
         <div class="discord-info">
             <i class="fab fa-discord"></i>
             <span>xsmileyy.</span>
