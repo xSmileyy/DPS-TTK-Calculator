@@ -83,7 +83,7 @@
     <header class="header">
         <div class="logo-group">
             <div class="logo">xSmileyy's <span>DPS Analyzer</span></div>
-            <div class="version-tag">ALPHA 1.0 WIP</div>
+            <div class="version-tag">ALPHA 1.1 WIP</div>
         </div>
         <div class="discord-info">
             <i class="fab fa-discord"></i>
@@ -96,14 +96,13 @@
             <div class="section-title">0. Calculate Base Damage</div>
             <div class="hint-text">
                 <i class="fas fa-info-circle"></i> 
-                <strong>Note:</strong> Only use this if your weapon is NOT in the presets below. <br>
-                Open Inventory → Stats → Copy "Weapon Damage", "All Weapon Damage" & "Specific Weapon Damage"
+                <strong>Note:</strong> Copy "Weapon Damage", "All Weapon Damage" & "Specific Weapon Damage" from Inventory Stats.
             </div>
             <div class="input-block">
-                <div class="group"><label>Weapon Damage</label><input type="number" id="menu-dmg" placeholder=""></div>
-                <div class="group"><label>AWD (All Weapon Damage %)</label><input type="number" id="menu-awd" placeholder=""></div>
-                <div class="group"><label>SWD (Specific Weapon Damage %)</label><input type="number" id="menu-swd" placeholder=""></div>
-                <div class="group"><label style="color:var(--orange)">Result: Base Damage</label><input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;"></div>
+                <div class="group"><label>Weapon Damage</label><input type="number" id="menu-dmg"></div>
+                <div class="group"><label>AWD %</label><input type="number" id="menu-awd"></div>
+                <div class="group"><label>SWD %</label><input type="number" id="menu-swd"></div>
+                <div class="group"><label style="color:var(--orange)">Result: Base</label><input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;"></div>
             </div>
 
             <div class="section-title">Weapon Presets (Base Dmg Only)</div>
@@ -118,22 +117,10 @@
                             <option value="eagle-bearer">Eagle Bearer</option>
                             <option value="the-bighorn">The Bighorn</option>
                             <option value="capacitor">Capacitor</option>
-                            <option value="strega">Strega</option>
-                            <option value="chameleon">Chameleon</option>
                         </optgroup>
                         <optgroup label="SMGs">
                             <option value="ouroboros">Ouroboros</option>
                             <option value="lady-death">Lady Death</option>
-                            <option value="backfire">Backfire</option>
-                            <option value="chatterbox">The Chatterbox</option>
-                            <option value="oxpecker">Oxpecker</option>
-                        </optgroup>
-                        <optgroup label="LMGs">
-                            <option value="bullet-king">Bullet King</option>
-                            <option value="bluescreen">Bluescreen</option>
-                            <option value="iron-lung">Iron Lung</option>
-                            <option value="pestilence">Pestilence</option>
-                            <option value="pakhan">Pakhan</option>
                         </optgroup>
                     </select>
                 </div>
@@ -141,42 +128,46 @@
 
             <div class="section-title">1. Weapon Data</div>
             <div class="input-block">
-                <div class="group"><label>Base Damage</label><input type="number" id="base" placeholder=""></div>
-                <div class="group"><label>RPM</label><input type="number" id="rpm" placeholder=""></div>
-                <div class="group"><label>Mag Size</label><input type="number" id="mag" placeholder=""></div>
-                <div class="group"><label>Reload (s)</label><input type="number" id="rel" placeholder=""></div>
+                <div class="group"><label>Base Damage</label><input type="number" id="base"></div>
+                <div class="group"><label>RPM</label><input type="number" id="rpm"></div>
+                <div class="group"><label>Mag Size</label><input type="number" id="mag"></div>
+                <div class="group"><label>Reload (s)</label><input type="number" id="rel"></div>
             </div>
 
             <div class="section-title">2. Weapon Damage %</div>
             <div class="input-block">
-                <div class="group"><label>AWD (All Weapon) %</label><input type="number" id="awd" placeholder=""></div>
-                <div class="group"><label>SWD (Weapon Type) %</label><input type="number" id="swd" placeholder=""></div>
-                <div class="group" style="grid-column: span 2;"><label>TWD (e.g. Obliterate) %</label><input type="number" id="twd" placeholder=""></div>
+                <div class="group"><label>AWD (All Weapon) %</label><input type="number" id="awd"></div>
+                <div class="group"><label>SWD (Weapon Type) %</label><input type="number" id="swd"></div>
+                <div class="group" style="grid-column: span 2;"><label>TWD (e.g. Obliterate) %</label><input type="number" id="twd"></div>
             </div>
 
             <div class="section-title">3. Combat Stats & Rates</div>
             <div class="input-block">
-                <div class="group"><label>CHC %</label><input type="number" id="chc" placeholder=""></div>
-                <div class="group"><label>CHD %</label><input type="number" id="chd" placeholder=""></div>
-                <div class="group"><label>HSD %</label><input type="number" id="hsd" placeholder=""></div>
-                <div class="group"><label>DttOOC %</label><input type="number" id="dttooc" placeholder=""></div>
-                <div class="group"><label>DtA %</label><input type="number" id="dta" placeholder=""></div>
-                <div class="group"><label>DtH %</label><input type="number" id="dth" placeholder=""></div>
+                <div class="group"><label>CHC %</label><input type="number" id="chc"></div>
+                <div class="group"><label>CHD %</label><input type="number" id="chd"></div>
+                <div class="group"><label>HSD %</label><input type="number" id="hsd"></div>
+                <div class="group"><label>DTOC %</label><input type="number" id="dttooc"></div>
+                <div class="group"><label>DtA %</label><input type="number" id="dta"></div>
+                <div class="group"><label>DtH %</label><input type="number" id="dth"></div>
             </div>
 
-            <div class="section-title">4. %-Rate Enemies (Calculated Avg)</div>
+            <div class="section-title">4. %-Rate Uptime</div>
             <div class="input-block">
                 <div class="group"><label>HS-Rate %</label><input type="number" id="h-rate" value="20"></div>
-                <div class="group"><label>DTTOOC-Rate %</label><input type="number" id="d-rate" value="60"></div>
+                <div class="group"><label>DTOC-Rate %</label><input type="number" id="d-rate" value="60"></div>
                 <div class="group"><label>Armor-Rate %</label><input type="number" id="a-rate" value="80"></div>
             </div>
 
             <div class="section-title">5. Amplifiers</div>
+            <div class="hint-text">
+                <i class="fas fa-bolt"></i> 
+                <strong>Examples:</strong> Striker (e.g. 65% or 100%), Glass Cannon (25%), Vigilance (25%), etc.
+            </div>
             <div class="input-block">
-                <div class="group"><label>Amp 1 %</label><input type="number" id="m1" placeholder=""></div>
-                <div class="group"><label>Amp 2 %</label><input type="number" id="m2" placeholder=""></div>
-                <div class="group"><label>Amp 3 %</label><input type="number" id="m3" placeholder=""></div>
-                <div class="group"><label>Amp 4 %</label><input type="number" id="m4" placeholder=""></div>
+                <div class="group"><label>Amp 1 %</label><input type="number" id="m1" placeholder="Striker"></div>
+                <div class="group"><label>Amp 2 %</label><input type="number" id="m2" placeholder="G. Cannon"></div>
+                <div class="group"><label>Amp 3 %</label><input type="number" id="m3"></div>
+                <div class="group"><label>Amp 4 %</label><input type="number" id="m4"></div>
             </div>
             
             <div class="input-block" style="border: 1px dashed var(--orange); grid-template-columns: repeat(3, 1fr);">
@@ -231,17 +222,13 @@
         currentTarget = t;
         document.getElementById('t-elite').classList.toggle('active', t === 'elite');
         document.getElementById('t-health').classList.toggle('active', t === 'health');
-        document.getElementById('st-body').style.color = (t === 'elite') ? 'var(--ingame-blue)' : '#fff';
         calculate();
     }
 
     const weaponPresets = {
         "lexington": { b: 48699.5 }, "st-elmos": { b: 46917.5 }, "eagle-bearer": { b: 47364.5 },
-        "the-bighorn": { b: 57218.0 }, "capacitor": { b: 57617.5 }, "strega": { b: 57646.0 },
-        "chameleon": { b: 44670.5 }, "ouroboros": { b: 38300.5 }, "lady-death": { b: 35409.0 },
-        "backfire": { b: 50998.5 }, "chatterbox": { b: 39457.0 }, "oxpecker": { b: 46405.5 },
-        "bullet-king": { b: 54604.0 }, "bluescreen": { b: 62361.0 }, "iron-lung": { b: 54322.0 },
-        "pestilence": { b: 48300.0 }, "pakhan": { b: 71538.0 }
+        "the-bighorn": { b: 57218.0 }, "capacitor": { b: 57617.5 }, "ouroboros": { b: 38300.5 },
+        "lady-death": { b: 35409.0 }
     };
 
     let builds = [];
@@ -249,7 +236,7 @@
     window.onload = function() {
         const saved = localStorage.getItem('dps_matrix_builds');
         if (saved) { builds = JSON.parse(saved); renderMatrix(); }
-        toggleTarget('elite');
+        calculate();
     };
 
     function applyPreset() {
@@ -262,31 +249,26 @@
     }
 
     function calculate() {
-        // --- SOFORTIGE SPIEGELUNG & HIGHLIGHTING ---
+        // --- SYNC SEKTION 0 ZU SEKTION 1 & 2 (MIT FIX FÜR LÖSCHEN) ---
         const mAwd = document.getElementById('menu-awd').value;
         const mSwd = document.getElementById('menu-swd').value;
         const mDmg = document.getElementById('menu-dmg').value;
 
-        // AWD Sync
         const awdField = document.getElementById('awd');
-        if (mAwd !== "") {
-            awdField.value = mAwd;
-            awdField.classList.add('auto-highlight');
-        } else {
-            awdField.classList.remove('auto-highlight');
-        }
-
-        // SWD Sync
         const swdField = document.getElementById('swd');
-        if (mSwd !== "") {
-            swdField.value = mSwd;
-            swdField.classList.add('auto-highlight');
-        } else {
-            swdField.classList.remove('auto-highlight');
-        }
-
-        // Base Damage Calculation & Sync
         const bField = document.getElementById('base');
+
+        // AWD Sync: Spiegelt den Wert (auch wenn leer)
+        awdField.value = mAwd;
+        if (mAwd !== "") { awdField.classList.add('auto-highlight'); } 
+        else { awdField.classList.remove('auto-highlight'); }
+
+        // SWD Sync: Spiegelt den Wert (auch wenn leer)
+        swdField.value = mSwd;
+        if (mSwd !== "") { swdField.classList.add('auto-highlight'); } 
+        else { swdField.classList.remove('auto-highlight'); }
+
+        // Base Damage Calculation & Reset Logic
         const d = parseFloat(mDmg), a = parseFloat(mAwd), s = parseFloat(mSwd);
         if(!isNaN(d) && !isNaN(a) && !isNaN(s)) {
             const cb = d / (1 + (a + s)/100);
@@ -295,11 +277,15 @@
             bField.value = finalBase;
             bField.classList.add('auto-highlight');
         } else {
+            // Wenn oben ein Wert gelöscht wird, wird auch das Resultat und das Base-Feld unten geleert
             document.getElementById('calc-base-res').value = "";
-            bField.classList.remove('auto-highlight');
+            if (mDmg === "" || mAwd === "" || mSwd === "") {
+                bField.value = "";
+                bField.classList.remove('auto-highlight');
+            }
         }
 
-        // --- HAUPTBERECHNUNG ---
+        // --- MATH ---
         const b = parseFloat(bField.value)||0, rpm = parseFloat(document.getElementById('rpm').value)||0;
         const mag = parseFloat(document.getElementById('mag').value)||0, rel = parseFloat(document.getElementById('rel').value)||0;
         const awd = parseFloat(awdField.value)||0, swd = parseFloat(swdField.value)||0, twd = parseFloat(document.getElementById('twd').value)||0;
@@ -330,6 +316,10 @@
             document.getElementById('res-ttkb').innerText = isFinite(ttkb) ? ttkb.toFixed(3) + "s" : "-";
             document.getElementById('res-ttks').innerText = isFinite(ttks) ? ttks.toFixed(3) + "s" : "-";
             return { n: "", mDmg: mDmgV, omk: isOMK ? "YES" : "NO", kpm: parseFloat((mDmgV/ehp).toFixed(2)), burst, ttkb, sustain, ttks };
+        } else {
+            // Reset Displays if no base damage
+            ['st-body', 'st-crit', 'st-head', 'st-head-crit', 'res-omk', 'res-kpm', 'res-ttkb', 'res-ttks'].forEach(id => document.getElementById(id).innerText = "-");
+            document.getElementById('omk-box').style.backgroundColor = "";
         }
         return null;
     }
@@ -350,14 +340,12 @@
         const h = document.getElementById('comp-header'), b = document.getElementById('comp-body');
         h.innerHTML = '<th>Metric</th>';
         builds.forEach((x, i) => h.innerHTML += `<th>${x.n}<span class="del-btn" onclick="removeBuild(${i})">X</span></th>`);
-        
         const rows = [
             {l: 'MAG Damage', k: 'mDmg', goal: 'max'}, {l: 'One Mag-Kill?', k: 'omk', goal: 'yes'},
             {l: 'Kills / Mag', k: 'kpm', goal: 'max'}, {l: 'Burst DPS', k: 'burst', goal: 'max'},
             {l: 'TTK Burst', k: 'ttkb', goal: 'min'}, {l: 'Sustain DPS', k: 'sustain', goal: 'max'},
             {l: 'TTK Sustain', k: 'ttks', goal: 'min'}
         ];
-        
         b.innerHTML = '';
         rows.forEach(r => {
             let tr = `<tr><td><strong>${r.l}</strong></td>`;
