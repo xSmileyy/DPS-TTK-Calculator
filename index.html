@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>xSmileyy | Heroic & Legendary DPS Analyzer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --orange: #ff6600; --orange-glow: rgba(255, 102, 0, 0.4); --bg: #030303; --card-bg: rgba(15, 15, 15, 0.9); --glass: rgba(255, 255, 255, 0.03); --border: #222; --text-main: #ffffff; --text-dim: #888; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); background-image: radial-gradient(circle at 50% 0%, #1a0d00 0%, #030303 70%); color: var(--text-main); margin: 0; padding: 30px; min-height: 100vh; }
+        .container { max-width: 1700px; margin: auto; }
+        .nav-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 30px; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+        .logo { font-size: 28px; font-weight: 800; letter-spacing: -1px; text-transform: uppercase; color: #fff; }
+        .logo span { color: var(--orange); text-shadow: 0 0 15px var(--orange-glow); }
+        .discord-contact { display: flex; align-items: center; gap: 12px; background: rgba(88, 101, 242, 0.1); border: 1px solid rgba(88, 101, 242, 0.3); padding: 8px 16px; border-radius: 12px; }
+        .discord-icon { width: 20px; height: 20px; fill: #5865F2; }
+        .discord-name { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 14px; color: #fff; }
+        .main-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 35px; backdrop-filter: blur(20px); box-shadow: 0 30px 60px rgba(0,0,0,0.8); }
+        .section-title { font-size: 13px; font-weight: 800; color: var(--orange); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .section-title::after { content: ''; height: 1px; flex-grow: 1; background: var(--border); }
+        .input-block { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; background: var(--glass); padding: 20px; border-radius: 15px; margin-bottom: 20px; }
+        .group { display: flex; flex-direction: column; }
+        label { font-size: 10px; font-weight: 700; color: var(--text-dim); margin-bottom: 6px; text-transform: uppercase; }
+        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-size: 16px; font-family: 'JetBrains Mono'; transition: 0.3s; }
+        optgroup { background: #111; color: var(--orange); font-style: normal; }
+        option { background: #000; color: #fff; }
+        input[readonly] { color: var(--orange); border-color: rgba(255,102,0,0.3); }
+        .toggle-btn { flex: 1; background: #111; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 13px; text-transform: uppercase; }
+        .toggle-btn.active { background: var(--orange); border-color: var(--orange); box-shadow: 0 0 15px var(--orange-glow); }
+        .range-display { background: #000; padding: 20px; border-radius: 16px; border: 1px solid #222; margin-bottom: 30px; }
+        .range-result-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #111; font-size: 19px; font-family: 'JetBrains Mono'; }
+        .results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .res-box { background: #0a0a0a; border: 1px solid var(--border); padding: 18px; border-radius: 15px; }
+        .res-box.primary { border-color: var(--orange); }
+        .res-val { font-size: 22px; font-weight: 700; font-family: 'JetBrains Mono'; display: block; margin-top: 5px; }
+        .res-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header class="nav-header">
+        <div class="logo">xSmileyy <span>DPS Analyzer</span></div>
+        <div class="discord-contact">
+            <svg class="discord-icon" viewBox="0 0 127.14 96.36"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.71,32.65-1.82,56.6.4,80.21a105.73,105.73,0,0,0,32.17,16.15,77.7,77.7,0,0,0,6.89-11.11,68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14c2.72-27.22-4.55-50.87-19.4-72.13ZM42.45,65.69C36.18,65.69,31,60,31,53s5.07-12.67,11.41-12.67S54,46,53.86,53,48.74,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5.07-12.67,11.44-12.67S96.23,46,96.11,53,91,65.69,84.69,65.69Z"/></svg>
+            <span class="discord-name">xsmileyy.</span>
+        </div>
+    </header>
+
+    <div class="main-grid">
+        <div class="card">
+            <h3 style="margin-top:0;">Build Configuration</h3>
+            
+            <div class="section-title">Base Damage Calculation</div>
+            <div class="input-block">
+                <div class="group"><label>In-Game Menu Damage</label><input type="number" id="h-game" placeholder="0" oninput="calculateAll()"></div>
+                <div class="group"><label>All Weapon Damage %</label><input type="number" id="h-awd" placeholder="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Specific Weapon Damage %</label><input type="number" id="h-swd" placeholder="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Calculated Base Value</label><input type="text" id="h-res" readonly></div>
+            </div>
+
+            <div class="section-title">Weapon Stats</div>
+            <div class="input-block">
+                <div class="group"><label>Base Damage</label><input type="number" id="base" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>RPM</label><input type="number" id="rpm" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Mag Size</label><input type="number" id="mag" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Reload Time (s)</label><input type="number" id="rel" value="0" oninput="calculateAll()"></div>
+            </div>
+
+            <div class="section-title">Attributes & Bonuses</div>
+            <div class="input-block">
+                <div class="group"><label>All Weapon Damage %</label><input type="number" id="awd" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Specific Weapon Damage %</label><input type="number" id="swd" value="0" oninput="calculateAll()"></div>
+                <div class="group" style="grid-column: span 2;"><label>Total Weapon Damage (Talents) %</label><input type="number" id="twd" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Crit Hit Chance %</label><input type="number" id="chc" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Crit Hit Damage %</label><input type="number" id="chd" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Headshot Damage %</label><input type="number" id="hsd" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Damage to Target Out of Cover %</label><input type="number" id="dttooc" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Damage to Armor %</label><input type="number" id="dta" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Damage to Health %</label><input type="number" id="dth" value="0" oninput="calculateAll()"></div>
+            </div>
+
+            <div class="section-title">Simulation Scenario Rates</div>
+            <div class="input-block">
+                <div class="group"><label>Headshot Rate %</label><input type="number" id="r-hs" value="20" oninput="calculateAll()"></div>
+                <div class="group"><label>Out of Cover Rate %</label><input type="number" id="r-ooc" value="60" oninput="calculateAll()"></div>
+                <div class="group"><label>Armor Proportion %</label><input type="number" id="r-arm" value="80" oninput="calculateAll()"></div>
+            </div>
+
+            <div class="section-title">Amplifiers (Multipliers)</div>
+            <div class="input-block">
+                <div class="group"><label>Multiplier 1 %</label><input type="number" id="m1" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Multiplier 2 %</label><input type="number" id="m2" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Multiplier 3 %</label><input type="number" id="m3" value="0" oninput="calculateAll()"></div>
+                <div class="group"><label>Multiplier 4 %</label><input type="number" id="m4" value="0" oninput="calculateAll()"></div>
+            </div>
+        </div>
+
+        <div class="card" style="border-left: 4px solid var(--orange);">
+            <h3 style="margin-top:0;">Analysis & Results</h3>
+            
+            <div class="section-title">Shooting Range Validator (Exact)</div>
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <button class="toggle-btn active" id="btn-dta" onclick="toggleMode('dta')">Vs Armor (DTA)</button>
+                <button class="toggle-btn" id="btn-dth" onclick="toggleMode('dth')">Vs Health (DTH)</button>
+            </div>
+
+            <div class="range-display">
+                <div class="range-result-row"><span>Body Hit (White)</span><b id="val-body">-</b></div>
+                <div class="range-result-row"><span>Crit Body (Orange)</span><b id="val-body-crit" style="color: #ffaa00;">-</b></div>
+                <div class="range-result-row"><span>Headshot (Red)</span><b id="val-head" style="color: #ff4444;">-</b></div>
+                <div class="range-result-row"><span>Crit Headshot (Dark Red)</span><b id="val-head-crit" style="color: #ff0000;">-</b></div>
+            </div>
+
+            <div class="section-title">Simulation Averages</div>
+            <div class="results-grid" style="margin-bottom: 30px;">
+                <div class="res-box primary"><span class="res-label">Avg Damage / Shot</span><span class="res-val orange" id="res-avg">-</span></div>
+                <div class="res-box"><span class="res-label">Total Mag Damage</span><span class="res-val" id="res-mag">-</span></div>
+                <div class="res-box"><span class="res-label">Burst DPS</span><span class="res-val" id="res-burst">-</span></div>
+                <div class="res-box"><span class="res-label">Sustain DPS</span><span class="res-val" id="res-sustain">-</span></div>
+            </div>
+
+            <div class="section-title">Target EHP Analysis</div>
+            <div class="group" style="margin-bottom:20px;">
+                <label>Select Difficulty & Team Size</label>
+                <select id="enemy-select" onchange="calculateAll()">
+                    <optgroup label="HEROIC DIFFICULTY">
+                        <option value="2827032">Heroic: Normal (Red) - 1-4P</option>
+                        <option value="6360822">Heroic: Veteran (Purple) - Solo</option>
+                        <option value="9894612">Heroic: Elite (Yellow) - Solo</option>
+                        <option value="19789226">Heroic: Named (Boss) - Solo</option>
+                        <option value="7632986">Heroic: Veteran (Purple) - 2P</option>
+                        <option value="12580292">Heroic: Elite (Yellow) - 2P</option>
+                        <option value="27648374">Heroic: Named (Boss) - 2P</option>
+                        <option value="9018232">Heroic: Veteran (Purple) - 3P</option>
+                        <option value="14672297">Heroic: Elite (Yellow) - 3P</option>
+                        <option value="38673802">Heroic: Named (Boss) - 3P</option>
+                        <option value="10544830">Heroic: Veteran (Purple) - 4P</option>
+                        <option value="16905653" selected>Heroic: Elite (Yellow) - 4P</option>
+                        <option value="47296250">Heroic: Named (Boss) - 4P</option>
+                    </optgroup>
+                    <optgroup label="LEGENDARY DIFFICULTY">
+                        <option value="13023223">Legendary: Elite (Yellow) - Solo</option>
+                        <option value="16511211">Legendary: Elite (Yellow) - 2P</option>
+                        <option value="19163200">Legendary: Elite (Yellow) - 3P</option>
+                        <option value="21950450">Legendary: Elite (Yellow) - 4P</option>
+                        <option value="56250000">Legendary: Heavy (Chungus) - 4P</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="results-grid">
+                <div class="res-box"><span class="res-label">One-Mag Kill?</span><span class="res-val" id="res-omk">-</span></div>
+                <div class="res-box"><span class="res-label">TTK (Burst)</span><span class="res-val" id="res-ttkb">-</span></div>
+                <div class="res-box primary"><span class="res-label">TTK (Sustain)</span><span class="res-val" id="res-ttks">-</span></div>
+                <div class="res-box"><span class="res-label">Kills per Magazine</span><span class="res-val" id="res-kpm">-</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let vMode = 'dta';
+    function toggleMode(m) { vMode = m; document.getElementById('btn-dta').classList.toggle('active', m === 'dta'); document.getElementById('btn-dth').classList.toggle('active', m === 'dth'); calculateAll(); }
+
+    function formatGameNum(num) {
+        if (num >= 1000000) {
+            return (num / 1000000).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " M";
+        } else if (num >= 1000) {
+            return (num / 1000).toLocaleString('en-US', {maximumFractionDigits: 1}) + " K";
+        }
+        return Math.round(num).toLocaleString('en-US');
+    }
+
+    function calculateAll() {
+        const hG = parseFloat(document.getElementById('h-game').value) || 0;
+        const hA = parseFloat(document.getElementById('h-awd').value) || 0;
+        const hS = parseFloat(document.getElementById('h-swd').value) || 0;
+        const hRes = hG / (1 + (hA+hS)/100);
+        document.getElementById('h-res').value = hRes > 0 ? hRes.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 1}) : "0.0";
+
+        const base = parseFloat(document.getElementById('base').value) || 0;
+        const awd = parseFloat(document.getElementById('awd').value) || 0;
+        const swd = parseFloat(document.getElementById('swd').value) || 0;
+        const twd = parseFloat(document.getElementById('twd').value) || 0;
+        const chc = Math.min(60, parseFloat(document.getElementById('chc').value) || 0) / 100;
+        const chd = (parseFloat(document.getElementById('chd').value) || 0) / 100;
+        const hsd = (parseFloat(document.getElementById('hsd').value) || 0) / 100;
+        const dttooc = (parseFloat(document.getElementById('dttooc').value) || 0) / 100;
+        const dta = (parseFloat(document.getElementById('dta').value) || 0) / 100;
+        const dth = (parseFloat(document.getElementById('dth').value) || 0) / 100;
+        const mMult = [1,2,3,4].reduce((acc, i) => acc * (parseFloat(document.getElementById('m'+i).value)/100 + 1), 1);
+
+        const rHs = (parseFloat(document.getElementById('r-hs').value) || 0) / 100;
+        const rOoc = (parseFloat(document.getElementById('r-ooc').value) || 0) / 100;
+        const rArm = (parseFloat(document.getElementById('r-arm').value) || 0) / 100;
+
+        const rangeArmor = vMode === 'dta' ? (1 + dta) : (1 + dth);
+        const vBody = base * (1 + (awd+swd)/100) * (1 + twd/100) * (1 + dttooc) * rangeArmor * mMult;
+        
+        document.getElementById('val-body').innerText = Math.round(vBody).toLocaleString('en-US');
+        document.getElementById('val-body-crit').innerText = Math.round(vBody * (1 + chd)).toLocaleString('en-US');
+        document.getElementById('val-head').innerText = Math.round(vBody * (1 + hsd)).toLocaleString('en-US');
+        document.getElementById('val-head-crit').innerText = Math.round(vBody * (1 + chd + hsd)).toLocaleString('en-US');
+
+        const simArmor = (1 + (dta * rArm) + (dth * (1 - rArm)));
+        const simOoc = (1 + (dttooc * rOoc));
+        const simBaseBody = base * (1 + (awd+swd)/100) * (1 + twd/100) * simOoc * simArmor * mMult;
+        const avgShot = simBaseBody * (1 + (chc * chd)) * (1 + (rHs * hsd));
+
+        const rpm = parseFloat(document.getElementById('rpm').value) || 0;
+        const mag = parseFloat(document.getElementById('mag').value) || 0;
+        const rel = parseFloat(document.getElementById('rel').value) || 0;
+        const targetEHP = parseFloat(document.getElementById('enemy-select').value);
+
+        const burstDps = (rpm / 60) * avgShot;
+        const magTime = (rpm > 0) ? mag / (rpm / 60) : 0;
+        const sustainDps = (mag > 0 && (rel + magTime) > 0) ? (mag * avgShot) / (rel + magTime) : 0;
+        const magDmg = avgShot * mag;
+
+        document.getElementById('res-avg').innerText = formatGameNum(avgShot);
+        document.getElementById('res-mag').innerText = formatGameNum(magDmg);
+        document.getElementById('res-burst').innerText = formatGameNum(burstDps);
+        document.getElementById('res-sustain').innerText = formatGameNum(sustainDps);
+
+        const canKill = magDmg >= targetEHP;
+        document.getElementById('res-omk').innerText = canKill ? "YES" : "NO";
+        document.getElementById('res-omk').style.color = canKill ? "#00ff88" : "#ff4444";
+        
+        document.getElementById('res-ttkb').innerText = burstDps > 0 ? (targetEHP / burstDps).toFixed(2) + "s" : "0.00s";
+        document.getElementById('res-ttks').innerText = sustainDps > 0 ? (targetEHP / sustainDps).toFixed(2) + "s" : "0.00s";
+        document.getElementById('res-kpm').innerText = targetEHP > 0 ? (magDmg / targetEHP).toFixed(2) : "0.00";
+    }
+    calculateAll();
+</script>
+</body>
+</html>
