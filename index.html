@@ -41,9 +41,12 @@
         .hint-text i { color: var(--orange); margin-right: 5px; }
 
         label { font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 4px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 15px; font-family: 'JetBrains Mono'; width: 100%; box-sizing: border-box; }
+        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 15px; font-family: 'JetBrains Mono'; width: 100%; box-sizing: border-box; transition: all 0.3s ease; }
         
         input:focus { border-color: var(--orange); outline: none; }
+
+        /* Highlight Style für automatische Felder */
+        .auto-highlight { border-color: var(--orange) !important; color: var(--orange) !important; box-shadow: 0 0 10px var(--orange-glow); }
 
         .range-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
         .range-box { background: #050505; border: 1px solid #1a1a1a; padding: 12px; border-radius: 10px; text-align: center; }
@@ -99,14 +102,14 @@
             <div class="input-block">
                 <div class="group"><label>Weapon Damage</label><input type="number" id="menu-dmg" placeholder=""></div>
                 <div class="group"><label>AWD (All Weapon Damage %)</label><input type="number" id="menu-awd" placeholder=""></div>
-                <div class="group"><label>SWD (Specific Weapon Damage % e.g. AR, SMG)</label><input type="number" id="menu-swd" placeholder=""></div>
+                <div class="group"><label>SWD (Specific Weapon Damage %)</label><input type="number" id="menu-swd" placeholder=""></div>
                 <div class="group"><label style="color:var(--orange)">Result: Base Damage</label><input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;"></div>
             </div>
 
             <div class="section-title">Weapon Presets (Base Dmg Only)</div>
             <div class="input-block">
                 <div class="group" style="grid-column: span 4;">
-                    <label>Select Weapon Template for Base Damage</label>
+                    <label>Select Weapon Template</label>
                     <select id="preset-select" onchange="applyPreset()">
                         <option value="">-- Choose a Weapon --</option>
                         <optgroup label="Assault Rifles">
@@ -138,7 +141,7 @@
 
             <div class="section-title">1. Weapon Data</div>
             <div class="input-block">
-                <div class="group"><label style="color:var(--orange)">Base Damage</label><input type="number" id="base" placeholder="" style="border-color:var(--orange); color:var(--orange); font-weight:bold;"></div>
+                <div class="group"><label>Base Damage</label><input type="number" id="base" placeholder=""></div>
                 <div class="group"><label>RPM</label><input type="number" id="rpm" placeholder=""></div>
                 <div class="group"><label>Mag Size</label><input type="number" id="mag" placeholder=""></div>
                 <div class="group"><label>Reload (s)</label><input type="number" id="rel" placeholder=""></div>
@@ -148,7 +151,7 @@
             <div class="input-block">
                 <div class="group"><label>AWD (All Weapon) %</label><input type="number" id="awd" placeholder=""></div>
                 <div class="group"><label>SWD (Weapon Type) %</label><input type="number" id="swd" placeholder=""></div>
-                <div class="group" style="grid-column: span 2;"><label>TWD (e.g. Obliterate) %</label><input type="number" id="twd" placeholder=""></div>
+                <div class="group" style="grid-column: span 2;"><label>TWD (TOTAL WEAPON DAMAGE e.g. Obliterate, Vigilance) %</label><input type="number" id="twd" placeholder=""></div>
             </div>
 
             <div class="section-title">3. Combat Stats & Rates</div>
@@ -159,23 +162,21 @@
                 <div class="group"><label>DttOOC %</label><input type="number" id="dttooc" placeholder=""></div>
                 <div class="group"><label>DtA %</label><input type="number" id="dta" placeholder=""></div>
                 <div class="group"><label>DtH %</label><input type="number" id="dth" placeholder=""></div>
-                <div class="group"></div><div class="group"></div>
             </div>
 
-            <div class="section-title">4. %-Rate Enemies for Calculation</div>
+            <div class="section-title">4. %-Rate Enemies (Calculated Avg)</div>
             <div class="input-block">
-                <div class="group"><label style="color:var(--orange)">HS-Rate % (20% recom.)</label><input type="number" id="h-rate" placeholder="" style="border-color:var(--orange)"></div>
-                <div class="group"><label style="color:var(--orange)">DTTOOC-Rate % (60% recom.)</label><input type="number" id="d-rate" placeholder="" style="border-color:var(--orange)"></div>
-                <div class="group"><label style="color:var(--orange)">Armor-Rate % (80% recom.)</label><input type="number" id="a-rate" placeholder="" style="border-color:var(--orange)"></div>
-                <div class="group"></div>
+                <div class="group"><label>HS-Rate %</label><input type="number" id="h-rate" value="20"></div>
+                <div class="group"><label>DTTOOC-Rate %</label><input type="number" id="d-rate" value="60"></div>
+                <div class="group"><label>Armor-Rate %</label><input type="number" id="a-rate" value="80"></div>
             </div>
 
             <div class="section-title">5. Amplifiers</div>
             <div class="input-block">
-                <div class="group"><label title="Amp 1 (e.g. Striker, Glass Cannon) %">Amp 1 (e.g. Striker, Glass Cannon) %</label><input type="number" id="m1" placeholder=""></div>
-                <div class="group"><label title="Amp 2 (e.g. Striker, Glass Cannon) %">Amp 2 (e.g. Striker, Glass Cannon) %</label><input type="number" id="m2" placeholder=""></div>
-                <div class="group"><label title="Amp 3 (e.g. Striker, Glass Cannon) %">Amp 3 (e.g. Striker, Glass Cannon) %</label><input type="number" id="m3" placeholder=""></div>
-                <div class="group"><label title="Amp 4 (e.g. Striker, Glass Cannon) %">Amp 4 (e.g. Striker, Glass Cannon) %</label><input type="number" id="m4" placeholder=""></div>
+                <div class="group"><label>Amp 1 %</label><input type="number" id="m1" placeholder=""></div>
+                <div class="group"><label>Amp 2 %</label><input type="number" id="m2" placeholder=""></div>
+                <div class="group"><label>Amp 3 %</label><input type="number" id="m3" placeholder=""></div>
+                <div class="group"><label>Amp 4 %</label><input type="number" id="m4" placeholder=""></div>
             </div>
             
             <div class="input-block" style="border: 1px dashed var(--orange); grid-template-columns: repeat(3, 1fr);">
@@ -191,34 +192,24 @@
                 <button class="t-btn" id="t-health" onclick="toggleTarget('health')">Target: Health (DtH)</button>
             </div>
             <div class="range-grid">
-                <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body" style="color:#fff">-</span></div>
-                <div class="range-box"><label>Crit Body</label><span class="range-val" id="st-crit" style="color:var(--crit)">-</span></div>
-                <div class="range-box"><label>Headshot</label><span class="range-val" id="st-head" style="color:var(--orange)">-</span></div>
-                <div class="range-box"><label>Crit Head</label><span class="range-val" id="st-head-crit" style="color:var(--head)">-</span></div>
+                <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body">-</span></div>
+                <div class="range-box"><label>Crit Body</label><span class="range-val" id="st-crit">-</span></div>
+                <div class="range-box"><label>Headshot</label><span class="range-val" id="st-head">-</span></div>
+                <div class="range-box"><label>Crit Head</label><span class="range-val" id="st-head-crit">-</span></div>
             </div>
 
             <div class="section-title">Kill Efficiency</div>
             <select id="enemy-select" style="width:100%; margin-bottom:15px;">
-                <optgroup label="Heroic (Scalings)">
-                    <option value="11200000">Heroic 1P Elite (11.2M)</option>
-                    <option value="16905653" selected>Heroic 4P Elite (16.9M)</option>
-                    <option value="32000000">Heroic 1P Named (32.0M)</option>
-                    <option value="47296250">Heroic 4P Named (47.3M)</option>
-                    <option value="25000000">Heroic 4P Chugger (25.0M)</option>
-                </optgroup>
-                <optgroup label="Legendary (Scalings)">
-                    <option value="16500000">Legendary 1P Elite (16.5M)</option>
-                    <option value="25172134">Legendary 4P Elite (25.2M)</option>
-                    <option value="48000000">Legendary 1P Named (48.0M)</option>
-                    <option value="72146660">Legendary 4P Named (72.1M)</option>
-                    <option value="38000000">Legendary 4P Chugger (38.0M)</option>
-                </optgroup>
+                <option value="16905653">Heroic 4P Elite (16.9M)</option>
+                <option value="47296250">Heroic 4P Named (47.3M)</option>
+                <option value="25172134">Legendary 4P Elite (25.2M)</option>
+                <option value="72146660">Legendary 4P Named (72.1M)</option>
             </select>
             <div class="results-grid">
                 <div class="res-box" id="omk-box"><span class="res-label">One-Mag Kill?</span><span class="res-val" id="res-omk">-</span></div>
                 <div class="res-box"><span class="res-label">Kills / Mag</span><span class="res-val" id="res-kpm">-</span></div>
-                <div class="res-box" style="border-color:var(--orange)"><span class="res-label">TTK Burst</span><span class="res-val" id="res-ttkb">-</span></div>
-                <div class="res-box" style="border-color:var(--orange)"><span class="res-label">TTK Sustain</span><span class="res-val" id="res-ttks">-</span></div>
+                <div class="res-box"><span class="res-label">TTK Burst</span><span class="res-val" id="res-ttkb">-</span></div>
+                <div class="res-box"><span class="res-label">TTK Sustain</span><span class="res-val" id="res-ttks">-</span></div>
             </div>
 
             <div class="section-title">Comparison Matrix</div>
@@ -240,81 +231,78 @@
         currentTarget = t;
         document.getElementById('t-elite').classList.toggle('active', t === 'elite');
         document.getElementById('t-health').classList.toggle('active', t === 'health');
-        
-        const bodyHitDisplay = document.getElementById('st-body');
-        if(t === 'elite') {
-            bodyHitDisplay.style.color = 'var(--ingame-blue)';
-        } else {
-            bodyHitDisplay.style.color = '#fff';
-        }
-        
+        document.getElementById('st-body').style.color = (t === 'elite') ? 'var(--ingame-blue)' : '#fff';
         calculate();
     }
 
     const weaponPresets = {
-        "lexington": { b: 48699.5 },
-        "st-elmos": { b: 46917.5 },
-        "eagle-bearer": { b: 47364.5 },
-        "the-bighorn": { b: 57218.0 },
-        "capacitor": { b: 57617.5 },
-        "strega": { b: 57646.0 },
-        "chameleon": { b: 44670.5 },
-        "ouroboros": { b: 38300.5 },
-        "lady-death": { b: 35409.0 },
-        "backfire": { b: 50998.5 },
-        "chatterbox": { b: 39457.0 },
-        "oxpecker": { b: 46405.5 },
-        "bullet-king": { b: 54604.0 },
-        "bluescreen": { b: 62361.0 },
-        "iron-lung": { b: 54322.0 },
-        "pestilence": { b: 48300.0 },
-        "pakhan": { b: 71538.0 }
+        "lexington": { b: 48699.5 }, "st-elmos": { b: 46917.5 }, "eagle-bearer": { b: 47364.5 },
+        "the-bighorn": { b: 57218.0 }, "capacitor": { b: 57617.5 }, "strega": { b: 57646.0 },
+        "chameleon": { b: 44670.5 }, "ouroboros": { b: 38300.5 }, "lady-death": { b: 35409.0 },
+        "backfire": { b: 50998.5 }, "chatterbox": { b: 39457.0 }, "oxpecker": { b: 46405.5 },
+        "bullet-king": { b: 54604.0 }, "bluescreen": { b: 62361.0 }, "iron-lung": { b: 54322.0 },
+        "pestilence": { b: 48300.0 }, "pakhan": { b: 71538.0 }
     };
 
     let builds = [];
 
     window.onload = function() {
         const saved = localStorage.getItem('dps_matrix_builds');
-        if (saved) {
-            builds = JSON.parse(saved);
-            renderMatrix();
-        }
+        if (saved) { builds = JSON.parse(saved); renderMatrix(); }
         toggleTarget('elite');
-        calculate();
     };
 
     function applyPreset() {
         const key = document.getElementById('preset-select').value;
         if (key && weaponPresets[key]) {
-            const p = weaponPresets[key];
-            document.getElementById('base').value = p.b;
+            document.getElementById('base').value = weaponPresets[key].b;
             document.getElementById('build-name').value = document.getElementById('preset-select').options[document.getElementById('preset-select').selectedIndex].text;
             calculate();
         }
     }
 
     function calculate() {
-        const mDmgI = parseFloat(document.getElementById('menu-dmg').value);
-        const mAwdI = parseFloat(document.getElementById('menu-awd').value);
-        const mSwdI = parseFloat(document.getElementById('menu-swd').value);
-        
-        if(!isNaN(mDmgI) && !isNaN(mAwdI) && !isNaN(mSwdI)) {
-            const cb = mDmgI / (1 + (mAwdI + mSwdI)/100);
-            const finalBase = Number.isInteger(cb) ? cb : cb.toFixed(1);
-            document.getElementById('calc-base-res').value = finalBase;
-            
-            // AUTO-INJECTION: Übertrage AWD und SWD automatisch in Sektion 2
-            document.getElementById('base').value = finalBase;
-            document.getElementById('awd').value = mAwdI;
-            document.getElementById('swd').value = mSwdI;
+        // --- SOFORTIGE SPIEGELUNG & HIGHLIGHTING ---
+        const mAwd = document.getElementById('menu-awd').value;
+        const mSwd = document.getElementById('menu-swd').value;
+        const mDmg = document.getElementById('menu-dmg').value;
+
+        // AWD Sync
+        const awdField = document.getElementById('awd');
+        if (mAwd !== "") {
+            awdField.value = mAwd;
+            awdField.classList.add('auto-highlight');
         } else {
-            // Falls Sektion 0 nicht vollständig ist, berechnen wir das Resultat-Feld leer
-            document.getElementById('calc-base-res').value = "";
+            awdField.classList.remove('auto-highlight');
         }
 
-        const b = parseFloat(document.getElementById('base').value)||0, rpm = parseFloat(document.getElementById('rpm').value)||0;
+        // SWD Sync
+        const swdField = document.getElementById('swd');
+        if (mSwd !== "") {
+            swdField.value = mSwd;
+            swdField.classList.add('auto-highlight');
+        } else {
+            swdField.classList.remove('auto-highlight');
+        }
+
+        // Base Damage Calculation & Sync
+        const bField = document.getElementById('base');
+        const d = parseFloat(mDmg), a = parseFloat(mAwd), s = parseFloat(mSwd);
+        if(!isNaN(d) && !isNaN(a) && !isNaN(s)) {
+            const cb = d / (1 + (a + s)/100);
+            const finalBase = Number.isInteger(cb) ? cb : cb.toFixed(1);
+            document.getElementById('calc-base-res').value = finalBase;
+            bField.value = finalBase;
+            bField.classList.add('auto-highlight');
+        } else {
+            document.getElementById('calc-base-res').value = "";
+            bField.classList.remove('auto-highlight');
+        }
+
+        // --- HAUPTBERECHNUNG ---
+        const b = parseFloat(bField.value)||0, rpm = parseFloat(document.getElementById('rpm').value)||0;
         const mag = parseFloat(document.getElementById('mag').value)||0, rel = parseFloat(document.getElementById('rel').value)||0;
-        const awd = parseFloat(document.getElementById('awd').value)||0, swd = parseFloat(document.getElementById('swd').value)||0, twd = parseFloat(document.getElementById('twd').value)||0;
+        const awd = parseFloat(awdField.value)||0, swd = parseFloat(swdField.value)||0, twd = parseFloat(document.getElementById('twd').value)||0;
         const chc = Math.min(60, parseFloat(document.getElementById('chc').value)||0)/100, chd = (parseFloat(document.getElementById('chd').value)||0)/100, hsd = (parseFloat(document.getElementById('hsd').value)||0)/100;
         const hr = (parseFloat(document.getElementById('h-rate').value)||0)/100, ooc = (parseFloat(document.getElementById('dttooc').value)||0)/100, or = (parseFloat(document.getElementById('d-rate').value)||0)/100;
         const dta = (parseFloat(document.getElementById('dta').value)||0)/100, dth = (parseFloat(document.getElementById('dth').value)||0)/100, ar = (parseFloat(document.getElementById('a-rate').value)||0)/100;
@@ -322,9 +310,6 @@
 
         const wDmg = b * (1 + (awd + swd)/100) * (1 + twd/100);
         const stMult = (1 + ooc) * (currentTarget === 'elite' ? (1 + dta) : (1 + dth)) * m;
-
-        const omkElement = document.getElementById('res-omk');
-        const omkBox = document.getElementById('omk-box');
 
         if(b > 0) {
             document.getElementById('st-body').innerText = Math.floor(wDmg * stMult).toLocaleString();
@@ -336,24 +321,15 @@
             const burst = (rpm/60) * avg, mDmgV = avg * mag;
             const sustain = mDmgV / ((mag/(rpm/60)) + rel);
             const ehp = parseFloat(document.getElementById('enemy-select').value);
-
-            const ttkb = (ehp/burst);
-            const ttks = mDmgV >= ehp ? ttkb : ttkb + (Math.ceil(ehp/mDmgV)-1)*rel;
+            const ttkb = (ehp/burst), ttks = mDmgV >= ehp ? ttkb : ttkb + (Math.ceil(ehp/mDmgV)-1)*rel;
 
             const isOMK = mDmgV >= ehp;
-            omkElement.innerText = isOMK ? "YES" : "NO";
-            omkBox.style.color = isOMK ? "var(--pos)" : "var(--neg)";
-            omkBox.style.backgroundColor = isOMK ? "rgba(0, 255, 136, 0.05)" : "rgba(255, 68, 68, 0.05)";
-
+            document.getElementById('res-omk').innerText = isOMK ? "YES" : "NO";
+            document.getElementById('omk-box').style.backgroundColor = isOMK ? "rgba(0, 255, 136, 0.05)" : "rgba(255, 68, 68, 0.05)";
             document.getElementById('res-kpm').innerText = (mDmgV/ehp).toFixed(2);
             document.getElementById('res-ttkb').innerText = isFinite(ttkb) ? ttkb.toFixed(3) + "s" : "-";
             document.getElementById('res-ttks').innerText = isFinite(ttks) ? ttks.toFixed(3) + "s" : "-";
-
             return { n: "", mDmg: mDmgV, omk: isOMK ? "YES" : "NO", kpm: parseFloat((mDmgV/ehp).toFixed(2)), burst, ttkb, sustain, ttks };
-        } else {
-            omkElement.innerText = "-";
-            omkBox.style.color = "";
-            omkBox.style.backgroundColor = "";
         }
         return null;
     }
@@ -362,38 +338,23 @@
         const s = calculate();
         if(s) {
             s.n = document.getElementById('build-name').value || "Build " + (builds.length+1);
-            builds.push(s);
-            saveToLocal();
-            renderMatrix();
+            builds.push(s); saveToLocal(); renderMatrix();
         }
     }
 
-    function removeBuild(index) {
-        builds.splice(index, 1);
-        saveToLocal();
-        renderMatrix();
-    }
-
+    function removeBuild(index) { builds.splice(index, 1); saveToLocal(); renderMatrix(); }
     function clearMatrix() { builds = []; saveToLocal(); renderMatrix(); }
-
-    function saveToLocal() {
-        localStorage.setItem('dps_matrix_builds', JSON.stringify(builds));
-    }
+    function saveToLocal() { localStorage.setItem('dps_matrix_builds', JSON.stringify(builds)); }
 
     function renderMatrix() {
         const h = document.getElementById('comp-header'), b = document.getElementById('comp-body');
         h.innerHTML = '<th>Metric</th>';
-        builds.forEach((x, index) => {
-            h.innerHTML += `<th>${x.n}<span class="del-btn" onclick="removeBuild(${index})">X</span></th>`;
-        });
+        builds.forEach((x, i) => h.innerHTML += `<th>${x.n}<span class="del-btn" onclick="removeBuild(${i})">X</span></th>`);
         
         const rows = [
-            {l: 'MAG Damage', k: 'mDmg', goal: 'max'},
-            {l: 'One Mag-Kill?', k: 'omk', goal: 'yes'},
-            {l: 'Kills / Mag', k: 'kpm', goal: 'max'},
-            {l: 'Burst DPS', k: 'burst', goal: 'max'},
-            {l: 'TTK Burst', k: 'ttkb', goal: 'min'},
-            {l: 'Sustain DPS', k: 'sustain', goal: 'max'},
+            {l: 'MAG Damage', k: 'mDmg', goal: 'max'}, {l: 'One Mag-Kill?', k: 'omk', goal: 'yes'},
+            {l: 'Kills / Mag', k: 'kpm', goal: 'max'}, {l: 'Burst DPS', k: 'burst', goal: 'max'},
+            {l: 'TTK Burst', k: 'ttkb', goal: 'min'}, {l: 'Sustain DPS', k: 'sustain', goal: 'max'},
             {l: 'TTK Sustain', k: 'ttks', goal: 'min'}
         ];
         
@@ -405,39 +366,18 @@
                 if(r.goal === 'max') bestVal = Math.max(...builds.map(x => x[r.k]));
                 if(r.goal === 'min') bestVal = Math.min(...builds.map(x => x[r.k]));
             }
-
             builds.forEach(x => {
-                let currentVal = x[r.k];
-                let cellClass = '';
-                let diffHtml = '';
-
-                if(r.k === 'omk') {
-                    cellClass = (currentVal === "YES") ? 'best-cell' : 'fail-cell';
-                } else if(builds.length > 1) {
-                    if(r.goal === 'max') {
-                        if(currentVal === bestVal) cellClass = 'best-cell';
-                        else {
-                            let p = ((currentVal / bestVal) - 1) * 100;
-                            diffHtml = `<span class="diff-tag">${p.toFixed(1)}%</span>`;
-                        }
-                    }
-                    if(r.goal === 'min') {
-                        if(currentVal === bestVal) cellClass = 'best-cell';
-                        else {
-                            let p = ((currentVal / bestVal) - 1) * 100;
-                            diffHtml = `<span class="diff-tag">+${p.toFixed(1)}% slower</span>`;
-                        }
+                let val = x[r.k], cellClass = '', diff = '';
+                if(r.k === 'omk') cellClass = (val === "YES") ? 'best-cell' : 'fail-cell';
+                else if(builds.length > 1) {
+                    if(val === bestVal) cellClass = 'best-cell';
+                    else {
+                        let p = ((val / bestVal) - 1) * 100;
+                        diff = `<span class="diff-tag">${r.goal === 'min' ? '+' : ''}${p.toFixed(1)}%${r.goal === 'min' ? ' slower' : ''}</span>`;
                     }
                 }
-
-                let display = currentVal;
-                if(typeof currentVal === 'number') {
-                    if(r.l.includes('TTK')) display = isFinite(currentVal) ? currentVal.toFixed(3) + 's' : "-";
-                    else display = Math.round(currentVal).toLocaleString();
-                    if(r.l.includes('/') ) display = currentVal.toFixed(2);
-                }
-
-                tr += `<td class="${cellClass}">${display}${diffHtml}</td>`;
+                let disp = typeof val === 'number' ? (r.l.includes('TTK') ? (isFinite(val) ? val.toFixed(3)+'s' : "-") : (r.l.includes('/') ? val.toFixed(2) : Math.round(val).toLocaleString())) : val;
+                tr += `<td class="${cellClass}">${disp}${diff}</td>`;
             });
             b.innerHTML += tr + '</tr>';
         });
