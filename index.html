@@ -24,7 +24,7 @@
         input, select { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-size: 16px; font-family: 'JetBrains Mono'; transition: 0.3s; }
         optgroup { background: #1a1a1a; color: var(--orange); font-style: normal; font-weight: 800; }
         option { background: #000; color: #fff; padding: 5px; }
-        input[readonly] { color: var(--orange); border-color: rgba(255,102,0,0.3); }
+        input[readonly] { color: var(--orange); border-color: rgba(255,102,0,0.3); outline: none; cursor: pointer; }
         .toggle-btn { flex: 1; background: #111; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 13px; text-transform: uppercase; }
         .toggle-btn.active { background: var(--orange); border-color: var(--orange); box-shadow: 0 0 15px var(--orange-glow); }
         .range-display { background: #000; padding: 20px; border-radius: 16px; border: 1px solid #222; margin-bottom: 30px; }
@@ -56,7 +56,7 @@
                 <div class="group"><label>Menu Damage</label><input type="number" id="h-game" placeholder="0"></div>
                 <div class="group"><label>All Wpn Dmg %</label><input type="number" id="h-awd" placeholder="0"></div>
                 <div class="group"><label>Spec. Wpn Dmg %</label><input type="number" id="h-swd" placeholder="0"></div>
-                <div class="group"><label>Calculated Base</label><input type="text" id="h-res" readonly></div>
+                <div class="group"><label>Calculated Base (Copy Me)</label><input type="text" id="h-res" readonly onclick="this.select()"></div>
             </div>
 
             <div class="section-title">Weapon Stats</div>
@@ -181,11 +181,11 @@
     function saveInputs() {
         const data = {};
         inputs.forEach(i => { if(i.id) data[i.id] = i.value; });
-        localStorage.setItem('dps_calc_data_v2', JSON.stringify(data));
+        localStorage.setItem('dps_calc_data_v3', JSON.stringify(data));
     }
 
     function loadInputs() {
-        const data = JSON.parse(localStorage.getItem('dps_calc_data_v2'));
+        const data = JSON.parse(localStorage.getItem('dps_calc_data_v3'));
         if(data) {
             Object.keys(data).forEach(id => {
                 const el = document.getElementById(id);
@@ -195,29 +195,39 @@
     }
 
     function formatGameNum(num) {
+        if (!isFinite(num) || isNaN(num)) return "-";
         if (num >= 1000000) return (num / 1000000).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " M";
         if (num >= 1000) return (num / 1000).toLocaleString('en-US', {maximumFractionDigits: 1}) + " K";
         return Math.round(num).toLocaleString('en-US');
     }
 
     function calculateAll() {
-        const hG = parseFloat(document.getElementById('h-game').value) || 0;
-        const hA = parseFloat(document.getElementById('h-awd').value) || 0;
-        const hS = parseFloat(document.getElementById('h-swd').value) || 0;
-        const hRes = hG / (1 + (hA+hS)/100);
-        document.getElementById('h-res').value = hRes > 0 ? hRes.toLocaleString('en-US', {maximumFractionDigits: 1}) : "0";
+        // Safe Number Parser to prevent NaN
+        const getVal = (id) => {
+            const val = parseFloat(document.getElementById(id).value);
+            return isNaN(val) ? 0 : val;
+        };
 
-        const base = parseFloat(document.getElementById('base').value) || 0;
-        const awd = parseFloat(document.getElementById('awd').value) || 0;
-        const swd = parseFloat(document.getElementById('swd').value) || 0;
-        const twd = parseFloat(document.getElementById('twd').value) || 0;
-        const chc = Math.min(60, parseFloat(document.getElementById('chc').value) || 0) / 100;
-        const chd = (parseFloat(document.getElementById('chd').value) || 0) / 100;
-        const hsd = (parseFloat(document.getElementById('hsd').value) || 0) / 100;
-        const dttooc = (parseFloat(document.getElementById('dttooc').value) || 0) / 100;
-        const dta = (parseFloat(document.getElementById('dta').value) || 0) / 100;
-        const dth = (parseFloat(document.getElementById('dth').value) || 0) / 100;
-        const mMult = [1,2,3,4].reduce((acc, i) => acc * (parseFloat(document.getElementById('m'+i).value)/100 + 1), 1);
+        const hG = getVal('h-game');
+        const hA = getVal('h-awd');
+        const hS = getVal('h-swd');
+        const hRes = hG / (1 + (hA+hS)/100);
+        
+        // Removed thousands separator from Calculated Base for easy copy-paste
+        document.getElementById('h-res').value = hRes > 0 ? hRes.toFixed(1) : "0";
+
+        const base = getVal('base');
+        const awd = getVal('awd');
+        const swd = getVal('swd');
+        const twd = getVal('twd');
+        const chc = Math.min(60, getVal('chc')) / 100;
+        const chd = getVal('chd') / 100;
+        const hsd = getVal('hsd') / 100;
+        const dttooc = getVal('dttooc') / 100;
+        const dta = getVal('dta') / 100;
+        const dth = getVal('dth') / 100;
+        
+        const mMult = [1,2,3,4].reduce((acc, i) => acc * (getVal('m'+i)/100 + 1), 1);
 
         const rangeArmor = vMode === 'dta' ? (1 + dta) : (1 + dth);
         const vBody = base * (1 + (awd+swd)/100) * (1 + twd/100) * (1 + dttooc) * rangeArmor * mMult;
@@ -227,18 +237,18 @@
         document.getElementById('val-head').innerText = Math.round(vBody * (1 + hsd)).toLocaleString('en-US');
         document.getElementById('val-head-crit').innerText = Math.round(vBody * (1 + chd + hsd)).toLocaleString('en-US');
 
-        const rHs = (parseFloat(document.getElementById('r-hs').value) || 0) / 100;
-        const rOoc = (parseFloat(document.getElementById('r-ooc').value) || 0) / 100;
-        const rArm = (parseFloat(document.getElementById('r-arm').value) || 0) / 100;
+        const rHs = getVal('r-hs') / 100;
+        const rOoc = getVal('r-ooc') / 100;
+        const rArm = getVal('r-arm') / 100;
 
         const simArmor = (1 + (dta * rArm) + (dth * (1 - rArm)));
         const simOoc = (1 + (dttooc * rOoc));
         const simBaseBody = base * (1 + (awd+swd)/100) * (1 + twd/100) * simOoc * simArmor * mMult;
         const avgShot = simBaseBody * (1 + (chc * chd)) * (1 + (rHs * hsd));
 
-        const rpm = parseFloat(document.getElementById('rpm').value) || 0;
-        const mag = parseFloat(document.getElementById('mag').value) || 0;
-        const rel = parseFloat(document.getElementById('rel').value) || 0;
+        const rpm = getVal('rpm');
+        const mag = getVal('mag');
+        const rel = getVal('rel');
         const targetEHP = parseFloat(document.getElementById('enemy-select').value);
 
         const burstDps = (rpm / 60) * avgShot;
@@ -251,7 +261,7 @@
         
         const btk = avgShot > 0 ? Math.ceil(targetEHP / avgShot) : 0;
         document.getElementById('res-btk').innerText = btk || "-";
-        document.getElementById('res-kpm').innerText = targetEHP > 0 ? ( (avgShot * mag) / targetEHP).toFixed(2) : "-";
+        document.getElementById('res-kpm').innerText = (targetEHP > 0 && avgShot > 0) ? ( (avgShot * mag) / targetEHP).toFixed(2) : "-";
         document.getElementById('res-ttkb').innerText = (burstDps > 0 && targetEHP > 0) ? (targetEHP / burstDps).toFixed(2) + "s" : "-";
         document.getElementById('res-ttks').innerText = (sustainDps > 0 && targetEHP > 0) ? (targetEHP / sustainDps).toFixed(2) + "s" : "-";
         
