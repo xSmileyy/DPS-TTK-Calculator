@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V7.2</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V8.0 FINAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -236,6 +236,7 @@
                 <br>
                 <span style="opacity:0.8"><i class="fas fa-hand-pointer"></i> Tap the <i class="fas fa-question-circle" style="color:var(--orange)"></i> icons to view stats screenshots.</span>
             </div>
+            
             <div class="input-block" style="grid-template-columns: repeat(3, 1fr);">
                 <div class="group">
                     <label>Weapon Damage <i class="fas fa-question-circle info-icon" onclick="showHelp('dmg')"></i></label>
@@ -246,6 +247,10 @@
                     <input type="number" id="menu-awd" oninput="calculateBase()">
                 </div>
                 <div class="group">
+                    <label>SWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('swd')"></i></label>
+                    <input type="number" id="menu-swd" oninput="calculateBase()">
+                </div>
+                <div class="group" style="grid-column: span 3; border-top: 1px solid #222; padding-top: 10px; margin-top: 5px;">
                     <label style="color:var(--orange)">Result: Base Damage</label>
                     <input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;">
                 </div>
@@ -290,8 +295,8 @@
                 <div class="group"><label>Reload (s)</label><input type="number" id="rel" oninput="calculate()"></div>
                 
                 <div class="group"><label>AWD %</label><input type="number" id="awd" oninput="calculate()"></div>
+                <div class="group"><label>SWD %</label><input type="number" id="swd" oninput="calculate()"></div>
                 <div class="group"><label>TWD (e.g. Obliterate)</label><input type="number" id="twd" oninput="calculate()"></div>
-                <div class="group"></div>
                 <div class="group"></div>
             </div>
 
@@ -395,7 +400,7 @@
     const helpImages = {
         'dmg': 'https://i.imgur.com/NBsyfoh.png',
         'awd': 'https://i.imgur.com/4SN8wG5.png',
-        'swd': 'https://i.imgur.com/gG2aIhn.png' // Kept just in case, but link removed from UI
+        'swd': 'https://i.imgur.com/gG2aIhn.png'
     };
 
     function showHelp(type) {
@@ -457,21 +462,22 @@
     function calculateBase() {
         const rawD = document.getElementById('menu-dmg').value;
         const rawA = document.getElementById('menu-awd').value;
-        
-        // Force Sync 0 -> 1 (AWD)
-        document.getElementById('awd').value = rawA;
+        const rawS = document.getElementById('menu-swd').value;
 
         const d = parseFloat(rawD) || 0;
         const a = parseFloat(rawA) || 0;
+        const s = parseFloat(rawS) || 0;
         
+        // Sync 0 -> 1 (Separate Fields)
+        document.getElementById('awd').value = a;
+        document.getElementById('swd').value = s;
+
         if (d > 0) {
-            // Formula: MenuDamage / (1 + AWD/100)
-            const b = d / (1 + (a/100));
-            // 1 Decimal place, no rounding to Int
+            // Correct Formula: MenuDamage / (1 + AWD + SWD)
+            const b = d / (1 + (a/100) + (s/100));
             document.getElementById('calc-base-res').value = b.toFixed(1); 
             document.getElementById('base').value = b.toFixed(1); 
         } else {
-            // Clear Result 0 but DO NOT CLEAR BASE (1)
             document.getElementById('calc-base-res').value = "";
         }
         calculate();
@@ -480,7 +486,6 @@
     function applyPreset() {
         const v = document.getElementById('preset-select').value;
         if (presets[v]) {
-            // ONLY SET BASE DAMAGE
             document.getElementById('base').value = presets[v].base;
             calculate();
         }
@@ -534,9 +539,9 @@
     function calculate() {
         const v = (id) => parseFloat(document.getElementById(id).value) || 0;
         
-        // 1. Core Variables (No SWD anymore)
+        // 1. Core Variables (AWD + SWD explicitly added here)
         const base = v('base');
-        const totalWpDmg = 1 + (v('awd')/100); 
+        const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100); 
         const amp = (1 + v('m1')/100) * (1 + v('m2')/100) * (1 + v('m3')/100) * (1 + v('m4')/100);
         const targetMult = currentTarget === 'elite' ? (1 + (v('dta')/100 * (v('a-rate')/100))) : (1 + (v('dth')/100));
         
@@ -608,11 +613,13 @@
         const inputs = {
             'menu-dmg': document.getElementById('menu-dmg').value,
             'menu-awd': document.getElementById('menu-awd').value,
+            'menu-swd': document.getElementById('menu-swd').value,
             'base': document.getElementById('base').value,
             'rpm': document.getElementById('rpm').value,
             'mag': document.getElementById('mag').value,
             'rel': document.getElementById('rel').value,
             'awd': document.getElementById('awd').value,
+            'swd': document.getElementById('swd').value,
             'twd': document.getElementById('twd').value,
             'chc': document.getElementById('chc').value,
             'chd': document.getElementById('chd').value,
@@ -653,19 +660,14 @@
 
     function loadBuild(i) {
         const data = builds[i].inputs;
-        // First load everything
         for (const [key, val] of Object.entries(data)) {
             if(document.getElementById(key)) document.getElementById(key).value = val;
         }
         
-        // Trigger Base calculation (this updates the read-only result field)
-        // BUT: We need to prevent it from clearing 'awd' if 'menu-awd' was empty in the save
-        // Easy fix: just re-apply the saved 'awd' value AFTER calculateBase
-        
         calculateBase(); 
         
-        // Restore 'awd' explicitly in case calculateBase() wiped it
         if(data['awd']) document.getElementById('awd').value = data['awd'];
+        if(data['swd']) document.getElementById('swd').value = data['swd'];
         
         calculate();
     }
