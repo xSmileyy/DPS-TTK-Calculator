@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V8.2 (Shareable)</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V8.3</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -437,17 +437,47 @@
     window.onload = function() {
         initChart();
         
-        // CHECK URL PARAMS FIRST
+        // CHECK URL PARAMS
         const params = new URLSearchParams(window.location.search);
         if (params.has('b')) {
             try {
+                // Optimization: Load just inputs from URL
                 const b64 = params.get('b');
                 const json = b64_to_utf8(b64);
-                builds = JSON.parse(json);
+                const loadedInputs = JSON.parse(json);
+                
+                // Reconstruct full build objects dynamically
+                // We do this by temporarily loading inputs into the calculator and capturing
+                builds = []; // Clear current
+                loadedInputs.forEach(inputData => {
+                    // Inject to form
+                    for (const [key, val] of Object.entries(inputData)) {
+                        if(document.getElementById(key)) document.getElementById(key).value = val;
+                    }
+                    calculateBase(); // Ensure base is sync
+                    calculate();     // Run calc
+                    
+                    // Manually push to builds array without triggering saveToStorage (to avoid overwrite)
+                    const stats = calculate();
+                    builds.push({
+                        name: inputData['build-name'] || "Shared Build",
+                        stats: stats,
+                        inputs: inputData,
+                        ui: {
+                            mDmg: stats.avg * stats.mag,
+                            omk: document.getElementById('res-omk').innerText,
+                            kpm: document.getElementById('res-kpm').innerText, 
+                            burst: stats.burst,
+                            ttkb: stats.ttkb, 
+                            sustain: stats.sustain,
+                            ttks: stats.ttks, 
+                            crit: document.getElementById('st-crit').innerText
+                        }
+                    });
+                });
+                
                 updateMatrix();
                 updateGraph();
-                // We do NOT save to local storage automatically to avoid overwriting user's own builds
-                // The user is in "View Mode" essentially
             } catch(e) {
                 console.error("Error loading shared builds", e);
                 loadFromStorage();
@@ -457,36 +487,23 @@
         }
     };
 
-    // Safe UTF-8 Base64 Encoders/Decoders
-    function utf8_to_b64(str) {
-        return window.btoa(unescape(encodeURIComponent(str)));
-    }
-
-    function b64_to_utf8(str) {
-        return decodeURIComponent(escape(window.atob(str)));
-    }
+    function utf8_to_b64(str) { return window.btoa(unescape(encodeURIComponent(str))); }
+    function b64_to_utf8(str) { return decodeURIComponent(escape(window.atob(str))); }
 
     function generateShareLink() {
-        if(builds.length === 0) {
-            alert("Please add at least one build to share.");
-            return;
-        }
+        if(builds.length === 0) { alert("Please add at least one build to share."); return; }
         
-        // 1. Convert builds array to JSON
-        const json = JSON.stringify(builds);
-        
-        // 2. Base64 Encode (safe for URL)
+        // OPTIMIZATION: Only share inputs, not results. Browser recalculates on load.
+        const minimalBuilds = builds.map(b => b.inputs);
+        const json = JSON.stringify(minimalBuilds);
         const encoded = utf8_to_b64(json);
         
-        // 3. Construct URL
         const url = new URL(window.location.href);
         url.searchParams.set('b', encoded);
         
-        // 4. Copy to clipboard
         navigator.clipboard.writeText(url.toString()).then(() => {
-            alert("Link copied to clipboard! You can now paste it to share.");
+            alert("Link copied! Note: The link is long because it contains all build data (no server used).");
         }).catch(err => {
-            console.error('Failed to copy: ', err);
             prompt("Copy this link:", url.toString());
         });
     }
@@ -521,7 +538,6 @@
         const a = parseFloat(rawA) || 0;
         const s = parseFloat(rawS) || 0;
         
-        // Sync 0 -> 1 (Separate Fields)
         document.getElementById('awd').value = a;
         document.getElementById('swd').value = s;
 
@@ -591,18 +607,15 @@
     function calculate() {
         const v = (id) => parseFloat(document.getElementById(id).value) || 0;
         
-        // 1. Core Variables
         const base = v('base');
         const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100); 
         const amp = (1 + v('m1')/100) * (1 + v('m2')/100) * (1 + v('m3')/100) * (1 + v('m4')/100);
         
-        // *** SHOOTING RANGE (100% Uptime for comparison) ***
-        const range_dtoc = 1 + (v('dttooc')/100); // Always OOC in range
-        const range_target = currentTarget === 'elite' ? (1 + v('dta')/100) : (1 + v('dth')/100); // Max DTA or DTH depending on toggle
+        const range_dtoc = 1 + (v('dttooc')/100); 
+        const range_target = currentTarget === 'elite' ? (1 + v('dta')/100) : (1 + v('dth')/100); 
         
         const fBaseRange = base * totalWpDmg * (1 + v('twd')/100) * range_dtoc * range_target * amp;
 
-        // *** SIMULATION (Uses user rates) ***
         const sim_dtoc = 1 + ((v('dttooc')/100) * (v('d-rate')/100));
         const sim_target = currentTarget === 'elite' ? (1 + (v('dta')/100 * (v('a-rate')/100))) : (1 + (v('dth')/100));
         
@@ -611,19 +624,25 @@
         const chc = Math.min(60, v('chc')) / 100;
         const hRate = v('h-rate') / 100;
 
-        // DISPLAY VALUES (Based on Range Max Potential)
         const body = fBaseRange;
         const crit = fBaseRange * (1 + v('chd')/100);
         const head = fBaseRange * (1 + v('hsd')/100);
         const hCrit = fBaseRange * (1 + (v('chd') + v('hsd'))/100);
 
-        document.getElementById('st-body').innerText = Math.round(body).toLocaleString();
+        const bodyElem = document.getElementById('st-body');
+        bodyElem.innerText = Math.round(body).toLocaleString();
+        
+        // BLUE COLOR LOGIC
+        if (currentTarget === 'elite') {
+            bodyElem.style.color = 'var(--ingame-blue)';
+        } else {
+            bodyElem.style.color = '#fff';
+        }
+
         document.getElementById('st-crit').innerText = Math.round(crit).toLocaleString();
         document.getElementById('st-head').innerText = Math.round(head).toLocaleString();
         document.getElementById('st-head-crit').innerText = Math.round(hCrit).toLocaleString();
 
-        // SIMULATION VALUES (Based on Avg Uptime)
-        // Average damage per shot taking Crits and Headshots into account
         const avgHit = (fBaseSim * (1-chc) + (fBaseSim * (1 + v('chd')/100)) * chc) * (1-hRate) + 
                        (fBaseSim * (1 + v('hsd')/100) * (1-chc) + (fBaseSim * (1 + (v('chd') + v('hsd'))/100)) * chc) * hRate;
 
