@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V4.0</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V5.0 (Pro)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { 
             --orange: #ff6600; 
@@ -19,6 +20,7 @@
             --head: #ff4444; 
             --pos: #00ff88; 
             --neg: #ff4444;
+            --ingame-blue: #3399ff;
         }
 
         body { 
@@ -60,7 +62,7 @@
 
         .main-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); 
             gap: 30px; 
             align-items: start; 
         }
@@ -143,10 +145,23 @@
         .comp-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
         .comp-table th { background: rgba(255,255,255,0.05); text-align: left; padding: 10px; color: var(--orange); border-bottom: 1px solid var(--border); }
         .comp-table td { padding: 10px; border-bottom: 1px solid #111; font-family: 'JetBrains Mono'; color: #fff; }
-        .del-btn { color: #ff4444; cursor: pointer; font-size: 10px; margin-left: 8px; border: 1px solid #ff4444; padding: 0px 4px; border-radius: 3px; }
+        
+        .action-cell { display: flex; gap: 5px; justify-content: flex-end; }
+        .del-btn { color: #ff4444; cursor: pointer; font-size: 10px; border: 1px solid #ff4444; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+        .edit-btn { color: var(--ingame-blue); cursor: pointer; font-size: 10px; border: 1px solid var(--ingame-blue); padding: 2px 6px; border-radius: 4px; font-weight: bold; }
         
         .action-row { display: flex; gap: 10px; margin-top: 15px; }
         .btn-small { flex: 1; padding: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; cursor: pointer; border-radius: 6px; border: 1px solid #333; background: #222; color: #fff; }
+
+        /* Chart Container */
+        .chart-container {
+            margin-top: 25px;
+            padding: 15px;
+            background: #080808;
+            border: 1px solid #222;
+            border-radius: 12px;
+            height: 300px;
+        }
     </style>
 </head>
 <body>
@@ -289,6 +304,11 @@
                 <div class="res-box"><span class="res-label">TTK Sustain</span><span class="res-val" id="res-ttks">-</span></div>
             </div>
 
+            <div class="section-title">Damage Timeline (30s)</div>
+            <div class="chart-container">
+                <canvas id="dpsChart"></canvas>
+            </div>
+
             <div class="section-title">Comparison Matrix</div>
             <div style="overflow-x: auto;">
                 <table class="comp-table">
@@ -307,6 +327,7 @@
 <script>
     let currentTarget = 'elite';
     let builds = [];
+    let dpsChart;
 
     const presets = {
         'lexington': { base: 53200, rpm: 850, mag: 30, rel: 2.2 },
@@ -327,24 +348,54 @@
         'm1a': { base: 195000, rpm: 180, mag: 10, rel: 2.5 }
     };
 
+    window.onload = function() {
+        initChart();
+    };
+
+    function initChart() {
+        const ctx = document.getElementById('dpsChart').getContext('2d');
+        dpsChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: Array.from({length:31}, (_,i)=>i + "s"), datasets: [] },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                elements: { point: { radius: 0 } },
+                scales: { 
+                    y: { 
+                        grid: { color: '#222' }, 
+                        ticks: { color: '#888', callback: function(value) { return (value/1000000).toFixed(1) + 'M'; } } 
+                    }, 
+                    x: { grid: { color: '#222' }, ticks: { color: '#888' } } 
+                },
+                plugins: { legend: { labels: { color: '#fff' } } }
+            }
+        });
+    }
+
     function calculateBase() {
-        const d = parseFloat(document.getElementById('menu-dmg').value) || 0;
-        const a = parseFloat(document.getElementById('menu-awd').value) || 0;
-        const s = parseFloat(document.getElementById('menu-swd').value) || 0;
+        const rawD = document.getElementById('menu-dmg').value;
+        const rawA = document.getElementById('menu-awd').value;
+        const rawS = document.getElementById('menu-swd').value;
+
+        // Force Sync 0 -> 2
+        document.getElementById('awd').value = rawA;
+        document.getElementById('swd').value = rawS;
+
+        const d = parseFloat(rawD) || 0;
+        const a = parseFloat(rawA) || 0;
+        const s = parseFloat(rawS) || 0;
         
         if (d > 0) {
-            // Berechnung
+            // NO ROUNDING HERE, KEEP FLOAT PRECISION
             const b = d / (1 + (a/100) + (s/100));
-            // Set Result 0.
-            document.getElementById('calc-base-res').value = Math.round(b).toLocaleString();
-            
-            // Sync to 1. and 2.
-            document.getElementById('base').value = Math.round(b);
-            document.getElementById('awd').value = a;
-            document.getElementById('swd').value = s;
-
-            calculate();
+            document.getElementById('calc-base-res').value = b; 
+            document.getElementById('base').value = b; 
+        } else {
+            document.getElementById('calc-base-res').value = "";
+            document.getElementById('base').value = "";
         }
+        calculate();
     }
 
     function applyPreset() {
@@ -368,6 +419,7 @@
     function calculate() {
         const v = (id) => parseFloat(document.getElementById(id).value) || 0;
         
+        // 1. Core Variables (High Precision)
         const base = v('base');
         const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100);
         const amp = (1 + v('m1')/100) * (1 + v('m2')/100) * (1 + v('m3')/100) * (1 + v('m4')/100);
@@ -377,52 +429,188 @@
         const chc = Math.min(60, v('chc')) / 100;
         const hRate = v('h-rate') / 100;
 
+        // 2. Hit Types (High Precision)
         const body = fBase;
         const crit = fBase * (1 + v('chd')/100);
         const head = fBase * (1 + v('hsd')/100);
         const hCrit = fBase * (1 + (v('chd') + v('hsd'))/100);
 
-        document.getElementById('st-body').innerText = Math.round(body).toLocaleString();
+        // 3. UI Display (Rounding ONLY for display)
+        const bodyElem = document.getElementById('st-body');
+        bodyElem.innerText = Math.round(body).toLocaleString();
+        bodyElem.style.color = currentTarget === 'elite' ? 'var(--ingame-blue)' : '#ffffff';
+
         document.getElementById('st-crit').innerText = Math.round(crit).toLocaleString();
         document.getElementById('st-head').innerText = Math.round(head).toLocaleString();
         document.getElementById('st-head-crit').innerText = Math.round(hCrit).toLocaleString();
 
+        // 4. Efficiency Metrics (High Precision)
         const avg = (body * (1-chc) + crit * chc) * (1-hRate) + (head * (1-chc) + hCrit * chc) * hRate;
         const hp = v('enemy-select');
-        const kpm = (avg * v('mag')) / hp;
+        const magDmg = avg * v('mag');
         
+        const kpm = magDmg / hp;
+        const rps = v('rpm')/60;
+        const burstTime = v('mag') / rps;
+        const cycleTime = burstTime + v('rel');
+        const burstDps = avg * rps;
+        const sustainDps = magDmg / cycleTime;
+
+        // 5. Final Results UI
         document.getElementById('res-omk').innerText = kpm >= 1 ? "YES" : "NO";
         document.getElementById('res-omk').style.color = kpm >= 1 ? "var(--pos)" : "var(--neg)";
         document.getElementById('res-kpm').innerText = kpm.toFixed(2);
-        document.getElementById('res-ttkb').innerText = (hp / (avg * (v('rpm')/60))).toFixed(2) + "s";
-        document.getElementById('res-ttks').innerText = (hp / ((avg * v('mag')) / ((v('mag')/(v('rpm')/60)) + v('rel')))).toFixed(2) + "s";
+        document.getElementById('res-ttkb').innerText = (hp / burstDps).toFixed(3) + "s";
+        
+        // Complex TTK Sustain Calculation
+        let shotsToKill = Math.ceil(hp / avg);
+        let magsNeeded = Math.ceil(shotsToKill / v('mag'));
+        let ttks = 0;
+        if (magsNeeded === 1) {
+            ttks = shotsToKill / rps;
+        } else {
+            ttks = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * v('mag'))) / rps);
+        }
+        document.getElementById('res-ttks').innerText = ttks.toFixed(3) + "s";
+
+        // Return Data for Matrix/Graph
+        return { 
+            avg, rps, mag: v('mag'), rel: v('rel'), name: "", 
+            burst: burstDps, sustain: sustainDps 
+        };
     }
 
     function captureBuild() {
+        const stats = calculate();
+        const inputs = {};
+        // Capture all inputs for "Load" functionality
+        document.querySelectorAll('input').forEach(i => inputs[i.id] = i.value);
+        
         const b = {
             name: document.getElementById('build-name').value || "Build " + (builds.length + 1),
-            crit: document.getElementById('st-crit').innerText,
-            ttkb: document.getElementById('res-ttkb').innerText,
-            ttks: document.getElementById('res-ttks').innerText
+            stats: stats,
+            inputs: inputs,
+            ui: {
+                mDmg: stats.avg * stats.mag,
+                omk: document.getElementById('res-omk').innerText,
+                kpm: document.getElementById('res-kpm').innerText,
+                burst: stats.burst,
+                ttkb: document.getElementById('res-ttkb').innerText,
+                sustain: stats.sustain,
+                ttks: document.getElementById('res-ttks').innerText
+            }
         };
         builds.push(b);
         updateMatrix();
+        updateGraph();
+    }
+
+    function loadBuild(i) {
+        const data = builds[i].inputs;
+        for (const [key, val] of Object.entries(data)) {
+            if(document.getElementById(key)) document.getElementById(key).value = val;
+        }
+        // Force sync logic again just in case
+        calculateBase(); 
+        calculate();
     }
 
     function updateMatrix() {
         const h = document.getElementById('comp-header');
         const b = document.getElementById('comp-body');
         h.innerHTML = '<th>Metric</th>';
-        let r = { c: '<td>Crit Hit</td>', b: '<td>TTK Burst</td>', s: '<td>TTK Sustain</td>' };
+        
+        let rows = [
+            {l:'MAG Damage', k:'mDmg'}, {l:'One Mag-Kill?', k:'omk'}, {l:'Kills / Mag', k:'kpm'}, 
+            {l:'Burst DPS', k:'burst'}, {l:'TTK Burst', k:'ttkb'}, {l:'Sustain DPS', k:'sustain'}, {l:'TTK Sustain', k:'ttks'}
+        ];
+        
+        // Build Headers
         builds.forEach((x, i) => {
-            h.innerHTML += `<th>${x.name} <span class="del-btn" onclick="deleteBuild(${i})">X</span></th>`;
-            r.c += `<td>${x.crit}</td>`; r.b += `<td>${x.ttkb}</td>`; r.s += `<td>${x.ttks}</td>`;
+            h.innerHTML += `<th>
+                ${x.name} 
+                <div class="action-cell">
+                    <span class="edit-btn" onclick="loadBuild(${i})">LOAD</span>
+                    <span class="del-btn" onclick="deleteBuild(${i})">X</span>
+                </div>
+            </th>`;
         });
-        b.innerHTML = `<tr>${r.c}</tr><tr>${r.b}</tr><tr>${r.s}</tr>`;
+
+        // Build Rows
+        b.innerHTML = '';
+        rows.forEach(r => {
+            let tr = `<tr><td><strong>${r.l}</strong></td>`;
+            builds.forEach(x => {
+                let val = x.ui[r.k];
+                // Formatting big numbers
+                if (typeof val === 'number') val = Math.round(val).toLocaleString();
+                // Color Logic for OMK
+                let style = (r.k === 'omk') ? `style="color:${val === 'YES' ? 'var(--pos)' : 'var(--neg)'}; font-weight:800;"` : "";
+                tr += `<td ${style}>${val}</td>`;
+            });
+            b.innerHTML += tr + '</tr>';
+        });
     }
 
-    function deleteBuild(i) { builds.splice(i, 1); updateMatrix(); }
-    function clearMatrix() { builds = []; updateMatrix(); }
+    function updateGraph() {
+        // MXSwat Style: Damage accumulation over time (0s to 25s)
+        const timeLimit = 25; 
+        const labels = Array.from({length: timeLimit + 1}, (_, i) => i + "s");
+        
+        const datasets = builds.map((b, idx) => {
+            let data = [];
+            let damage = 0;
+            let currentMag = b.stats.mag;
+            let state = 'firing'; // or 'reloading'
+            let stateTimer = 0;
+            
+            // Simulation per second (simplified for graph)
+            // Precise calculation per second tick
+            for (let t = 0; t <= timeLimit; t++) {
+                let timeInSecond = 1.0;
+                let dmgInSecond = 0;
+                
+                // Very simple simulation logic for graph curve
+                // This approximates the burst/reload cycle
+                let shotsPerSec = b.stats.rps;
+                
+                // Total cycle capacity
+                let cycleDmg = b.stats.mag * b.stats.avg;
+                let emptyTime = b.stats.mag / shotsPerSec;
+                let cycleTime = emptyTime + b.stats.rel;
+                
+                // Full cycles passed
+                let fullCycles = Math.floor(t / cycleTime);
+                let remainder = t % cycleTime;
+                
+                let currentDmg = fullCycles * cycleDmg;
+                
+                if (remainder < emptyTime) {
+                    currentDmg += remainder * shotsPerSec * b.stats.avg;
+                } else {
+                    currentDmg += cycleDmg; // reloading, damage stays flat
+                }
+                
+                data.push(currentDmg);
+            }
+
+            const colors = ['#ff6600', '#00ff88', '#3399ff', '#ffcc00', '#ff4444'];
+            return {
+                label: b.name,
+                data: data,
+                borderColor: colors[idx % colors.length],
+                fill: false,
+                tension: 0.1
+            };
+        });
+
+        dpsChart.data.labels = labels;
+        dpsChart.data.datasets = datasets;
+        dpsChart.update();
+    }
+
+    function deleteBuild(i) { builds.splice(i, 1); updateMatrix(); updateGraph(); }
+    function clearMatrix() { builds = []; updateMatrix(); updateGraph(); }
 </script>
 </body>
 </html>
