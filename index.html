@@ -9,47 +9,34 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { 
-            --orange: #ff6600; --orange-glow: rgba(255, 102, 0, 0.4); 
-            --bg: #030303; --card-bg: rgba(15, 15, 15, 0.95); 
+            --orange: #ff6600; --bg: #030303; --card-bg: rgba(15, 15, 15, 0.95); 
             --glass: rgba(255, 255, 255, 0.05); --border: #222; 
-            --text-main: #ffffff; --crit: #ffcc00; --head: #ff4444; 
-            --pos: #00ff88; --neg: #ff4444; --ingame-blue: #3399ff;
+            --text-main: #ffffff; --crit: #ffcc00; --pos: #00ff88;
         }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); margin: 0; padding: 10px; min-height: 100vh; }
         .container { max-width: 1700px; margin: auto; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
         .logo { font-size: 18px; font-weight: 800; text-transform: uppercase; }
         .logo span { color: var(--orange); }
-        
         .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
         .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 15px; padding: 20px; height: fit-content; }
-        
         .section-title { font-size: 13px; font-weight: 800; color: var(--orange); text-transform: uppercase; margin: 20px 0 10px 0; display: flex; align-items: center; gap: 10px; }
         .section-title::after { content: ''; height: 1px; flex-grow: 1; background: var(--border); }
-        
         .input-block { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: var(--glass); padding: 15px; border-radius: 10px; margin-bottom: 10px; }
         .group { display: flex; flex-direction: column; }
         label { font-size: 10px; font-weight: 700; color: #aaa; margin-bottom: 4px; text-transform: uppercase; }
         input, select { background: #000; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 5px; font-size: 14px; font-family: 'JetBrains Mono'; width: 100%; box-sizing: border-box; }
-        
-        .hint-text { font-size: 11px; color: #888; margin-bottom: 12px; line-height: 1.4; }
         .range-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
         .range-box { background: #050505; border: 1px solid #1a1a1a; padding: 12px; border-radius: 8px; text-align: center; }
         .range-val { font-family: 'JetBrains Mono'; font-size: 16px; font-weight: 800; display: block; }
-        
         .target-toggle { display: flex; gap: 8px; margin-bottom: 15px; }
         .t-btn { flex: 1; padding: 12px; border-radius: 5px; border: 1px solid #333; background: #111; color: #666; cursor: pointer; font-weight: 800; font-size: 10px; }
-        .t-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); }
-
+        .t-btn.active { background: var(--orange); color: #fff; }
         .btn-capture { background: #fff; color: #000; border: none; padding: 15px; border-radius: 6px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 10px; text-transform: uppercase; }
-        
         .comp-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
-        .comp-table th { background: rgba(255,255,255,0.05); padding: 10px; color: var(--orange); text-align: left; border-bottom: 1px solid var(--border); }
+        .comp-table th { background: rgba(255,255,255,0.05); padding: 10px; color: var(--orange); text-align: left; }
         .comp-table td { padding: 10px; border-bottom: 1px solid #111; font-family: 'JetBrains Mono'; }
-        
         .build-link { color: var(--pos); text-decoration: underline; cursor: pointer; }
-        .del-btn { color: #ff4444; border: 1px solid #ff4444; padding: 0 5px; border-radius: 3px; margin-left: 8px; cursor: pointer; font-style: normal; font-size: 10px; }
-        
         #chart-container { margin-top: 20px; background: #080808; padding: 10px; border-radius: 10px; height: 250px; }
     </style>
 </head>
@@ -72,7 +59,7 @@
             </div>
 
             <div class="section-title">Weapon Presets</div>
-            <select id="preset-select" onchange="applyPreset()" style="margin-bottom: 10px;">
+            <select id="preset-select" onchange="applyPreset()" style="margin-bottom: 15px;">
                 <option value="">-- Select Weapon --</option>
                 <optgroup label="Assault Rifles">
                     <option value="lexington">Lexington (AR)</option>
@@ -110,11 +97,20 @@
                 <div class="group"><label>HSD %</label><input type="number" id="hsd" oninput="calculate()"></div>
             </div>
 
-            <div class="section-title">4. Rates & Amps</div>
+            <div class="section-title">4. Rates</div>
             <div class="input-block">
-                <div class="group"><label>HS Rate %</label><input type="number" id="h-rate" value="20" oninput="calculate()"></div>
-                <div class="group"><label>Amp % (Striker/GC)</label><input type="number" id="m1" oninput="calculate()"></div>
-                <div class="group" style="grid-column: span 2;"><label>Build Name</label><input type="text" id="build-name" placeholder="Build Name..."></div>
+                <div class="group" style="grid-column: span 2;"><label>Headshot Rate %</label><input type="number" id="h-rate" value="20" oninput="calculate()"></div>
+            </div>
+
+            <div class="section-title">5. Amplified Damage</div>
+            <div class="input-block">
+                <div class="group"><label>Amp 1 % (Striker/GC)</label><input type="number" id="m1" oninput="calculate()"></div>
+                <div class="group"><label>Amp 2 % (Talents)</label><input type="number" id="m2" oninput="calculate()"></div>
+            </div>
+
+            <div class="section-title">Build Management</div>
+            <div class="input-block">
+                <div class="group" style="grid-column: span 2;"><label>Build Name</label><input type="text" id="build-name" placeholder="Name your build..."></div>
             </div>
             <button class="btn-capture" onclick="captureBuild()">Add to Matrix</button>
         </div>
@@ -122,8 +118,8 @@
         <div class="card">
             <div class="section-title">Shooting Range</div>
             <div class="target-toggle">
-                <button class="t-btn active" id="t-elite" onclick="setTarget('elite')">Target: Elite (DtA)</button>
-                <button class="t-btn" id="t-health" onclick="setTarget('health')">Target: Health (DtH)</button>
+                <button class="t-btn active" id="t-elite" onclick="setTarget('elite')">Elite (DtA)</button>
+                <button class="t-btn" id="t-health" onclick="setTarget('health')">Health (DtH)</button>
             </div>
             <div class="range-grid">
                 <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body">-</span></div>
@@ -138,11 +134,9 @@
                 </table>
             </div>
 
-            <div class="section-title">DPS Graph (30s)</div>
-            <div id="chart-container">
-                <canvas id="dpsChart"></canvas>
-            </div>
-            <button onclick="clearMatrix()" style="margin-top:20px; background:none; border:none; color:#555; font-size:10px; cursor:pointer; text-decoration: underline;">Clear Matrix</button>
+            <div class="section-title">DPS Timeline (30s)</div>
+            <div id="chart-container"><canvas id="dpsChart"></canvas></div>
+            <button onclick="clearMatrix()" style="margin-top:20px; background:none; border:none; color:#555; font-size:10px; cursor:pointer; text-decoration: underline;">Clear All</button>
         </div>
     </div>
 </div>
@@ -161,30 +155,17 @@
     };
 
     function syncFields(source) {
-        const m_awd = document.getElementById('menu-awd');
-        const m_swd = document.getElementById('menu-swd');
-        const b_awd = document.getElementById('awd');
-        const b_swd = document.getElementById('swd');
-
-        if(source === 'menu') {
-            b_awd.value = m_awd.value;
-            b_swd.value = m_swd.value;
-        } else {
-            m_awd.value = b_awd.value;
-            m_swd.value = b_swd.value;
-        }
+        const m_awd = document.getElementById('menu-awd'), m_swd = document.getElementById('menu-swd');
+        const b_awd = document.getElementById('awd'), b_swd = document.getElementById('swd');
+        if(source === 'menu') { b_awd.value = m_awd.value; b_swd.value = m_swd.value; }
+        else { m_awd.value = b_awd.value; m_swd.value = b_swd.value; }
         
-        // Base Damage Berechnung
         const d = parseFloat(document.getElementById('menu-dmg').value) || 0;
-        const a = parseFloat(m_awd.value) || 0;
-        const s = parseFloat(m_swd.value) || 0;
-        
+        const a = parseFloat(m_awd.value) || 0, s = parseFloat(m_swd.value) || 0;
         if (d > 0) {
             const res = d / (1 + (a + s) / 100);
-            document.getElementById('calc-base-res').value = res.toFixed(2);
-            document.getElementById('base').value = res.toFixed(2);
-        } else {
-            document.getElementById('calc-base-res').value = "";
+            document.getElementById('calc-base-res').value = res;
+            document.getElementById('base').value = res;
         }
         calculate();
     }
@@ -209,24 +190,15 @@
     }
 
     function calculate() {
-        const b = parseFloat(document.getElementById('base').value) || 0;
-        const rpm = parseFloat(document.getElementById('rpm').value) || 0;
-        const mag = parseFloat(document.getElementById('mag').value) || 0;
-        const rel = parseFloat(document.getElementById('rel').value) || 0;
-        const awd = parseFloat(document.getElementById('awd').value) || 0;
-        const swd = parseFloat(document.getElementById('swd').value) || 0;
-        const twd = parseFloat(document.getElementById('twd').value) || 0;
-        const chc = Math.min(60, parseFloat(document.getElementById('chc').value) || 0) / 100;
-        const chd = (parseFloat(document.getElementById('chd').value) || 0) / 100;
-        const ooc = (parseFloat(document.getElementById('dttooc').value) || 0) / 100;
-        const dta = (parseFloat(document.getElementById('dta').value) || 0) / 100;
-        const dth = (parseFloat(document.getElementById('dth').value) || 0) / 100;
-        const hsd = (parseFloat(document.getElementById('hsd').value) || 0) / 100;
-        const h_rate = (parseFloat(document.getElementById('h-rate').value) || 0) / 100;
-        const m1 = (1 + (parseFloat(document.getElementById('m1').value) || 0) / 100);
+        const f = (id) => parseFloat(document.getElementById(id).value) || 0;
+        const b = f('base'), rpm = f('rpm'), mag = f('mag'), rel = f('rel');
+        const awd = f('awd'), swd = f('swd'), twd = f('twd');
+        const chc = Math.min(60, f('chc'))/100, chd = f('chd')/100, ooc = f('dttooc')/100;
+        const dta = f('dta')/100, dth = f('dth')/100, hsd = f('hsd')/100, h_rate = f('h-rate')/100;
+        const m1 = (1 + f('m1')/100), m2 = (1 + f('m2')/100);
 
         const wDmg = b * (1 + (awd + swd) / 100) * (1 + twd / 100);
-        const stMult = (1 + ooc) * (currentTarget === 'elite' ? (1 + dta) : (1 + dth)) * m1;
+        const stMult = (1 + ooc) * (currentTarget === 'elite' ? (1 + dta) : (1 + dth)) * m1 * m2;
 
         if (b > 0) {
             const body = wDmg * stMult;
@@ -243,8 +215,7 @@
             return { 
                 name: document.getElementById('build-name').value || "Build", 
                 burst, sustain, avgHit, rps, mag, rel,
-                // Rohdaten für Ladefunktion
-                raw: { base:b, rpm, mag, rel, awd, swd, twd, chc, chd, dttooc, dta, dth, hsd, h_rate, m1 }
+                raw: { base:b, rpm, mag, rel, awd, swd, twd, chc, chd, dttooc, dta, dth, hsd, 'h-rate':h_rate*100, m1: (m1-1)*100, m2: (m2-1)*100 }
             };
         }
         return null;
@@ -252,19 +223,12 @@
 
     function captureBuild() {
         const res = calculate();
-        if (res) {
-            builds.push(res);
-            renderMatrix();
-            updateChart();
-        }
+        if (res) { builds.push(res); renderMatrix(); updateChart(); }
     }
 
     function loadBuild(i) {
         const r = builds[i].raw;
-        for (let key in r) {
-            const el = document.getElementById(key === 'h_rate' ? 'h-rate' : key);
-            if(el) el.value = r[key];
-        }
+        for (let key in r) { if(document.getElementById(key)) document.getElementById(key).value = r[key]; }
         document.getElementById('build-name').value = builds[i].name;
         syncFields('main');
     }
@@ -272,58 +236,31 @@
     function renderMatrix() {
         const h = document.getElementById('comp-header'), b = document.getElementById('comp-body');
         h.innerHTML = '<th>Metric</th>';
-        builds.forEach((x, i) => h.innerHTML += `<th><span class="build-link" onclick="loadBuild(${i})">${x.name}</span><i class="del-btn" onclick="builds.splice(${i},1);renderMatrix();updateChart();">X</i></th>`);
+        builds.forEach((x, i) => h.innerHTML += `<th><span class="build-link" onclick="loadBuild(${i})">${x.name}</span><i onclick="builds.splice(${i},1);renderMatrix();updateChart();" style="color:red; margin-left:8px; cursor:pointer; font-style:normal;">X</i></th>`);
         
-        let row1 = '<tr><td><strong>Burst DPS</strong></td>';
-        let row2 = '<tr><td><strong>Sustain DPS</strong></td>';
-        builds.forEach(x => {
-            row1 += `<td>${Math.round(x.burst).toLocaleString()}</td>`;
-            row2 += `<td>${Math.round(x.sustain).toLocaleString()}</td>`;
-        });
-        b.innerHTML = row1 + '</tr>' + row2 + '</tr>';
+        let r1 = '<tr><td><strong>Burst DPS</strong></td>', r2 = '<tr><td><strong>Sustain DPS</strong></td>';
+        builds.forEach(x => { r1 += `<td>${Math.round(x.burst).toLocaleString()}</td>`; r2 += `<td>${Math.round(x.sustain).toLocaleString()}</td>`; });
+        b.innerHTML = r1 + '</tr>' + r2 + '</tr>';
     }
 
     function updateChart() {
         const ctx = document.getElementById('dpsChart').getContext('2d');
         const labels = Array.from({length: 31}, (_, i) => i + "s");
         const datasets = builds.map((b, idx) => {
-            let data = [];
-            let currentMag = b.mag;
-            let reloadingUntil = 0;
-            let totalDmg = 0;
+            let data = [], currentMag = b.mag, reloadingUntil = 0, totalDmg = 0;
             for(let t=0; t<=30; t++) {
                 if(t >= reloadingUntil) {
                     let shots = Math.min(currentMag, b.rps);
                     totalDmg += shots * b.avgHit;
                     currentMag -= shots;
-                    if(currentMag <= 0) {
-                        reloadingUntil = t + b.rel;
-                        currentMag = b.mag;
-                    }
+                    if(currentMag <= 0) { reloadingUntil = t + b.rel; currentMag = b.mag; }
                 }
                 data.push(totalDmg);
             }
-            return {
-                label: b.name,
-                data: data,
-                borderColor: ['#ff6600', '#00ff88', '#3399ff', '#ffcc00'][idx % 4],
-                tension: 0.1, fill: false
-            };
+            return { label: b.name, data, borderColor: ['#ff6600', '#00ff88', '#3399ff', '#ffcc00'][idx % 4], tension: 0.1, fill: false };
         });
-
         if (dpsChart) dpsChart.destroy();
-        dpsChart = new Chart(ctx, {
-            type: 'line',
-            data: { labels, datasets },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                scales: { 
-                    y: { grid: { color: '#222' }, ticks: { color: '#888' } },
-                    x: { grid: { color: '#222' }, ticks: { color: '#888' } }
-                },
-                plugins: { legend: { labels: { color: '#fff', boxWidth: 10, font: { size: 10 } } } }
-            }
-        });
+        dpsChart = new Chart(ctx, { type: 'line', data: { labels, datasets }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: '#222' }, ticks: { color: '#888' } }, x: { grid: { color: '#222' }, ticks: { color: '#888' } } }, plugins: { legend: { labels: { color: '#fff', boxWidth: 10 } } } } });
     }
 
     function clearMatrix() { builds = []; renderMatrix(); updateChart(); }
