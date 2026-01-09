@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V6.1</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V6.4</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -99,7 +99,7 @@
             margin-bottom: 15px; 
         }
 
-        .group { display: flex; flex-direction: column; }
+        .group { display: flex; flex-direction: column; position: relative; }
         
         label { 
             font-size: 10px; 
@@ -108,7 +108,19 @@
             margin-bottom: 4px; 
             text-transform: uppercase; 
             white-space: nowrap; 
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
+
+        /* Info Icon Style */
+        .info-icon {
+            color: var(--orange);
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+        .info-icon:hover { transform: scale(1.2); text-shadow: 0 0 5px var(--orange); }
 
         input, select { 
             background: #000; 
@@ -146,13 +158,10 @@
         .comp-table th { background: rgba(255,255,255,0.05); text-align: left; padding: 10px; color: var(--orange); border-bottom: 1px solid var(--border); }
         .comp-table td { padding: 10px; border-bottom: 1px solid #111; font-family: 'JetBrains Mono'; color: #fff; }
         
-        /* Diff Styles */
         .diff-text { font-size: 10px; margin-left: 5px; font-weight: normal; opacity: 0.8; }
-        
         .action-cell { display: flex; gap: 5px; justify-content: flex-end; }
         .del-btn { color: #ff4444; cursor: pointer; font-size: 10px; border: 1px solid #ff4444; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
         .edit-btn { color: var(--ingame-blue); cursor: pointer; font-size: 10px; border: 1px solid var(--ingame-blue); padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-        
         .action-row { display: flex; gap: 10px; margin-top: 15px; }
         .btn-small { flex: 1; padding: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; cursor: pointer; border-radius: 6px; border: 1px solid #333; background: #222; color: #fff; }
 
@@ -164,9 +173,51 @@
             border-radius: 12px;
             height: 300px;
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 999; 
+            left: 0; top: 0; 
+            width: 100%; height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.8); 
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            margin: 5% auto; 
+            padding: 0; 
+            border: 1px solid var(--orange); 
+            width: 90%; 
+            max-width: 800px; 
+            background: #111;
+            border-radius: 10px;
+            position: relative;
+            animation: fadeIn 0.3s;
+        }
+        .modal-img { width: 100%; height: auto; display: block; border-radius: 10px; }
+        .close {
+            color: #fff;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            text-shadow: 0 0 10px #000;
+        }
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
     </style>
 </head>
 <body>
+
+<div id="imageModal" class="modal" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img id="modalImg" class="modal-img" src="" alt="Help Image">
+    </div>
+</div>
 
 <div class="container">
     <header class="header">
@@ -180,14 +231,25 @@
             <div class="section-title">0. Calculate Base Damage</div>
             <div class="hint-text">
                 <i class="fas fa-info-circle"></i> 
-                <strong>Guide:</strong> Only use if Base Damage is unknown. Otherwise select a Preset or skip to 1. Weapon Data.<br>
-                <strong>Stats Location:</strong> Open Inventory > Stats > Weapon Damage, All Weapon Damage Bonus %, Specific Weapon Damage % (e.g. AR, SMG).
+                <strong>Guide:</strong> Tap the <i class="fas fa-question-circle" style="color:var(--orange)"></i> icons to see where to find these stats ingame.
             </div>
             <div class="input-block">
-                <div class="group"><label>Weapon Damage</label><input type="number" id="menu-dmg" oninput="calculateBase()"></div>
-                <div class="group"><label>AWD %</label><input type="number" id="menu-awd" oninput="calculateBase()"></div>
-                <div class="group"><label>SWD %</label><input type="number" id="menu-swd" oninput="calculateBase()"></div>
-                <div class="group"><label style="color:var(--orange)">Result: Base Damage</label><input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;"></div>
+                <div class="group">
+                    <label>Weapon Damage <i class="fas fa-question-circle info-icon" onclick="showHelp('dmg')"></i></label>
+                    <input type="number" id="menu-dmg" oninput="calculateBase()">
+                </div>
+                <div class="group">
+                    <label>AWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('awd')"></i></label>
+                    <input type="number" id="menu-awd" oninput="calculateBase()">
+                </div>
+                <div class="group">
+                    <label>SWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('swd')"></i></label>
+                    <input type="number" id="menu-swd" oninput="calculateBase()">
+                </div>
+                <div class="group">
+                    <label style="color:var(--orange)">Result: Base Damage</label>
+                    <input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;">
+                </div>
             </div>
 
             <div class="section-title">Weapon Presets (Base Dmg)</div>
@@ -250,11 +312,11 @@
             </div>
 
             <div class="section-title">4. %-Rate Uptime</div>
-            <div class="hint-text"><i class="fas fa-info-circle"></i> Rec: HS 20% | DTOC 60% | Armor 80%</div>
+            <div class="hint-text"><i class="fas fa-info-circle"></i> Recommended: HS 20% | DTOC 60% | DTA 80%</div>
             <div class="input-block">
                 <div class="group"><label>HS-Rate %</label><input type="number" id="h-rate" value="20" oninput="calculate()"></div>
                 <div class="group"><label>DTOC-Rate %</label><input type="number" id="d-rate" value="60" oninput="calculate()"></div>
-                <div class="group"><label>Armor-Rate %</label><input type="number" id="a-rate" value="80" oninput="calculate()"></div>
+                <div class="group"><label>DTA-Rate %</label><input type="number" id="a-rate" value="80" oninput="calculate()"></div>
             </div>
 
             <div class="section-title">5. Amplifiers</div>
@@ -336,6 +398,33 @@
     let builds = [];
     let dpsChart;
 
+    // IMPORTANT: Replace the placeholders below with the actual URLs of your images!
+    const helpImages = {
+        'dmg': 'https://i.imgur.com/example1.png', // Placeholder for Weapon Stats Image
+        'awd': 'https://i.imgur.com/example2.png', // Placeholder for Offense Stats (All Weapon)
+        'swd': 'https://i.imgur.com/example3.png'  // Placeholder for Specific Weapon Dmg
+    };
+
+    /* NOTE TO USER: 
+       You need to upload your 3 screenshots to an image host like Imgur.com.
+       Then replace the URLs above:
+       1. image_29a188.png -> goes into 'dmg'
+       2. image_29a1c5.png -> goes into 'awd'
+       3. image_29a1e4.png -> goes into 'swd'
+    */
+
+    function showHelp(type) {
+        const modal = document.getElementById('imageModal');
+        const img = document.getElementById('modalImg');
+        // Use a default placeholder if you haven't replaced the links yet
+        img.src = helpImages[type] || ''; 
+        modal.style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById('imageModal').style.display = "none";
+    }
+
     const presets = {
         'lexington': { base: 53200, rpm: 850, mag: 30, rel: 2.2 },
         'st-elmos': { base: 56223, rpm: 850, mag: 70, rel: 2.2 },
@@ -400,8 +489,8 @@
             document.getElementById('calc-base-res').value = b.toFixed(0); 
             document.getElementById('base').value = b; 
         } else {
+            // Clear Result 0 but DO NOT CLEAR BASE (1)
             document.getElementById('calc-base-res').value = "";
-            document.getElementById('base').value = "";
         }
         calculate();
     }
@@ -579,11 +668,11 @@
             ui: {
                 mDmg: stats.avg * stats.mag,
                 omk: document.getElementById('res-omk').innerText,
-                kpm: document.getElementById('res-kpm').innerText, // String initially
+                kpm: document.getElementById('res-kpm').innerText, 
                 burst: stats.burst,
-                ttkb: stats.ttkb, // Number
+                ttkb: stats.ttkb, 
                 sustain: stats.sustain,
-                ttks: stats.ttks, // Number
+                ttks: stats.ttks, 
                 crit: document.getElementById('st-crit').innerText
             }
         };
@@ -728,19 +817,11 @@
         dpsChart.update();
     }
 
-    function saveToStorage() {
-        localStorage.setItem('xsmileyy_builds', JSON.stringify(builds));
-    }
-
+    function saveToStorage() { localStorage.setItem('xsmileyy_builds', JSON.stringify(builds)); }
     function loadFromStorage() {
         const saved = localStorage.getItem('xsmileyy_builds');
-        if (saved) {
-            builds = JSON.parse(saved);
-            updateMatrix();
-            updateGraph();
-        }
+        if (saved) { builds = JSON.parse(saved); updateMatrix(); updateGraph(); }
     }
-
     function deleteBuild(i) { builds.splice(i, 1); saveToStorage(); updateMatrix(); updateGraph(); }
     function clearMatrix() { builds = []; saveToStorage(); updateMatrix(); updateGraph(); }
 </script>
