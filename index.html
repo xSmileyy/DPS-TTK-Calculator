@@ -88,6 +88,7 @@
                 <strong>Note:</strong> Only use this if you don't have the Base Damage! <br>
                 <strong>How to find:</strong> Open Inventory > Stats > Weapon Damage, All Weapon Damage Bonus %, Specific Weapon Damage % (e.g. AR, SMG).
             </div>
+            
             <div class="input-block">
                 <div class="group"><label>Weapon Damage</label><input type="number" id="menu-dmg"></div>
                 <div class="group"><label>AWD %</label><input type="number" id="menu-awd"></div>
@@ -127,7 +128,10 @@
             <div class="input-block">
                 <div class="group"><label>AWD (All) %</label><input type="number" id="awd"></div>
                 <div class="group"><label>SWD (Type) %</label><input type="number" id="swd"></div>
-                <div class="group" style="grid-column: span 2;"><label>TWD (Total) %</label><input type="number" id="twd"></div>
+                <div class="group" style="grid-column: span 2;">
+                    <label style="font-size: 8.5px;">TWD (Total Weapon Damage e.g. Obliterate, Vigilance)</label>
+                    <input type="number" id="twd">
+                </div>
             </div>
 
             <div class="section-title">3. Combat Stats</div>
@@ -149,6 +153,7 @@
             </div>
 
             <div class="section-title">5. Amplifiers (Empty)</div>
+            <div class="hint-text">e.g. Striker Stacks in %, Glass Cannon %</div>
             <div class="input-block">
                 <div class="group"><label>Amp 1 %</label><input type="number" id="m1"></div>
                 <div class="group"><label>Amp 2 %</label><input type="number" id="m2"></div>
@@ -188,6 +193,7 @@
                     <option value="72146660">Legendary 4P Named (72.1M)</option>
                 </optgroup>
             </select>
+            
             <div class="results-grid">
                 <div class="res-box"><span class="res-label">One-Mag Kill?</span><span class="res-val" id="res-omk">-</span></div>
                 <div class="res-box"><span class="res-label">Kills / Mag</span><span class="res-val" id="res-kpm">-</span></div>
@@ -283,6 +289,7 @@
             const bodyEl = document.getElementById('st-body');
             bodyEl.innerText = Math.floor(wDmg * stMult).toLocaleString();
             bodyEl.style.color = (currentTarget === 'elite') ? 'var(--ingame-blue)' : '#ffffff';
+            
             document.getElementById('st-crit').innerText = Math.floor(wDmg * stMult * (1 + chd)).toLocaleString();
             document.getElementById('st-head').innerText = Math.floor(wDmg * stMult * (1 + hsd)).toLocaleString();
             document.getElementById('st-head-crit').innerText = Math.floor(wDmg * stMult * (1 + hsd + chd)).toLocaleString();
@@ -308,34 +315,4 @@
     }
 
     function captureBuild() {
-        const s = calculate();
-        if(s) {
-            s.n = document.getElementById('build-name').value || "Build " + (builds.length+1);
-            builds.push(s); saveToLocal(); renderMatrix();
-        }
-    }
-    function removeBuild(i) { builds.splice(i, 1); saveToLocal(); renderMatrix(); }
-    function clearMatrix() { builds = []; saveToLocal(); renderMatrix(); }
-    function saveToLocal() { localStorage.setItem('dps_matrix_builds', JSON.stringify(builds)); }
-
-    function renderMatrix() {
-        const h = document.getElementById('comp-header'), b = document.getElementById('comp-body');
-        h.innerHTML = '<th>Metric</th>';
-        builds.forEach((x, i) => h.innerHTML += `<th>${x.n}<span class="del-btn" onclick="removeBuild(${i})">X</span></th>`);
-        const rows = [{l:'MAG Damage', k:'mDmg'}, {l:'One Mag-Kill?', k:'omk'}, {l:'Kills / Mag', k:'kpm'}, {l:'Burst DPS', k:'burst'}, {l:'TTK Burst', k:'ttkb'}, {l:'Sustain DPS', k:'sustain'}, {l:'TTK Sustain', k:'ttks'}];
-        b.innerHTML = '';
-        rows.forEach(r => {
-            let tr = `<tr><td><strong>${r.l}</strong></td>`;
-            builds.forEach(x => {
-                let val = x[r.k];
-                let disp = typeof val === 'number' ? (r.l.includes('TTK') ? val.toFixed(3)+'s' : Math.round(val).toLocaleString()) : val;
-                let style = (r.k === 'omk') ? `style="color:${val === 'YES' ? 'var(--pos)' : 'var(--neg)'}; font-weight:800;"` : "";
-                tr += `<td ${style}>${disp}</td>`;
-            });
-            b.innerHTML += tr + '</tr>';
-        });
-    }
-    document.querySelectorAll('input, select').forEach(i => i.addEventListener('input', calculate));
-</script>
-</body>
-</html>
+        const s = calc
