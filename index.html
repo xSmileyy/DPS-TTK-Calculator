@@ -6,41 +6,116 @@
     <title>xSmileyy's DPS Analyzer | Elite Matrix V3.9</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { 
-            --orange: #ff6600; --orange-glow: rgba(255, 102, 0, 0.4); 
-            --bg: #030303; --card-bg: rgba(15, 15, 15, 0.95); 
-            --glass: rgba(255, 255, 255, 0.05); --border: #222; 
-            --text-main: #ffffff; --crit: #ffcc00; --head: #ff4444; 
-            --pos: #00ff88; --neg: #ff4444; --ingame-blue: #3399ff;
+            --orange: #ff6600; 
+            --orange-glow: rgba(255, 102, 0, 0.4); 
+            --bg: #030303; 
+            --card-bg: rgba(15, 15, 15, 0.95); 
+            --glass: rgba(255, 255, 255, 0.05); 
+            --border: #222; 
+            --text-main: #ffffff; 
+            --crit: #ffcc00; 
+            --head: #ff4444; 
+            --pos: #00ff88; 
+            --neg: #ff4444;
+            --ingame-blue: #3399ff;
         }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); margin: 0; padding: 10px; min-height: 100vh; }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); 
+            background-image: radial-gradient(circle at 50% 0%, #1a0d00 0%, #030303 70%); 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 10px; 
+            min-height: 100vh; 
+        }
+
         .container { max-width: 1700px; margin: auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 15px; 
+        }
+
         .logo { font-size: 18px; font-weight: 800; text-transform: uppercase; }
         .logo span { color: var(--orange); }
-        .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
-        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 15px; padding: 20px; }
-        .section-title { font-size: 13px; font-weight: 800; color: var(--orange); text-transform: uppercase; margin: 20px 0 10px 0; display: flex; align-items: center; gap: 10px; }
+
+        .main-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 20px; 
+        }
+
+        .card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border); 
+            border-radius: 15px; 
+            padding: 20px; 
+        }
+        
+        .section-title { 
+            font-size: 13px; 
+            font-weight: 800; 
+            color: var(--orange); 
+            text-transform: uppercase; 
+            margin: 20px 0 10px 0; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
         .section-title::after { content: ''; height: 1px; flex-grow: 1; background: var(--border); }
-        .input-block { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: var(--glass); padding: 12px; border-radius: 10px; margin-bottom: 10px; }
+
+        .input-block { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 10px; 
+            background: var(--glass); 
+            padding: 12px; 
+            border-radius: 10px; 
+            margin-bottom: 10px; 
+        }
+
         .group { display: flex; flex-direction: column; }
         label { font-size: 9px; font-weight: 700; color: #aaa; margin-bottom: 4px; text-transform: uppercase; }
-        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 5px; font-size: 14px; font-family: 'JetBrains Mono'; width: 100%; }
+
+        input, select { 
+            background: #000; 
+            border: 1px solid #333; 
+            color: #fff; 
+            padding: 8px; 
+            border-radius: 5px; 
+            font-size: 14px; 
+            font-family: 'JetBrains Mono'; 
+            width: 100%; 
+        }
+
         .hint-text { font-size: 11px; color: #888; margin-bottom: 12px; line-height: 1.4; }
+
         .range-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
         .range-box { background: #050505; border: 1px solid #1a1a1a; padding: 10px; border-radius: 8px; text-align: center; }
         .range-val { font-family: 'JetBrains Mono'; font-size: 16px; font-weight: 800; display: block; }
+
         .target-toggle { display: flex; gap: 8px; margin-bottom: 15px; }
         .t-btn { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #333; background: #111; color: #666; cursor: pointer; font-weight: 800; font-size: 10px; }
-        .t-btn.active { background: var(--orange); color: #fff; }
+        .t-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); }
+
+        .results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        .res-box { background: #0a0a0a; border: 1px solid var(--border); padding: 12px; border-radius: 10px; }
+        .res-label { font-size: 9px; color: #888; display: block; margin-bottom: 2px; }
+        .res-val { font-size: 16px; font-weight: 800; font-family: 'JetBrains Mono'; }
+
         .btn-capture { background: #fff; color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 10px; }
+        
         .comp-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
         .comp-table th { background: rgba(255,255,255,0.05); padding: 8px; color: var(--orange); text-align: left; }
         .comp-table td { padding: 8px; border-bottom: 1px solid #111; font-family: 'JetBrains Mono'; }
-        .load-btn { color: var(--pos); cursor: pointer; text-decoration: underline; }
-        #chart-container { margin-top: 20px; background: #080808; padding: 15px; border-radius: 10px; height: 300px; }
+        .del-btn { color: #ff4444; border: 1px solid #ff4444; padding: 0 4px; border-radius: 3px; margin-left: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -52,19 +127,20 @@
     </header>
 
     <div class="main-grid">
-        <div class="card" id="input-editor">
+        <div class="card">
             <div class="section-title">0. Calculate Base Damage</div>
             <div class="hint-text">
-                <strong>Guide:</strong> Only needed if Base Damage is unknown. Otherwise, select a Preset or skip directly to 1. Weapon Data.
+                <strong>Guide:</strong> Only needed if Base Damage is unknown. Otherwise, select a Preset or skip directly to 1. Weapon Data.<br>
+                <strong>Stats:</strong> Check Stats > Weapon Damage, All Weapon Dmg % and Type Dmg %.
             </div>
             <div class="input-block">
-                <div class="group"><label>Weapon Dmg</label><input type="number" id="menu-dmg" oninput="syncDmg(0)"></div>
-                <div class="group"><label>AWD %</label><input type="number" id="menu-awd" oninput="syncDmg(0)"></div>
-                <div class="group"><label>SWD %</label><input type="number" id="menu-swd" oninput="syncDmg(0)"></div>
+                <div class="group"><label>Weapon Dmg</label><input type="number" id="menu-dmg" oninput="calculateBase()"></div>
+                <div class="group"><label>AWD %</label><input type="number" id="menu-awd" oninput="calculateBase()"></div>
+                <div class="group"><label>SWD %</label><input type="number" id="menu-swd" oninput="calculateBase()"></div>
                 <div class="group"><label>Base Res</label><input type="text" id="calc-base-res" readonly></div>
             </div>
 
-            <div class="section-title">Weapon Presets</div>
+            <div class="section-title">Weapon Presets (Base Dmg)</div>
             <select id="preset-select" onchange="applyPreset()">
                 <option value="">-- Select Weapon --</option>
                 <optgroup label="Assault Rifles">
@@ -88,8 +164,8 @@
 
             <div class="section-title">2. Weapon Damage %</div>
             <div class="input-block">
-                <div class="group"><label>AWD %</label><input type="number" id="awd" oninput="syncDmg(2)"></div>
-                <div class="group"><label>SWD %</label><input type="number" id="swd" oninput="syncDmg(2)"></div>
+                <div class="group"><label>AWD %</label><input type="number" id="awd" oninput="calculate()"></div>
+                <div class="group"><label>SWD %</label><input type="number" id="swd" oninput="calculate()"></div>
                 <div class="group" style="grid-column: span 2;"><label>Total WD %</label><input type="number" id="twd" oninput="calculate()"></div>
             </div>
 
@@ -107,7 +183,7 @@
             <div class="input-block">
                 <div class="group"><label>HS Rate%</label><input type="number" id="h-rate" value="20" oninput="calculate()"></div>
                 <div class="group"><label>Amp 1 %</label><input type="number" id="m1" oninput="calculate()"></div>
-                <div class="group" style="grid-column: span 2;"><label>Build Name</label><input type="text" id="build-name" placeholder="Build Name..."></div>
+                <div class="group" style="grid-column: span 2;"><label>Build Name</label><input type="text" id="build-name" placeholder="Name..."></div>
             </div>
             <button class="btn-capture" onclick="captureBuild()">Add to Matrix</button>
         </div>
@@ -115,32 +191,33 @@
         <div class="card">
             <div class="section-title">Shooting Range</div>
             <div class="target-toggle">
-                <button class="t-btn active" id="t-elite" onclick="setTarget('elite')">Elite (DtA)</button>
-                <button class="t-btn" id="t-health" onclick="setTarget('health')">Health (DtH)</button>
+                <button class="t-btn active" id="t-elite" onclick="setTarget('elite')">Target: Elite (DtA)</button>
+                <button class="t-btn" id="t-health" onclick="setTarget('health')">Target: Health (DtH)</button>
             </div>
             <div class="range-grid">
                 <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body">-</span></div>
                 <div class="range-box" style="color:var(--crit)"><label>Crit Body</label><span class="range-val" id="st-crit">-</span></div>
             </div>
 
-            <div class="section-title">Matrix Comparison</div>
-            <select id="enemy-select" onchange="calculate()" style="margin-bottom:10px;">
+            <div class="section-title">Kill Efficiency</div>
+            <select id="enemy-select" onchange="calculate()">
                 <option value="16905653">Heroic 4P Elite (16.9M)</option>
                 <option value="6050000">Heroic 1P Elite (6.0M)</option>
             </select>
             
+            <div class="results-grid">
+                <div class="res-box"><span class="res-label">Kills / Mag</span><span class="res-val" id="res-kpm">-</span></div>
+                <div class="res-box"><span class="res-label">TTK Burst</span><span class="res-val" id="res-ttkb">-</span></div>
+            </div>
+
+            <div class="section-title">Comparison Matrix</div>
             <div style="overflow-x: auto;">
                 <table class="comp-table">
                     <thead><tr id="comp-header"><th>Metric</th></tr></thead>
                     <tbody id="comp-body"></tbody>
                 </table>
+                <button onclick="clearMatrix()" style="margin-top:10px; background:none; border:none; color:#555; font-size:10px; cursor:pointer;">Clear Matrix</button>
             </div>
-
-            <div class="section-title">DPS Timeline (30s)</div>
-            <div id="chart-container">
-                <canvas id="dpsChart"></canvas>
-            </div>
-            <button onclick="clearMatrix()" style="margin-top:15px; background:none; border:none; color:#555; font-size:10px; cursor:pointer;">Reset All</button>
         </div>
     </div>
 </div>
@@ -148,7 +225,6 @@
 <script>
     let currentTarget = 'elite';
     let builds = [];
-    let dpsChart = null;
 
     const weaponPresets = {
         "lexington": { b: 48699.5, rpm: 700, mag: 30, rel: 2.1 },
@@ -157,22 +233,6 @@
         "ouroboros": { b: 38300.5, rpm: 1485, mag: 50, rel: 1.8 },
         "vector": { b: 32500.0, rpm: 1200, mag: 40, rel: 1.7 }
     };
-
-    // 1. Synchronisation der Felder
-    function syncDmg(source) {
-        const awd0 = document.getElementById('menu-awd'), swd0 = document.getElementById('menu-swd');
-        const awd2 = document.getElementById('awd'), swd2 = document.getElementById('swd');
-        
-        if(source === 0) {
-            awd2.value = awd0.value;
-            swd2.value = swd0.value;
-            calculateBase();
-        } else {
-            awd0.value = awd2.value;
-            swd0.value = swd2.value;
-            calculate();
-        }
-    }
 
     function setTarget(t) {
         currentTarget = t;
@@ -187,8 +247,8 @@
         const s = parseFloat(document.getElementById('menu-swd').value) || 0;
         if (d > 0) {
             const res = d / (1 + (a + s) / 100);
-            document.getElementById('calc-base-res').value = res; // Keine Rundung intern
-            document.getElementById('base').value = res;
+            document.getElementById('calc-base-res').value = Math.round(res);
+            document.getElementById('base').value = Math.round(res);
             calculate();
         }
     }
@@ -205,134 +265,67 @@
         }
     }
 
-    // 2. Präzisions-Kalkulation
-    function calculate(isSilent = false) {
-        const fields = ['base','rpm','mag','rel','awd','swd','twd','chc','chd','dttooc','dta','dth','m1','h-rate'];
-        const data = {};
-        fields.forEach(f => data[f] = parseFloat(document.getElementById(f).value) || 0);
+    function calculate() {
+        const b = parseFloat(document.getElementById('base').value) || 0;
+        const rpm = parseFloat(document.getElementById('rpm').value) || 0;
+        const mag = parseFloat(document.getElementById('mag').value) || 0;
+        const rel = parseFloat(document.getElementById('rel').value) || 0;
+        const awd = parseFloat(document.getElementById('awd').value) || 0;
+        const swd = parseFloat(document.getElementById('swd').value) || 0;
+        const twd = parseFloat(document.getElementById('twd').value) || 0;
+        const chc = Math.min(60, parseFloat(document.getElementById('chc').value) || 0) / 100;
+        const chd = (parseFloat(document.getElementById('chd').value) || 0) / 100;
+        const ooc = (parseFloat(document.getElementById('dttooc').value) || 0) / 100;
+        const dta = (parseFloat(document.getElementById('dta').value) || 0) / 100;
+        const dth = (parseFloat(document.getElementById('dth').value) || 0) / 100;
+        const m1 = (1 + (parseFloat(document.getElementById('m1').value) || 0) / 100);
 
-        const wDmg = data.base * (1 + (data.awd + data.swd) / 100) * (1 + data.twd / 100);
-        const stMult = (1 + data.dttooc/100) * (currentTarget === 'elite' ? (1 + data.dta/100) : (1 + data.dth/100)) * (1 + data.m1/100);
+        const wDmg = b * (1 + (awd + swd) / 100) * (1 + twd / 100);
+        const stMult = (1 + ooc) * (currentTarget === 'elite' ? (1 + dta) : (1 + dth)) * m1;
 
-        if (data.base > 0) {
-            const body = wDmg * stMult;
-            const crit = body * (1 + data.chd/100);
-            const avgHit = wDmg * (1 + (Math.min(60, data.chc)/100 * data.chd/100)) * stMult;
+        if (b > 0) {
+            const body = Math.floor(wDmg * stMult);
+            const crit = Math.floor(wDmg * stMult * (1 + chd));
             
-            if(!isSilent) {
-                document.getElementById('st-body').innerText = Math.round(body).toLocaleString();
-                document.getElementById('st-crit').innerText = Math.round(crit).toLocaleString();
-            }
+            document.getElementById('st-body').innerText = body.toLocaleString();
+            document.getElementById('st-crit').innerText = crit.toLocaleString();
 
-            const rps = data.rpm / 60;
-            const burst = rps * avgHit;
-            const timeToEmpty = data.mag / rps;
-            const sustain = (avgHit * data.mag) / (timeToEmpty + data.rel);
+            const avgHit = wDmg * (1 + (chc * chd)) * stMult;
+            const burst = (rpm / 60) * avgHit;
+            const enemy = parseFloat(document.getElementById('enemy-select').value);
+            
+            document.getElementById('res-kpm').innerText = ( (avgHit * mag) / enemy ).toFixed(2);
+            document.getElementById('res-ttkb').innerText = (enemy / burst).toFixed(2) + "s";
 
-            return { 
-                name: document.getElementById('build-name').value || "Build",
-                burst, sustain, avgHit, rps, mag: data.mag, rel: data.rel,
-                rawInputs: data // Speicher für Schritt 3
-            };
+            return { n: document.getElementById('build-name').value || "Build", burst: burst, kpm: (avgHit * mag) / enemy };
         }
         return null;
     }
 
-    // 3. Builds laden & Matrix
     function captureBuild() {
         const res = calculate();
         if (res) {
             builds.push(res);
             renderMatrix();
-            updateChart();
         }
-    }
-
-    function loadBuild(index) {
-        const b = builds[index].rawInputs;
-        for (let key in b) {
-            const el = document.getElementById(key);
-            if(el) el.value = b[key];
-        }
-        document.getElementById('build-name').value = builds[index].name;
-        syncDmg(2);
     }
 
     function renderMatrix() {
         const h = document.getElementById('comp-header'), b = document.getElementById('comp-body');
         h.innerHTML = '<th>Metric</th>';
-        builds.forEach((x, i) => {
-            h.innerHTML += `<th><span class="load-btn" onclick="loadBuild(${i})">${x.name}</span><span class="del-btn" onclick="builds.splice(${i},1);renderMatrix();updateChart();" style="color:red; margin-left:5px; cursor:pointer;">X</span></th>`;
-        });
+        builds.forEach((x, i) => h.innerHTML += `<th>${x.n} <span onclick="builds.splice(${i},1);renderMatrix()" style="color:red">X</span></th>`);
         
-        let rows = [
-            {n: 'Burst DPS', k: 'burst'},
-            {n: 'Sustain DPS', k: 'sustain'},
-            {n: 'Avg Hit', k: 'avgHit'}
-        ];
-
-        b.innerHTML = '';
-        rows.forEach(r => {
-            let row = `<tr><td><strong>${r.n}</strong></td>`;
-            builds.forEach(x => row += `<td>${Math.round(x[r.k]).toLocaleString()}</td>`);
-            b.innerHTML += row + '</tr>';
+        let row1 = '<tr><td><strong>Burst DPS</strong></td>';
+        let row2 = '<tr><td><strong>Kills/Mag</strong></td>';
+        builds.forEach(x => {
+            row1 += `<td>${Math.round(x.burst).toLocaleString()}</td>`;
+            row2 += `<td>${x.kpm.toFixed(2)}</td>`;
         });
+        b.innerHTML = row1 + '</tr>' + row2 + '</tr>';
     }
 
-    // 4. DPS Graph (mxswat Style)
-    function updateChart() {
-        const ctx = document.getElementById('dpsChart').getContext('2d');
-        const labels = Array.from({length: 31}, (_, i) => i + "s");
-        
-        const datasets = builds.map((build, idx) => {
-            const data = [];
-            let totalDmg = 0;
-            let currentMag = build.mag;
-            let reloadingUntil = 0;
-
-            for (let t = 0; t <= 30; t++) {
-                if (t >= reloadingUntil) {
-                    const shots = Math.min(currentMag, build.rps);
-                    totalDmg += shots * build.avgHit;
-                    currentMag -= shots;
-
-                    if (currentMag <= 0) {
-                        reloadingUntil = t + build.rel;
-                        currentMag = build.mag;
-                    }
-                }
-                data.push(totalDmg);
-            }
-
-            return {
-                label: build.name,
-                data: data,
-                borderColor: ['#ff6600', '#00ff88', '#3399ff', '#ffcc00'][idx % 4],
-                tension: 0.1,
-                fill: false
-            };
-        });
-
-        if (dpsChart) dpsChart.destroy();
-        dpsChart = new Chart(ctx, {
-            type: 'line',
-            data: { labels, datasets },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { grid: { color: '#222' }, ticks: { color: '#888' } },
-                    x: { grid: { color: '#222' }, ticks: { color: '#888' } }
-                },
-                plugins: { legend: { labels: { color: '#fff' } } }
-            }
-        });
-    }
-
-    function clearMatrix() { builds = []; renderMatrix(); updateChart(); }
-
-    // Initialer Chart-Dummy
-    window.onload = updateChart;
+    function clearMatrix() { builds = []; renderMatrix(); }
 </script>
+
 </body>
 </html>
