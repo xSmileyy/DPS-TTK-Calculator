@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V8.3</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V8.6 (Accordion)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
     <style>
         :root { 
             --orange: #ff6600; 
@@ -89,6 +90,40 @@
         .section-title:first-child { margin-top: 0; }
         .section-title::after { content: ''; height: 1px; flex-grow: 1; background: var(--border); }
 
+        /* NEW STYLES FOR ACCORDION & INFO BOX */
+        .info-box-prominent {
+            background: rgba(255, 102, 0, 0.1); 
+            border-left: 4px solid var(--orange);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #ccc;
+        }
+        .info-box-prominent strong { color: #fff; text-transform: uppercase; }
+        .info-box-prominent i { color: var(--orange); margin-right: 8px; }
+
+        .accordion-header {
+            background: #111;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+            margin-bottom: 10px;
+        }
+        .accordion-header:hover { border-color: var(--orange); background: #161616; }
+        .accordion-header span { font-weight: 800; font-size: 12px; text-transform: uppercase; color: #fff; }
+        .accordion-arrow { transition: transform 0.3s ease; color: var(--orange); }
+        .accordion-content { display: none; margin-top: 15px; animation: slideDown 0.3s ease-out; }
+        .accordion-content.active { display: block; }
+        
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
         .input-block { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
@@ -113,7 +148,6 @@
             gap: 5px;
         }
 
-        /* Info Icon Style */
         .info-icon {
             color: var(--orange);
             cursor: pointer;
@@ -159,9 +193,16 @@
         .comp-table td { padding: 10px; border-bottom: 1px solid #111; font-family: 'JetBrains Mono'; color: #fff; }
         
         .diff-text { font-size: 10px; margin-left: 5px; font-weight: normal; opacity: 0.8; }
-        .action-cell { display: flex; gap: 5px; justify-content: flex-end; }
-        .del-btn { color: #ff4444; cursor: pointer; font-size: 10px; border: 1px solid #ff4444; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-        .edit-btn { color: var(--ingame-blue); cursor: pointer; font-size: 10px; border: 1px solid var(--ingame-blue); padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+        
+        .action-cell { display: flex; gap: 4px; justify-content: flex-end; align-items: center; margin-top: 5px; }
+        .del-btn { color: #ff4444; cursor: pointer; font-size: 10px; border: 1px solid #ff4444; padding: 2px 6px; border-radius: 4px; font-weight: bold; transition: 0.2s; }
+        .edit-btn { color: var(--ingame-blue); cursor: pointer; font-size: 10px; border: 1px solid var(--ingame-blue); padding: 2px 6px; border-radius: 4px; font-weight: bold; transition: 0.2s; }
+        .move-btn { color: #888; cursor: pointer; font-size: 10px; border: 1px solid #444; padding: 2px 6px; border-radius: 4px; font-weight: bold; transition: 0.2s; }
+        
+        .del-btn:hover { background: rgba(255, 68, 68, 0.2); }
+        .edit-btn:hover { background: rgba(51, 153, 255, 0.2); }
+        .move-btn:hover { background: #333; color: #fff; border-color: #fff; }
+
         .action-row { display: flex; gap: 10px; margin-top: 15px; }
         .btn-small { flex: 1; padding: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; cursor: pointer; border-radius: 6px; border: 1px solid #333; background: #222; color: #fff; }
 
@@ -228,31 +269,40 @@
 
     <div class="main-grid">
         <div class="card">
-            <div class="section-title">0. Calculate Base Damage</div>
-            <div class="hint-text">
-                <i class="fas fa-info-circle"></i> 
-                <strong>Guide:</strong> Only use if Base Damage is unknown. Otherwise select a Preset or skip to 1. Weapon Data.<br>
-                <strong>Stats Location:</strong> Open Inventory > Stats > Weapon Damage, All Weapon Damage Bonus %, Specific Weapon Damage % (e.g. AR, SMG).<br>
-                <br>
-                <span style="opacity:0.8"><i class="fas fa-hand-pointer"></i> Tap the <i class="fas fa-question-circle" style="color:var(--orange)"></i> icons to view stats screenshots.</span>
-            </div>
             
-            <div class="input-block" style="grid-template-columns: repeat(3, 1fr);">
-                <div class="group">
-                    <label>Weapon Damage <i class="fas fa-question-circle info-icon" onclick="showHelp('dmg')"></i></label>
-                    <input type="number" id="menu-dmg" oninput="calculateBase()">
+            <div class="info-box-prominent">
+                <i class="fas fa-info-circle"></i>
+                <strong>Optional Tool:</strong> Use this if you don't know your Base Damage.
+                <br>If your weapon is in the "Weapon Presets" list, you can <strong>skip this step</strong>.
+            </div>
+
+            <div class="accordion-header" onclick="toggleCalc()">
+                <span>0. Calculate Base Damage (Click to Open)</span>
+                <i id="calc-arrow" class="fas fa-chevron-down accordion-arrow"></i>
+            </div>
+
+            <div id="calc-content" class="accordion-content">
+                <div class="hint-text">
+                    <strong>Guide:</strong> Enter stats from Inventory to find Base Damage.<br>
+                    <i class="fas fa-hand-pointer"></i> Tap <i class="fas fa-question-circle" style="color:var(--orange)"></i> icons for screenshots.
                 </div>
-                <div class="group">
-                    <label>AWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('awd')"></i></label>
-                    <input type="number" id="menu-awd" oninput="calculateBase()">
-                </div>
-                <div class="group">
-                    <label>SWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('swd')"></i></label>
-                    <input type="number" id="menu-swd" oninput="calculateBase()">
-                </div>
-                <div class="group" style="grid-column: span 3; border-top: 1px solid #222; padding-top: 10px; margin-top: 5px;">
-                    <label style="color:var(--orange)">Result: Base Damage</label>
-                    <input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;">
+                <div class="input-block" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="group">
+                        <label>Weapon Damage <i class="fas fa-question-circle info-icon" onclick="showHelp('dmg')"></i></label>
+                        <input type="number" id="menu-dmg" oninput="calculateBase()">
+                    </div>
+                    <div class="group">
+                        <label>AWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('awd')"></i></label>
+                        <input type="number" id="menu-awd" oninput="calculateBase()">
+                    </div>
+                    <div class="group">
+                        <label>SWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('swd')"></i></label>
+                        <input type="number" id="menu-swd" oninput="calculateBase()">
+                    </div>
+                    <div class="group" style="grid-column: span 3; border-top: 1px solid #222; padding-top: 10px; margin-top: 5px;">
+                        <label style="color:var(--orange)">Result: Base Damage</label>
+                        <input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;">
+                    </div>
                 </div>
             </div>
 
@@ -398,6 +448,17 @@
     let builds = [];
     let dpsChart;
 
+    const INPUT_KEYS = [
+        'build-name', // 0
+        'base', 'rpm', 'mag', 'rel', // 1-4
+        'awd', 'swd', 'twd', // 5-7
+        'chc', 'chd', 'hsd', // 8-10
+        'dttooc', 'dta', 'dth', // 11-13
+        'h-rate', 'd-rate', 'a-rate', // 14-16
+        'm1', 'm2', 'm3', 'm4', // 17-20
+        'menu-dmg', 'menu-awd', 'menu-swd' // 21-23
+    ];
+
     const helpImages = {
         'dmg': 'https://i.imgur.com/NBsyfoh.png',
         'awd': 'https://i.imgur.com/4SN8wG5.png',
@@ -413,6 +474,20 @@
 
     function closeModal() {
         document.getElementById('imageModal').style.display = "none";
+    }
+
+    // ACCORDION LOGIC
+    function toggleCalc() {
+        const content = document.getElementById('calc-content');
+        const arrow = document.getElementById('calc-arrow');
+        
+        if (content.classList.contains('active')) {
+            content.classList.remove('active');
+            arrow.style.transform = "rotate(0deg)";
+        } else {
+            content.classList.add('active');
+            arrow.style.transform = "rotate(180deg)";
+        }
     }
 
     const presets = {
@@ -437,32 +512,31 @@
     window.onload = function() {
         initChart();
         
-        // CHECK URL PARAMS
         const params = new URLSearchParams(window.location.search);
         if (params.has('b')) {
             try {
-                // Optimization: Load just inputs from URL
-                const b64 = params.get('b');
-                const json = b64_to_utf8(b64);
-                const loadedInputs = JSON.parse(json);
+                const compressed = params.get('b');
+                const json = LZString.decompressFromEncodedURIComponent(compressed);
+                const minifiedBuilds = JSON.parse(json);
                 
-                // Reconstruct full build objects dynamically
-                // We do this by temporarily loading inputs into the calculator and capturing
-                builds = []; // Clear current
-                loadedInputs.forEach(inputData => {
-                    // Inject to form
-                    for (const [key, val] of Object.entries(inputData)) {
+                builds = [];
+                minifiedBuilds.forEach(minArray => {
+                    let inputObj = {};
+                    INPUT_KEYS.forEach((key, index) => {
+                        inputObj[key] = minArray[index];
+                    });
+
+                    for (const [key, val] of Object.entries(inputObj)) {
                         if(document.getElementById(key)) document.getElementById(key).value = val;
                     }
-                    calculateBase(); // Ensure base is sync
-                    calculate();     // Run calc
+                    calculateBase();
+                    calculate();
                     
-                    // Manually push to builds array without triggering saveToStorage (to avoid overwrite)
                     const stats = calculate();
                     builds.push({
-                        name: inputData['build-name'] || "Shared Build",
+                        name: inputObj['build-name'] || "Shared",
                         stats: stats,
-                        inputs: inputData,
+                        inputs: inputObj,
                         ui: {
                             mDmg: stats.avg * stats.mag,
                             omk: document.getElementById('res-omk').innerText,
@@ -479,7 +553,7 @@
                 updateMatrix();
                 updateGraph();
             } catch(e) {
-                console.error("Error loading shared builds", e);
+                console.error("Load error", e);
                 loadFromStorage();
             }
         } else {
@@ -487,24 +561,23 @@
         }
     };
 
-    function utf8_to_b64(str) { return window.btoa(unescape(encodeURIComponent(str))); }
-    function b64_to_utf8(str) { return decodeURIComponent(escape(window.atob(str))); }
-
     function generateShareLink() {
-        if(builds.length === 0) { alert("Please add at least one build to share."); return; }
+        if(builds.length === 0) { alert("Add a build first."); return; }
         
-        // OPTIMIZATION: Only share inputs, not results. Browser recalculates on load.
-        const minimalBuilds = builds.map(b => b.inputs);
-        const json = JSON.stringify(minimalBuilds);
-        const encoded = utf8_to_b64(json);
+        const minifiedBuilds = builds.map(b => {
+            return INPUT_KEYS.map(key => b.inputs[key] || "");
+        });
+
+        const json = JSON.stringify(minifiedBuilds);
+        const compressed = LZString.compressToEncodedURIComponent(json);
         
         const url = new URL(window.location.href);
-        url.searchParams.set('b', encoded);
+        url.searchParams.set('b', compressed);
         
         navigator.clipboard.writeText(url.toString()).then(() => {
-            alert("Link copied! Note: The link is long because it contains all build data (no server used).");
+            alert("Link copied! It uses smart compression to be as short as possible.");
         }).catch(err => {
-            prompt("Copy this link:", url.toString());
+            prompt("Copy link:", url.toString());
         });
     }
 
@@ -632,7 +705,6 @@
         const bodyElem = document.getElementById('st-body');
         bodyElem.innerText = Math.round(body).toLocaleString();
         
-        // BLUE COLOR LOGIC
         if (currentTarget === 'elite') {
             bodyElem.style.color = 'var(--ingame-blue)';
         } else {
@@ -754,15 +826,31 @@
         calculate();
     }
 
+    function moveBuild(index, direction) {
+        const newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= builds.length) return;
+        const temp = builds[index];
+        builds[index] = builds[newIndex];
+        builds[newIndex] = temp;
+        saveToStorage();
+        updateMatrix();
+        updateGraph();
+    }
+
     function updateMatrix() {
         const h = document.getElementById('comp-header');
         const b = document.getElementById('comp-body');
         h.innerHTML = '<th>Metric</th>';
         
         builds.forEach((x, i) => {
+            let leftBtn = i > 0 ? `<span class="move-btn" onclick="moveBuild(${i}, -1)">&lt;</span>` : '';
+            let rightBtn = i < builds.length - 1 ? `<span class="move-btn" onclick="moveBuild(${i}, 1)">&gt;</span>` : '';
+
             h.innerHTML += `<th>
                 ${x.name} 
                 <div class="action-cell">
+                    ${leftBtn}
+                    ${rightBtn}
                     <span class="edit-btn" onclick="loadBuild(${i})">LOAD</span>
                     <span class="del-btn" onclick="deleteBuild(${i})">X</span>
                 </div>
