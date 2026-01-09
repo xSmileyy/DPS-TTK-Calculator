@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V6.4</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V6.6</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -231,7 +231,10 @@
             <div class="section-title">0. Calculate Base Damage</div>
             <div class="hint-text">
                 <i class="fas fa-info-circle"></i> 
-                <strong>Guide:</strong> Tap the <i class="fas fa-question-circle" style="color:var(--orange)"></i> icons to see where to find these stats ingame.
+                <strong>Guide:</strong> Only use if Base Damage is unknown. Otherwise select a Preset or skip to 1. Weapon Data.<br>
+                <strong>Stats Location:</strong> Open Inventory > Stats > Weapon Damage, All Weapon Damage Bonus %, Specific Weapon Damage % (e.g. AR, SMG).<br>
+                <br>
+                <span style="opacity:0.8"><i class="fas fa-hand-pointer"></i> Tap the <i class="fas fa-question-circle" style="color:var(--orange)"></i> icons to view screenshots.</span>
             </div>
             <div class="input-block">
                 <div class="group">
@@ -398,25 +401,15 @@
     let builds = [];
     let dpsChart;
 
-    // IMPORTANT: Replace the placeholders below with the actual URLs of your images!
     const helpImages = {
-        'dmg': 'https://i.imgur.com/example1.png', // Placeholder for Weapon Stats Image
-        'awd': 'https://i.imgur.com/example2.png', // Placeholder for Offense Stats (All Weapon)
-        'swd': 'https://i.imgur.com/example3.png'  // Placeholder for Specific Weapon Dmg
+        'dmg': 'https://i.imgur.com/SwymWKv.png',
+        'awd': 'https://i.imgur.com/m17ulea.png',
+        'swd': 'https://i.imgur.com/jvOyOfE.png'
     };
-
-    /* NOTE TO USER: 
-       You need to upload your 3 screenshots to an image host like Imgur.com.
-       Then replace the URLs above:
-       1. image_29a188.png -> goes into 'dmg'
-       2. image_29a1c5.png -> goes into 'awd'
-       3. image_29a1e4.png -> goes into 'swd'
-    */
 
     function showHelp(type) {
         const modal = document.getElementById('imageModal');
         const img = document.getElementById('modalImg');
-        // Use a default placeholder if you haven't replaced the links yet
         img.src = helpImages[type] || ''; 
         modal.style.display = "block";
     }
