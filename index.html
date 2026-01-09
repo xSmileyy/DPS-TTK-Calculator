@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V7.0</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V7.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -282,25 +282,20 @@
                 </div>
             </div>
 
-            <div class="section-title">1. Weapon Data</div>
+            <div class="section-title">1. Weapon Data & Damage %</div>
             <div class="input-block">
                 <div class="group"><label style="color:var(--orange)">Base Damage</label><input type="number" id="base" style="border-color:var(--orange)" oninput="calculate()"></div>
                 <div class="group"><label>RPM</label><input type="number" id="rpm" oninput="calculate()"></div>
                 <div class="group"><label>Mag Size</label><input type="number" id="mag" oninput="calculate()"></div>
                 <div class="group"><label>Reload (s)</label><input type="number" id="rel" oninput="calculate()"></div>
-            </div>
-
-            <div class="section-title">2. Weapon Damage %</div>
-            <div class="input-block">
+                
                 <div class="group"><label>AWD %</label><input type="number" id="awd" oninput="calculate()"></div>
-                <div class="group"><label>SWD %</label><input type="number" id="swd" oninput="calculate()"></div>
-                <div class="group" style="grid-column: span 2;">
-                    <label>TWD (e.g. Obliterate, Vigilance)</label>
-                    <input type="number" id="twd" oninput="calculate()">
-                </div>
+                <div class="group"><label>TWD (e.g. Obliterate)</label><input type="number" id="twd" oninput="calculate()"></div>
+                <div class="group"></div>
+                <div class="group"></div>
             </div>
 
-            <div class="section-title">3. Combat Stats</div>
+            <div class="section-title">2. Combat Stats</div>
             <div class="input-block">
                 <div class="group"><label>CHC %</label><input type="number" id="chc" oninput="calculate()"></div>
                 <div class="group"><label>CHD %</label><input type="number" id="chd" oninput="calculate()"></div>
@@ -310,7 +305,7 @@
                 <div class="group"><label>DtH %</label><input type="number" id="dth" oninput="calculate()"></div>
             </div>
 
-            <div class="section-title">4. %-Rate Uptime</div>
+            <div class="section-title">3. %-Rate Uptime</div>
             <div class="hint-text"><i class="fas fa-info-circle"></i> Recommended: HS 20% | DTOC 60% | DTA 80%</div>
             <div class="input-block">
                 <div class="group"><label>HS-Rate %</label><input type="number" id="h-rate" value="20" oninput="calculate()"></div>
@@ -318,7 +313,7 @@
                 <div class="group"><label>DTA-Rate %</label><input type="number" id="a-rate" value="80" oninput="calculate()"></div>
             </div>
 
-            <div class="section-title">5. Amplifiers</div>
+            <div class="section-title">4. Amplifiers</div>
             <div class="hint-text"><i class="fas fa-info-circle"></i> e.g. Striker Stacks in %, Glass Cannon %</div>
             <div class="input-block">
                 <div class="group"><label>AMP %</label><input type="number" id="m1" oninput="calculate()"></div>
@@ -400,7 +395,7 @@
     const helpImages = {
         'dmg': 'https://i.imgur.com/NBsyfoh.png',
         'awd': 'https://i.imgur.com/4SN8wG5.png',
-        'swd': 'https://i.imgur.com/gG2aIhn.png'
+        'swd': 'https://i.imgur.com/gG2aIhn.png' // Kept just in case, but link removed from UI
     };
 
     function showHelp(type) {
@@ -462,9 +457,8 @@
     function calculateBase() {
         const rawD = document.getElementById('menu-dmg').value;
         const rawA = document.getElementById('menu-awd').value;
-        // SWD not in 0 anymore, so no rawS here for calculation
-
-        // Force Sync 0 -> 2 (AWD)
+        
+        // Force Sync 0 -> 1 (AWD)
         document.getElementById('awd').value = rawA;
 
         const d = parseFloat(rawD) || 0;
@@ -473,6 +467,7 @@
         if (d > 0) {
             // Formula: MenuDamage / (1 + AWD/100)
             const b = d / (1 + (a/100));
+            // 1 Decimal place, no rounding to Int
             document.getElementById('calc-base-res').value = b.toFixed(1); 
             document.getElementById('base').value = b.toFixed(1); 
         } else {
@@ -498,33 +493,26 @@
         calculate();
     }
 
-    // New Function to handle recalculation of all saved builds when Enemy changes
     function recalculateAll() {
         const hp = parseFloat(document.getElementById('enemy-select').value);
-        
-        // Update current input view
         calculate();
 
-        // Update all saved builds based on new HP
         builds.forEach(b => {
-            // Re-calc efficiency based on stored stats
             const magDmg = b.stats.avg * b.stats.mag;
             const kpm = magDmg / hp;
             const rps = b.stats.rps;
             const burstDps = b.stats.burst;
             const cycleTime = (b.stats.mag / rps) + b.stats.rel;
 
-            // Update UI Object for this build
             b.ui.kpm = kpm.toFixed(2);
             b.ui.omk = (kpm >= 1) ? "YES" : "NO";
             
             if(isFinite(burstDps) && burstDps > 0) {
-                b.ui.ttkb = hp / burstDps; // Store raw for sort, format in matrix
+                b.ui.ttkb = hp / burstDps; 
             } else {
                 b.ui.ttkb = Infinity;
             }
 
-            // TTK Sustain Logic
             if(isFinite(rps) && rps > 0 && b.stats.mag > 0) {
                 let shotsToKill = Math.ceil(hp / b.stats.avg);
                 let magsNeeded = Math.ceil(shotsToKill / b.stats.mag);
@@ -534,7 +522,7 @@
                 } else {
                     ttks = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * b.stats.mag)) / rps);
                 }
-                b.ui.ttks = ttks; // Store raw
+                b.ui.ttks = ttks; 
             } else {
                 b.ui.ttks = Infinity;
             }
@@ -546,9 +534,9 @@
     function calculate() {
         const v = (id) => parseFloat(document.getElementById(id).value) || 0;
         
-        // 1. Core Variables (High Precision)
+        // 1. Core Variables (No SWD anymore)
         const base = v('base');
-        const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100);
+        const totalWpDmg = 1 + (v('awd')/100); 
         const amp = (1 + v('m1')/100) * (1 + v('m2')/100) * (1 + v('m3')/100) * (1 + v('m4')/100);
         const targetMult = currentTarget === 'elite' ? (1 + (v('dta')/100 * (v('a-rate')/100))) : (1 + (v('dth')/100));
         
@@ -562,7 +550,6 @@
         const head = fBase * (1 + v('hsd')/100);
         const hCrit = fBase * (1 + (v('chd') + v('hsd'))/100);
 
-        // 3. UI Display (Rounding ONLY for display)
         const bodyElem = document.getElementById('st-body');
         bodyElem.innerText = Math.round(body).toLocaleString();
         bodyElem.style.color = currentTarget === 'elite' ? 'var(--ingame-blue)' : '#ffffff';
@@ -571,7 +558,6 @@
         document.getElementById('st-head').innerText = Math.round(head).toLocaleString();
         document.getElementById('st-head-crit').innerText = Math.round(hCrit).toLocaleString();
 
-        // 4. Efficiency Metrics (High Precision)
         const avg = (body * (1-chc) + crit * chc) * (1-hRate) + (head * (1-chc) + hCrit * chc) * hRate;
         const hp = v('enemy-select');
         const magDmg = avg * v('mag');
@@ -583,7 +569,6 @@
         const burstDps = avg * rps;
         const sustainDps = magDmg / cycleTime;
 
-        // 5. Final Results UI
         document.getElementById('res-omk').innerText = kpm >= 1 ? "YES" : "NO";
         document.getElementById('res-omk').style.color = kpm >= 1 ? "var(--pos)" : "var(--neg)";
         document.getElementById('res-kpm').innerText = kpm.toFixed(2);
@@ -620,17 +605,14 @@
 
     function captureBuild() {
         const stats = calculate();
-        // CAPTURE ALL INPUTS EXPLICITLY FOR PERFECT LOAD
         const inputs = {
             'menu-dmg': document.getElementById('menu-dmg').value,
             'menu-awd': document.getElementById('menu-awd').value,
-            // SWD Removed from 0
             'base': document.getElementById('base').value,
             'rpm': document.getElementById('rpm').value,
             'mag': document.getElementById('mag').value,
             'rel': document.getElementById('rel').value,
             'awd': document.getElementById('awd').value,
-            'swd': document.getElementById('swd').value,
             'twd': document.getElementById('twd').value,
             'chc': document.getElementById('chc').value,
             'chd': document.getElementById('chd').value,
@@ -671,10 +653,20 @@
 
     function loadBuild(i) {
         const data = builds[i].inputs;
+        // First load everything
         for (const [key, val] of Object.entries(data)) {
             if(document.getElementById(key)) document.getElementById(key).value = val;
         }
+        
+        // Trigger Base calculation (this updates the read-only result field)
+        // BUT: We need to prevent it from clearing 'awd' if 'menu-awd' was empty in the save
+        // Easy fix: just re-apply the saved 'awd' value AFTER calculateBase
+        
         calculateBase(); 
+        
+        // Restore 'awd' explicitly in case calculateBase() wiped it
+        if(data['awd']) document.getElementById('awd').value = data['awd'];
+        
         calculate();
     }
 
@@ -683,7 +675,6 @@
         const b = document.getElementById('comp-body');
         h.innerHTML = '<th>Metric</th>';
         
-        // Headers
         builds.forEach((x, i) => {
             h.innerHTML += `<th>
                 ${x.name} 
@@ -694,7 +685,6 @@
             </th>`;
         });
 
-        // Metrics definition
         let rows = [
             {l:'MAG Damage', k:'mDmg', type:'max'}, 
             {l:'One Mag-Kill?', k:'omk', type:'string'}, 
@@ -708,7 +698,6 @@
         b.innerHTML = '';
         rows.forEach(r => {
             let bestVal = (r.type === 'min') ? Infinity : -Infinity;
-            
             if (r.type !== 'string') {
                 builds.forEach(x => {
                     let val = parseFloat(x.ui[r.k]);
@@ -720,9 +709,8 @@
             }
 
             let tr = `<tr><td><strong>${r.l}</strong></td>`;
-            
             builds.forEach(x => {
-                let val = x.ui[r.k]; // Raw value (number or string)
+                let val = x.ui[r.k];
                 let numVal = parseFloat(val);
                 let displayHTML = "";
                 let style = "";
@@ -731,12 +719,10 @@
                     style = (val === 'YES') ? 'color:var(--pos); font-weight:800;' : 'color:var(--neg);';
                     displayHTML = val;
                 } else {
-                    // Check if infinity or invalid
                     if(!isFinite(numVal) || isNaN(numVal)) {
                         displayHTML = "-";
                     } else {
                         let isBest = (Math.abs(numVal - bestVal) < 0.001);
-                        
                         if (isBest) {
                             style = 'color:var(--pos); font-weight:800;';
                             if (r.l.includes('TTK')) displayHTML = numVal.toFixed(3) + 's';
@@ -744,7 +730,6 @@
                         } else {
                             style = 'color:var(--neg);';
                             let diffPct = 0, diffAbs = 0;
-                            
                             if (r.type === 'max') {
                                 diffPct = ((numVal - bestVal) / bestVal) * 100;
                                 displayHTML = Math.round(numVal).toLocaleString() + ` <span class="diff-text">(${diffPct.toFixed(1)}%)</span>`;
@@ -756,7 +741,6 @@
                         }
                     }
                 }
-                
                 tr += `<td style="${style}">${displayHTML}</td>`;
             });
             b.innerHTML += tr + '</tr>';
@@ -766,20 +750,16 @@
     function updateGraph() {
         const timeLimit = 30; 
         const labels = Array.from({length: timeLimit + 1}, (_, i) => i + "s");
-        
         const datasets = builds.map((b, idx) => {
             let data = [];
             for (let t = 0; t <= timeLimit; t++) {
                 let shotsPerSec = b.stats.rps;
                 if(shotsPerSec <= 0) { data.push(0); continue; }
-
                 let cycleDmg = b.stats.mag * b.stats.avg;
                 let emptyTime = b.stats.mag / shotsPerSec;
                 let cycleTime = emptyTime + b.stats.rel;
-                
                 let fullCycles = Math.floor(t / cycleTime);
                 let remainder = t % cycleTime;
-                
                 let currentDmg = fullCycles * cycleDmg;
                 if (remainder < emptyTime) {
                     currentDmg += remainder * shotsPerSec * b.stats.avg;
@@ -788,7 +768,6 @@
                 }
                 data.push(currentDmg);
             }
-
             const colors = ['#ff6600', '#00ff88', '#3399ff', '#ffcc00', '#ff4444'];
             return {
                 label: b.name,
@@ -798,7 +777,6 @@
                 tension: 0.1
             };
         });
-
         dpsChart.data.labels = labels;
         dpsChart.data.datasets = datasets;
         dpsChart.update();
