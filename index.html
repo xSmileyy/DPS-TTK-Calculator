@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V8.0 FINAL</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V8.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -543,35 +543,46 @@
         const base = v('base');
         const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100); 
         const amp = (1 + v('m1')/100) * (1 + v('m2')/100) * (1 + v('m3')/100) * (1 + v('m4')/100);
-        const targetMult = currentTarget === 'elite' ? (1 + (v('dta')/100 * (v('a-rate')/100))) : (1 + (v('dth')/100));
         
-        const fBase = base * totalWpDmg * (1 + v('twd')/100) * (1 + (v('dttooc')/100 * (v('d-rate')/100))) * targetMult * amp;
+        // *** SHOOTING RANGE (100% Uptime for comparison) ***
+        const range_dtoc = 1 + (v('dttooc')/100); // Always OOC in range
+        const range_target = currentTarget === 'elite' ? (1 + v('dta')/100) : (1 + v('dth')/100); // Max DTA or DTH depending on toggle
+        
+        const fBaseRange = base * totalWpDmg * (1 + v('twd')/100) * range_dtoc * range_target * amp;
+
+        // *** SIMULATION (Uses user rates) ***
+        const sim_dtoc = 1 + ((v('dttooc')/100) * (v('d-rate')/100));
+        const sim_target = currentTarget === 'elite' ? (1 + (v('dta')/100 * (v('a-rate')/100))) : (1 + (v('dth')/100));
+        
+        const fBaseSim = base * totalWpDmg * (1 + v('twd')/100) * sim_dtoc * sim_target * amp;
         
         const chc = Math.min(60, v('chc')) / 100;
         const hRate = v('h-rate') / 100;
 
-        const body = fBase;
-        const crit = fBase * (1 + v('chd')/100);
-        const head = fBase * (1 + v('hsd')/100);
-        const hCrit = fBase * (1 + (v('chd') + v('hsd'))/100);
+        // DISPLAY VALUES (Based on Range Max Potential)
+        const body = fBaseRange;
+        const crit = fBaseRange * (1 + v('chd')/100);
+        const head = fBaseRange * (1 + v('hsd')/100);
+        const hCrit = fBaseRange * (1 + (v('chd') + v('hsd'))/100);
 
-        const bodyElem = document.getElementById('st-body');
-        bodyElem.innerText = Math.round(body).toLocaleString();
-        bodyElem.style.color = currentTarget === 'elite' ? 'var(--ingame-blue)' : '#ffffff';
-
+        document.getElementById('st-body').innerText = Math.round(body).toLocaleString();
         document.getElementById('st-crit').innerText = Math.round(crit).toLocaleString();
         document.getElementById('st-head').innerText = Math.round(head).toLocaleString();
         document.getElementById('st-head-crit').innerText = Math.round(hCrit).toLocaleString();
 
-        const avg = (body * (1-chc) + crit * chc) * (1-hRate) + (head * (1-chc) + hCrit * chc) * hRate;
+        // SIMULATION VALUES (Based on Avg Uptime)
+        // Average damage per shot taking Crits and Headshots into account
+        const avgHit = (fBaseSim * (1-chc) + (fBaseSim * (1 + v('chd')/100)) * chc) * (1-hRate) + 
+                       (fBaseSim * (1 + v('hsd')/100) * (1-chc) + (fBaseSim * (1 + (v('chd') + v('hsd'))/100)) * chc) * hRate;
+
         const hp = v('enemy-select');
-        const magDmg = avg * v('mag');
+        const magDmg = avgHit * v('mag');
         
         const kpm = magDmg / hp;
         const rps = v('rpm')/60;
         const burstTime = v('mag') / rps;
         const cycleTime = burstTime + v('rel');
-        const burstDps = avg * rps;
+        const burstDps = avgHit * rps;
         const sustainDps = magDmg / cycleTime;
 
         document.getElementById('res-omk').innerText = kpm >= 1 ? "YES" : "NO";
@@ -588,7 +599,7 @@
         }
         
         if(isFinite(rps) && rps > 0 && v('mag') > 0) {
-            let shotsToKill = Math.ceil(hp / avg);
+            let shotsToKill = Math.ceil(hp / avgHit);
             let magsNeeded = Math.ceil(shotsToKill / v('mag'));
             
             if (magsNeeded <= 1) {
@@ -602,7 +613,7 @@
         }
 
         return { 
-            avg, rps, mag: v('mag'), rel: v('rel'), name: "", 
+            avg: avgHit, rps, mag: v('mag'), rel: v('rel'), name: "", 
             burst: burstDps, sustain: sustainDps,
             ttkb: ttkbVal, ttks: ttksVal
         };
