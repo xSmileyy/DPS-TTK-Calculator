@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V6.8</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V7.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -236,7 +236,7 @@
                 <br>
                 <span style="opacity:0.8"><i class="fas fa-hand-pointer"></i> Tap the <i class="fas fa-question-circle" style="color:var(--orange)"></i> icons to view stats screenshots.</span>
             </div>
-            <div class="input-block">
+            <div class="input-block" style="grid-template-columns: repeat(3, 1fr);">
                 <div class="group">
                     <label>Weapon Damage <i class="fas fa-question-circle info-icon" onclick="showHelp('dmg')"></i></label>
                     <input type="number" id="menu-dmg" oninput="calculateBase()">
@@ -244,10 +244,6 @@
                 <div class="group">
                     <label>AWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('awd')"></i></label>
                     <input type="number" id="menu-awd" oninput="calculateBase()">
-                </div>
-                <div class="group">
-                    <label>SWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('swd')"></i></label>
-                    <input type="number" id="menu-swd" oninput="calculateBase()">
                 </div>
                 <div class="group">
                     <label style="color:var(--orange)">Result: Base Damage</label>
@@ -466,21 +462,19 @@
     function calculateBase() {
         const rawD = document.getElementById('menu-dmg').value;
         const rawA = document.getElementById('menu-awd').value;
-        const rawS = document.getElementById('menu-swd').value;
+        // SWD not in 0 anymore, so no rawS here for calculation
 
-        // Force Sync 0 -> 2
+        // Force Sync 0 -> 2 (AWD)
         document.getElementById('awd').value = rawA;
-        document.getElementById('swd').value = rawS;
 
         const d = parseFloat(rawD) || 0;
         const a = parseFloat(rawA) || 0;
-        const s = parseFloat(rawS) || 0;
         
         if (d > 0) {
-            // NO ROUNDING HERE, KEEP FLOAT PRECISION
-            const b = d / (1 + (a/100) + (s/100));
-            document.getElementById('calc-base-res').value = b.toFixed(0); 
-            document.getElementById('base').value = b; 
+            // Formula: MenuDamage / (1 + AWD/100)
+            const b = d / (1 + (a/100));
+            document.getElementById('calc-base-res').value = b.toFixed(1); 
+            document.getElementById('base').value = b.toFixed(1); 
         } else {
             // Clear Result 0 but DO NOT CLEAR BASE (1)
             document.getElementById('calc-base-res').value = "";
@@ -630,7 +624,7 @@
         const inputs = {
             'menu-dmg': document.getElementById('menu-dmg').value,
             'menu-awd': document.getElementById('menu-awd').value,
-            'menu-swd': document.getElementById('menu-swd').value,
+            // SWD Removed from 0
             'base': document.getElementById('base').value,
             'rpm': document.getElementById('rpm').value,
             'mag': document.getElementById('mag').value,
