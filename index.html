@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V3.9</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V4.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -19,7 +19,6 @@
             --head: #ff4444; 
             --pos: #00ff88; 
             --neg: #ff4444;
-            --ingame-blue: #3399ff;
         }
 
         body { 
@@ -171,7 +170,7 @@
                 <div class="group"><label>Weapon Damage</label><input type="number" id="menu-dmg" oninput="calculateBase()"></div>
                 <div class="group"><label>AWD %</label><input type="number" id="menu-awd" oninput="calculateBase()"></div>
                 <div class="group"><label>SWD %</label><input type="number" id="menu-swd" oninput="calculateBase()"></div>
-                <div class="group"><label style="color:var(--orange)">Result: Base</label><input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;"></div>
+                <div class="group"><label style="color:var(--orange)">Result: Base Damage</label><input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;"></div>
             </div>
 
             <div class="section-title">Weapon Presets (Base Dmg)</div>
@@ -180,17 +179,26 @@
                     <select id="preset-select" onchange="applyPreset()">
                         <option value="">-- Select Weapon --</option>
                         <optgroup label="Assault Rifles">
+                            <option value="lexington">Lexington (AR)</option>
                             <option value="st-elmos">St. Elmo's Engine</option>
                             <option value="eagle-bearer">Eagle Bearer</option>
                             <option value="the-bighorn">The Bighorn</option>
                             <option value="capacitor">Capacitor</option>
                             <option value="famas">FAMAS 2010</option>
                             <option value="m4">Police M4</option>
+                            <option value="carbine7">Carbine 7</option>
                         </optgroup>
                         <optgroup label="SMGs">
                             <option value="ouroboros">Ouroboros</option>
                             <option value="lady-death">Lady Death</option>
+                            <option value="mpx">MPX</option>
                             <option value="vector">Vector SBR .45</option>
+                        </optgroup>
+                        <optgroup label="LMGs & Rifles">
+                            <option value="iron-lung">Iron Lung</option>
+                            <option value="pestilence">Pestilence</option>
+                            <option value="gr9">GR9</option>
+                            <option value="m1a">Classic M1A</option>
                         </optgroup>
                     </select>
                 </div>
@@ -206,8 +214,8 @@
 
             <div class="section-title">2. Weapon Damage %</div>
             <div class="input-block">
-                <div class="group"><label>AWD (All) %</label><input type="number" id="awd" oninput="calculate()"></div>
-                <div class="group"><label>SWD (Type) %</label><input type="number" id="swd" oninput="calculate()"></div>
+                <div class="group"><label>AWD %</label><input type="number" id="awd" oninput="calculate()"></div>
+                <div class="group"><label>SWD %</label><input type="number" id="swd" oninput="calculate()"></div>
                 <div class="group" style="grid-column: span 2;">
                     <label>TWD (e.g. Obliterate, Vigilance)</label>
                     <input type="number" id="twd" oninput="calculate()">
@@ -225,6 +233,7 @@
             </div>
 
             <div class="section-title">4. %-Rate Uptime</div>
+            <div class="hint-text"><i class="fas fa-info-circle"></i> Rec: HS 20% | DTOC 60% | Armor 80%</div>
             <div class="input-block">
                 <div class="group"><label>HS-Rate %</label><input type="number" id="h-rate" value="20" oninput="calculate()"></div>
                 <div class="group"><label>DTOC-Rate %</label><input type="number" id="d-rate" value="60" oninput="calculate()"></div>
@@ -232,11 +241,12 @@
             </div>
 
             <div class="section-title">5. Amplifiers</div>
+            <div class="hint-text"><i class="fas fa-info-circle"></i> e.g. Striker Stacks in %, Glass Cannon %</div>
             <div class="input-block">
-                <div class="group"><label>Amp 1 %</label><input type="number" id="m1" oninput="calculate()"></div>
-                <div class="group"><label>Amp 2 %</label><input type="number" id="m2" oninput="calculate()"></div>
-                <div class="group"><label>Amp 3 %</label><input type="number" id="m3" oninput="calculate()"></div>
-                <div class="group"><label>Amp 4 %</label><input type="number" id="m4" oninput="calculate()"></div>
+                <div class="group"><label>AMP %</label><input type="number" id="m1" oninput="calculate()"></div>
+                <div class="group"><label>AMP %</label><input type="number" id="m2" oninput="calculate()"></div>
+                <div class="group"><label>AMP %</label><input type="number" id="m3" oninput="calculate()"></div>
+                <div class="group"><label>AMP %</label><input type="number" id="m4" oninput="calculate()"></div>
             </div>
             
             <div class="input-block" style="border: 1px dashed var(--orange); grid-template-columns: repeat(3, 1fr);">
@@ -260,10 +270,16 @@
 
             <div class="section-title">Kill Efficiency</div>
             <select id="enemy-select" style="width:100%; margin-bottom:15px;" onchange="calculate()">
-                <option value="6050000">Heroic 1P Elite (6.0M)</option>
-                <option value="16905653" selected>Heroic 4P Elite (16.9M)</option>
-                <option value="32000000">Heroic 1P Named (32.0M)</option>
-                <option value="72146660">Legendary 4P Named (72.1M)</option>
+                <optgroup label="Heroic Scalings">
+                    <option value="6050000">Heroic 1P Elite (6.0M)</option>
+                    <option value="16905653" selected>Heroic 4P Elite (16.9M)</option>
+                    <option value="32000000">Heroic 1P Named (32.0M)</option>
+                    <option value="47296250">Heroic 4P Named (47.3M)</option>
+                </optgroup>
+                <optgroup label="Legendary Scalings">
+                    <option value="25172134">Legendary 4P Elite (25.2M)</option>
+                    <option value="72146660">Legendary 4P Named (72.1M)</option>
+                </optgroup>
             </select>
             
             <div class="results-grid">
@@ -293,21 +309,40 @@
     let builds = [];
 
     const presets = {
+        'lexington': { base: 53200, rpm: 850, mag: 30, rel: 2.2 },
         'st-elmos': { base: 56223, rpm: 850, mag: 70, rel: 2.2 },
-        'ouroboros': { base: 37922, rpm: 1485, mag: 50, rel: 1.8 },
         'eagle-bearer': { base: 64120, rpm: 750, mag: 60, rel: 2.3 },
+        'the-bighorn': { base: 82500, rpm: 800, mag: 30, rel: 2.1 },
+        'capacitor': { base: 48200, rpm: 700, mag: 40, rel: 2.0 },
         'famas': { base: 51154, rpm: 900, mag: 30, rel: 2.1 },
+        'm4': { base: 53200, rpm: 850, mag: 30, rel: 2.2 },
+        'carbine7': { base: 49500, rpm: 790, mag: 30, rel: 2.1 },
+        'ouroboros': { base: 37922, rpm: 1485, mag: 50, rel: 1.8 },
+        'lady-death': { base: 38200, rpm: 900, mag: 32, rel: 1.8 },
+        'mpx': { base: 45000, rpm: 850, mag: 35, rel: 2.1 },
+        'vector': { base: 39500, rpm: 1200, mag: 40, rel: 1.7 },
+        'iron-lung': { base: 56223, rpm: 800, mag: 85, rel: 2.4 },
+        'pestilence': { base: 58500, rpm: 550, mag: 100, rel: 4.0 },
+        'gr9': { base: 39500, rpm: 750, mag: 200, rel: 3.5 },
         'm1a': { base: 195000, rpm: 180, mag: 10, rel: 2.5 }
     };
 
     function calculateBase() {
         const d = parseFloat(document.getElementById('menu-dmg').value) || 0;
-        const a = (parseFloat(document.getElementById('menu-awd').value) || 0) / 100;
-        const s = (parseFloat(document.getElementById('menu-swd').value) || 0) / 100;
+        const a = parseFloat(document.getElementById('menu-awd').value) || 0;
+        const s = parseFloat(document.getElementById('menu-swd').value) || 0;
+        
         if (d > 0) {
-            const b = d / (1 + a + s);
+            // Berechnung
+            const b = d / (1 + (a/100) + (s/100));
+            // Set Result 0.
             document.getElementById('calc-base-res').value = Math.round(b).toLocaleString();
+            
+            // Sync to 1. and 2.
             document.getElementById('base').value = Math.round(b);
+            document.getElementById('awd').value = a;
+            document.getElementById('swd').value = s;
+
             calculate();
         }
     }
@@ -332,6 +367,7 @@
 
     function calculate() {
         const v = (id) => parseFloat(document.getElementById(id).value) || 0;
+        
         const base = v('base');
         const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100);
         const amp = (1 + v('m1')/100) * (1 + v('m2')/100) * (1 + v('m3')/100) * (1 + v('m4')/100);
