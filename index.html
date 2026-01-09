@@ -85,7 +85,8 @@
             <div class="section-title">0. Calculate Base Damage</div>
             <div class="hint-text">
                 <i class="fas fa-info-circle"></i> 
-                <strong>Note:</strong> Nur nutzen, wenn Base Damage unbekannt ist! Werte aus dem Inventar (Weapon Damage / AWD / SWD) übertragen.
+                <strong>Note:</strong> Only use this if you don't have the Base Damage! <br>
+                <strong>How to find:</strong> Open Inventory > Stats > Weapon Damage, All Weapon Damage Bonus %, Specific Weapon Damage % (e.g. AR, SMG).
             </div>
             <div class="input-block">
                 <div class="group"><label>Weapon Damage</label><input type="number" id="menu-dmg"></div>
@@ -140,7 +141,7 @@
             </div>
 
             <div class="section-title">4. %-Rate Uptime</div>
-            <div class="hint-text">Empfehlung: HS 20% | DTOC 60% | Armor 80%</div>
+            <div class="hint-text">Recommendations: HS 20% | DTOC 60% | Armor 80%</div>
             <div class="input-block">
                 <div class="group"><label>HS-Rate %</label><input type="number" id="h-rate" value="20"></div>
                 <div class="group"><label>DTOC-Rate %</label><input type="number" id="d-rate" value="60"></div>
@@ -314,4 +315,27 @@
         }
     }
     function removeBuild(i) { builds.splice(i, 1); saveToLocal(); renderMatrix(); }
-    function clearMatrix() { builds = []; saveToLocal(); renderMatrix();
+    function clearMatrix() { builds = []; saveToLocal(); renderMatrix(); }
+    function saveToLocal() { localStorage.setItem('dps_matrix_builds', JSON.stringify(builds)); }
+
+    function renderMatrix() {
+        const h = document.getElementById('comp-header'), b = document.getElementById('comp-body');
+        h.innerHTML = '<th>Metric</th>';
+        builds.forEach((x, i) => h.innerHTML += `<th>${x.n}<span class="del-btn" onclick="removeBuild(${i})">X</span></th>`);
+        const rows = [{l:'MAG Damage', k:'mDmg'}, {l:'One Mag-Kill?', k:'omk'}, {l:'Kills / Mag', k:'kpm'}, {l:'Burst DPS', k:'burst'}, {l:'TTK Burst', k:'ttkb'}, {l:'Sustain DPS', k:'sustain'}, {l:'TTK Sustain', k:'ttks'}];
+        b.innerHTML = '';
+        rows.forEach(r => {
+            let tr = `<tr><td><strong>${r.l}</strong></td>`;
+            builds.forEach(x => {
+                let val = x[r.k];
+                let disp = typeof val === 'number' ? (r.l.includes('TTK') ? val.toFixed(3)+'s' : Math.round(val).toLocaleString()) : val;
+                let style = (r.k === 'omk') ? `style="color:${val === 'YES' ? 'var(--pos)' : 'var(--neg)'}; font-weight:800;"` : "";
+                tr += `<td ${style}>${disp}</td>`;
+            });
+            b.innerHTML += tr + '</tr>';
+        });
+    }
+    document.querySelectorAll('input, select').forEach(i => i.addEventListener('input', calculate));
+</script>
+</body>
+</html>
