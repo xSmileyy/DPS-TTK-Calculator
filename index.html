@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V6.0</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V6.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -357,6 +357,7 @@
 
     window.onload = function() {
         initChart();
+        loadFromStorage();
     };
 
     function initChart() {
@@ -394,6 +395,7 @@
         const s = parseFloat(rawS) || 0;
         
         if (d > 0) {
+            // NO ROUNDING HERE, KEEP FLOAT PRECISION
             const b = d / (1 + (a/100) + (s/100));
             document.getElementById('calc-base-res').value = b.toFixed(0); 
             document.getElementById('base').value = b; 
@@ -407,6 +409,7 @@
     function applyPreset() {
         const v = document.getElementById('preset-select').value;
         if (presets[v]) {
+            // ONLY SET BASE DAMAGE
             document.getElementById('base').value = presets[v].base;
             calculate();
         }
@@ -474,6 +477,7 @@
         const targetMult = currentTarget === 'elite' ? (1 + (v('dta')/100 * (v('a-rate')/100))) : (1 + (v('dth')/100));
         
         const fBase = base * totalWpDmg * (1 + v('twd')/100) * (1 + (v('dttooc')/100 * (v('d-rate')/100))) * targetMult * amp;
+        
         const chc = Math.min(60, v('chc')) / 100;
         const hRate = v('h-rate') / 100;
 
@@ -540,6 +544,7 @@
 
     function captureBuild() {
         const stats = calculate();
+        // CAPTURE ALL INPUTS EXPLICITLY FOR PERFECT LOAD
         const inputs = {
             'menu-dmg': document.getElementById('menu-dmg').value,
             'menu-awd': document.getElementById('menu-awd').value,
@@ -583,6 +588,7 @@
             }
         };
         builds.push(b);
+        saveToStorage();
         updateMatrix();
         updateGraph();
     }
@@ -722,8 +728,21 @@
         dpsChart.update();
     }
 
-    function deleteBuild(i) { builds.splice(i, 1); updateMatrix(); updateGraph(); }
-    function clearMatrix() { builds = []; updateMatrix(); updateGraph(); }
+    function saveToStorage() {
+        localStorage.setItem('xsmileyy_builds', JSON.stringify(builds));
+    }
+
+    function loadFromStorage() {
+        const saved = localStorage.getItem('xsmileyy_builds');
+        if (saved) {
+            builds = JSON.parse(saved);
+            updateMatrix();
+            updateGraph();
+        }
+    }
+
+    function deleteBuild(i) { builds.splice(i, 1); saveToStorage(); updateMatrix(); updateGraph(); }
+    function clearMatrix() { builds = []; saveToStorage(); updateMatrix(); updateGraph(); }
 </script>
 </body>
 </html>
