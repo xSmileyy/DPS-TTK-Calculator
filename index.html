@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V8.1</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V8.2 (Shareable)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -386,7 +386,8 @@
             </div>
             
             <div class="action-row">
-                <button class="btn-small" onclick="clearMatrix()" style="color:#ff4444; margin-top:10px;">Reset Matrix</button>
+                <button class="btn-small" onclick="generateShareLink()" style="color:var(--ingame-blue)">Share / Copy Link</button>
+                <button class="btn-small" onclick="clearMatrix()" style="color:#ff4444;">Reset Matrix</button>
             </div>
         </div>
     </div>
@@ -435,8 +436,60 @@
 
     window.onload = function() {
         initChart();
-        loadFromStorage();
+        
+        // CHECK URL PARAMS FIRST
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('b')) {
+            try {
+                const b64 = params.get('b');
+                const json = b64_to_utf8(b64);
+                builds = JSON.parse(json);
+                updateMatrix();
+                updateGraph();
+                // We do NOT save to local storage automatically to avoid overwriting user's own builds
+                // The user is in "View Mode" essentially
+            } catch(e) {
+                console.error("Error loading shared builds", e);
+                loadFromStorage();
+            }
+        } else {
+            loadFromStorage();
+        }
     };
+
+    // Safe UTF-8 Base64 Encoders/Decoders
+    function utf8_to_b64(str) {
+        return window.btoa(unescape(encodeURIComponent(str)));
+    }
+
+    function b64_to_utf8(str) {
+        return decodeURIComponent(escape(window.atob(str)));
+    }
+
+    function generateShareLink() {
+        if(builds.length === 0) {
+            alert("Please add at least one build to share.");
+            return;
+        }
+        
+        // 1. Convert builds array to JSON
+        const json = JSON.stringify(builds);
+        
+        // 2. Base64 Encode (safe for URL)
+        const encoded = utf8_to_b64(json);
+        
+        // 3. Construct URL
+        const url = new URL(window.location.href);
+        url.searchParams.set('b', encoded);
+        
+        // 4. Copy to clipboard
+        navigator.clipboard.writeText(url.toString()).then(() => {
+            alert("Link copied to clipboard! You can now paste it to share.");
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            prompt("Copy this link:", url.toString());
+        });
+    }
 
     function initChart() {
         const ctx = document.getElementById('dpsChart').getContext('2d');
@@ -473,7 +526,6 @@
         document.getElementById('swd').value = s;
 
         if (d > 0) {
-            // Correct Formula: MenuDamage / (1 + AWD + SWD)
             const b = d / (1 + (a/100) + (s/100));
             document.getElementById('calc-base-res').value = b.toFixed(1); 
             document.getElementById('base').value = b.toFixed(1); 
@@ -539,7 +591,7 @@
     function calculate() {
         const v = (id) => parseFloat(document.getElementById(id).value) || 0;
         
-        // 1. Core Variables (AWD + SWD explicitly added here)
+        // 1. Core Variables
         const base = v('base');
         const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100); 
         const amp = (1 + v('m1')/100) * (1 + v('m2')/100) * (1 + v('m3')/100) * (1 + v('m4')/100);
