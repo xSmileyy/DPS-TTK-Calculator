@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V5.0 (Pro)</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V6.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -146,6 +146,9 @@
         .comp-table th { background: rgba(255,255,255,0.05); text-align: left; padding: 10px; color: var(--orange); border-bottom: 1px solid var(--border); }
         .comp-table td { padding: 10px; border-bottom: 1px solid #111; font-family: 'JetBrains Mono'; color: #fff; }
         
+        /* Diff Styles */
+        .diff-text { font-size: 10px; margin-left: 5px; font-weight: normal; opacity: 0.8; }
+        
         .action-cell { display: flex; gap: 5px; justify-content: flex-end; }
         .del-btn { color: #ff4444; cursor: pointer; font-size: 10px; border: 1px solid #ff4444; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
         .edit-btn { color: var(--ingame-blue); cursor: pointer; font-size: 10px; border: 1px solid var(--ingame-blue); padding: 2px 6px; border-radius: 4px; font-weight: bold; }
@@ -153,7 +156,6 @@
         .action-row { display: flex; gap: 10px; margin-top: 15px; }
         .btn-small { flex: 1; padding: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; cursor: pointer; border-radius: 6px; border: 1px solid #333; background: #222; color: #fff; }
 
-        /* Chart Container */
         .chart-container {
             margin-top: 25px;
             padding: 15px;
@@ -284,16 +286,21 @@
             </div>
 
             <div class="section-title">Kill Efficiency</div>
-            <select id="enemy-select" style="width:100%; margin-bottom:15px;" onchange="calculate()">
-                <optgroup label="Heroic Scalings">
-                    <option value="6050000">Heroic 1P Elite (6.0M)</option>
-                    <option value="16905653" selected>Heroic 4P Elite (16.9M)</option>
-                    <option value="32000000">Heroic 1P Named (32.0M)</option>
-                    <option value="47296250">Heroic 4P Named (47.3M)</option>
+            <select id="enemy-select" style="width:100%; margin-bottom:15px;" onchange="recalculateAll()">
+                <optgroup label="Heroic (1 Player)">
+                    <option value="6050000">Heroic Elite (6.05M)</option>
+                    <option value="18000000">Heroic Named (18.0M)</option>
+                    <option value="22000000">Heroic Chunga (22.0M)</option>
                 </optgroup>
-                <optgroup label="Legendary Scalings">
-                    <option value="25172134">Legendary 4P Elite (25.2M)</option>
-                    <option value="72146660">Legendary 4P Named (72.1M)</option>
+                <optgroup label="Heroic (4 Player)" selected>
+                    <option value="16905653" selected>Heroic Elite (16.9M)</option>
+                    <option value="47296250">Heroic Named (47.3M)</option>
+                    <option value="58000000">Heroic Chunga (58.0M)</option>
+                </optgroup>
+                <optgroup label="Legendary (4 Player)">
+                    <option value="25172134">Legendary Elite (25.2M)</option>
+                    <option value="72146660">Legendary Named (72.1M)</option>
+                    <option value="108000000">Legendary Chunga (108M)</option>
                 </optgroup>
             </select>
             
@@ -304,7 +311,7 @@
                 <div class="res-box"><span class="res-label">TTK Sustain</span><span class="res-val" id="res-ttks">-</span></div>
             </div>
 
-            <div class="section-title">Damage Timeline (30s)</div>
+            <div class="section-title">DPS Comparison Graph (30s)</div>
             <div class="chart-container">
                 <canvas id="dpsChart"></canvas>
             </div>
@@ -318,7 +325,7 @@
             </div>
             
             <div class="action-row">
-                <button class="btn-small" onclick="clearMatrix()" style="color:#ff4444;">Reset Matrix</button>
+                <button class="btn-small" onclick="clearMatrix()" style="color:#ff4444; margin-top:10px;">Reset Matrix</button>
             </div>
         </div>
     </div>
@@ -387,9 +394,8 @@
         const s = parseFloat(rawS) || 0;
         
         if (d > 0) {
-            // NO ROUNDING HERE, KEEP FLOAT PRECISION
             const b = d / (1 + (a/100) + (s/100));
-            document.getElementById('calc-base-res').value = b; 
+            document.getElementById('calc-base-res').value = b.toFixed(0); 
             document.getElementById('base').value = b; 
         } else {
             document.getElementById('calc-base-res').value = "";
@@ -402,9 +408,6 @@
         const v = document.getElementById('preset-select').value;
         if (presets[v]) {
             document.getElementById('base').value = presets[v].base;
-            document.getElementById('rpm').value = presets[v].rpm;
-            document.getElementById('mag').value = presets[v].mag;
-            document.getElementById('rel').value = presets[v].rel;
             calculate();
         }
     }
@@ -414,6 +417,51 @@
         document.getElementById('t-elite').classList.toggle('active', t === 'elite');
         document.getElementById('t-health').classList.toggle('active', t === 'health');
         calculate();
+    }
+
+    // New Function to handle recalculation of all saved builds when Enemy changes
+    function recalculateAll() {
+        const hp = parseFloat(document.getElementById('enemy-select').value);
+        
+        // Update current input view
+        calculate();
+
+        // Update all saved builds based on new HP
+        builds.forEach(b => {
+            // Re-calc efficiency based on stored stats
+            const magDmg = b.stats.avg * b.stats.mag;
+            const kpm = magDmg / hp;
+            const rps = b.stats.rps;
+            const burstDps = b.stats.burst;
+            const cycleTime = (b.stats.mag / rps) + b.stats.rel;
+
+            // Update UI Object for this build
+            b.ui.kpm = kpm.toFixed(2);
+            b.ui.omk = (kpm >= 1) ? "YES" : "NO";
+            
+            if(isFinite(burstDps) && burstDps > 0) {
+                b.ui.ttkb = hp / burstDps; // Store raw for sort, format in matrix
+            } else {
+                b.ui.ttkb = Infinity;
+            }
+
+            // TTK Sustain Logic
+            if(isFinite(rps) && rps > 0 && b.stats.mag > 0) {
+                let shotsToKill = Math.ceil(hp / b.stats.avg);
+                let magsNeeded = Math.ceil(shotsToKill / b.stats.mag);
+                let ttks = 0;
+                if (magsNeeded <= 1) {
+                    ttks = shotsToKill / rps;
+                } else {
+                    ttks = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * b.stats.mag)) / rps);
+                }
+                b.ui.ttks = ttks; // Store raw
+            } else {
+                b.ui.ttks = Infinity;
+            }
+        });
+
+        updateMatrix();
     }
 
     function calculate() {
@@ -429,7 +477,6 @@
         const chc = Math.min(60, v('chc')) / 100;
         const hRate = v('h-rate') / 100;
 
-        // 2. Hit Types (High Precision)
         const body = fBase;
         const crit = fBase * (1 + v('chd')/100);
         const head = fBase * (1 + v('hsd')/100);
@@ -460,44 +507,79 @@
         document.getElementById('res-omk').innerText = kpm >= 1 ? "YES" : "NO";
         document.getElementById('res-omk').style.color = kpm >= 1 ? "var(--pos)" : "var(--neg)";
         document.getElementById('res-kpm').innerText = kpm.toFixed(2);
-        document.getElementById('res-ttkb').innerText = (hp / burstDps).toFixed(3) + "s";
         
-        // Complex TTK Sustain Calculation
-        let shotsToKill = Math.ceil(hp / avg);
-        let magsNeeded = Math.ceil(shotsToKill / v('mag'));
-        let ttks = 0;
-        if (magsNeeded === 1) {
-            ttks = shotsToKill / rps;
-        } else {
-            ttks = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * v('mag'))) / rps);
-        }
-        document.getElementById('res-ttks').innerText = ttks.toFixed(3) + "s";
+        let ttkbVal = 0, ttksVal = 0;
 
-        // Return Data for Matrix/Graph
+        if(isFinite(burstDps) && burstDps > 0) {
+             ttkbVal = hp / burstDps;
+             document.getElementById('res-ttkb').innerText = ttkbVal.toFixed(3) + "s";
+        } else {
+             document.getElementById('res-ttkb').innerText = "-";
+        }
+        
+        if(isFinite(rps) && rps > 0 && v('mag') > 0) {
+            let shotsToKill = Math.ceil(hp / avg);
+            let magsNeeded = Math.ceil(shotsToKill / v('mag'));
+            
+            if (magsNeeded <= 1) {
+                ttksVal = shotsToKill / rps;
+            } else {
+                ttksVal = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * v('mag'))) / rps);
+            }
+            document.getElementById('res-ttks').innerText = ttksVal.toFixed(3) + "s";
+        } else {
+            document.getElementById('res-ttks').innerText = "-";
+        }
+
         return { 
             avg, rps, mag: v('mag'), rel: v('rel'), name: "", 
-            burst: burstDps, sustain: sustainDps 
+            burst: burstDps, sustain: sustainDps,
+            ttkb: ttkbVal, ttks: ttksVal
         };
     }
 
     function captureBuild() {
         const stats = calculate();
-        const inputs = {};
-        // Capture all inputs for "Load" functionality
-        document.querySelectorAll('input').forEach(i => inputs[i.id] = i.value);
+        const inputs = {
+            'menu-dmg': document.getElementById('menu-dmg').value,
+            'menu-awd': document.getElementById('menu-awd').value,
+            'menu-swd': document.getElementById('menu-swd').value,
+            'base': document.getElementById('base').value,
+            'rpm': document.getElementById('rpm').value,
+            'mag': document.getElementById('mag').value,
+            'rel': document.getElementById('rel').value,
+            'awd': document.getElementById('awd').value,
+            'swd': document.getElementById('swd').value,
+            'twd': document.getElementById('twd').value,
+            'chc': document.getElementById('chc').value,
+            'chd': document.getElementById('chd').value,
+            'hsd': document.getElementById('hsd').value,
+            'dttooc': document.getElementById('dttooc').value,
+            'dta': document.getElementById('dta').value,
+            'dth': document.getElementById('dth').value,
+            'h-rate': document.getElementById('h-rate').value,
+            'd-rate': document.getElementById('d-rate').value,
+            'a-rate': document.getElementById('a-rate').value,
+            'm1': document.getElementById('m1').value,
+            'm2': document.getElementById('m2').value,
+            'm3': document.getElementById('m3').value,
+            'm4': document.getElementById('m4').value,
+            'build-name': document.getElementById('build-name').value
+        };
         
         const b = {
-            name: document.getElementById('build-name').value || "Build " + (builds.length + 1),
+            name: inputs['build-name'] || "Build " + (builds.length + 1),
             stats: stats,
             inputs: inputs,
             ui: {
                 mDmg: stats.avg * stats.mag,
                 omk: document.getElementById('res-omk').innerText,
-                kpm: document.getElementById('res-kpm').innerText,
+                kpm: document.getElementById('res-kpm').innerText, // String initially
                 burst: stats.burst,
-                ttkb: document.getElementById('res-ttkb').innerText,
+                ttkb: stats.ttkb, // Number
                 sustain: stats.sustain,
-                ttks: document.getElementById('res-ttks').innerText
+                ttks: stats.ttks, // Number
+                crit: document.getElementById('st-crit').innerText
             }
         };
         builds.push(b);
@@ -510,7 +592,6 @@
         for (const [key, val] of Object.entries(data)) {
             if(document.getElementById(key)) document.getElementById(key).value = val;
         }
-        // Force sync logic again just in case
         calculateBase(); 
         calculate();
     }
@@ -520,12 +601,7 @@
         const b = document.getElementById('comp-body');
         h.innerHTML = '<th>Metric</th>';
         
-        let rows = [
-            {l:'MAG Damage', k:'mDmg'}, {l:'One Mag-Kill?', k:'omk'}, {l:'Kills / Mag', k:'kpm'}, 
-            {l:'Burst DPS', k:'burst'}, {l:'TTK Burst', k:'ttkb'}, {l:'Sustain DPS', k:'sustain'}, {l:'TTK Sustain', k:'ttks'}
-        ];
-        
-        // Build Headers
+        // Headers
         builds.forEach((x, i) => {
             h.innerHTML += `<th>
                 ${x.name} 
@@ -536,61 +612,98 @@
             </th>`;
         });
 
-        // Build Rows
+        // Metrics definition
+        let rows = [
+            {l:'MAG Damage', k:'mDmg', type:'max'}, 
+            {l:'One Mag-Kill?', k:'omk', type:'string'}, 
+            {l:'Kills / Mag', k:'kpm', type:'max'}, 
+            {l:'Burst DPS', k:'burst', type:'max'}, 
+            {l:'TTK Burst', k:'ttkb', type:'min'}, 
+            {l:'Sustain DPS', k:'sustain', type:'max'}, 
+            {l:'TTK Sustain', k:'ttks', type:'min'}
+        ];
+
         b.innerHTML = '';
         rows.forEach(r => {
+            let bestVal = (r.type === 'min') ? Infinity : -Infinity;
+            
+            if (r.type !== 'string') {
+                builds.forEach(x => {
+                    let val = parseFloat(x.ui[r.k]);
+                    if (!isNaN(val) && val > 0 && val !== Infinity) {
+                        if (r.type === 'min') bestVal = Math.min(bestVal, val);
+                        else bestVal = Math.max(bestVal, val);
+                    }
+                });
+            }
+
             let tr = `<tr><td><strong>${r.l}</strong></td>`;
+            
             builds.forEach(x => {
-                let val = x.ui[r.k];
-                // Formatting big numbers
-                if (typeof val === 'number') val = Math.round(val).toLocaleString();
-                // Color Logic for OMK
-                let style = (r.k === 'omk') ? `style="color:${val === 'YES' ? 'var(--pos)' : 'var(--neg)'}; font-weight:800;"` : "";
-                tr += `<td ${style}>${val}</td>`;
+                let val = x.ui[r.k]; // Raw value (number or string)
+                let numVal = parseFloat(val);
+                let displayHTML = "";
+                let style = "";
+                
+                if (r.type === 'string') {
+                    style = (val === 'YES') ? 'color:var(--pos); font-weight:800;' : 'color:var(--neg);';
+                    displayHTML = val;
+                } else {
+                    // Check if infinity or invalid
+                    if(!isFinite(numVal) || isNaN(numVal)) {
+                        displayHTML = "-";
+                    } else {
+                        let isBest = (Math.abs(numVal - bestVal) < 0.001);
+                        
+                        if (isBest) {
+                            style = 'color:var(--pos); font-weight:800;';
+                            if (r.l.includes('TTK')) displayHTML = numVal.toFixed(3) + 's';
+                            else displayHTML = Math.round(numVal).toLocaleString();
+                        } else {
+                            style = 'color:var(--neg);';
+                            let diffPct = 0, diffAbs = 0;
+                            
+                            if (r.type === 'max') {
+                                diffPct = ((numVal - bestVal) / bestVal) * 100;
+                                displayHTML = Math.round(numVal).toLocaleString() + ` <span class="diff-text">(${diffPct.toFixed(1)}%)</span>`;
+                            } else {
+                                diffAbs = numVal - bestVal;
+                                diffPct = ((numVal - bestVal) / bestVal) * 100;
+                                displayHTML = numVal.toFixed(3) + 's' + ` <span class="diff-text">(+${diffAbs.toFixed(2)}s / +${diffPct.toFixed(0)}%)</span>`;
+                            }
+                        }
+                    }
+                }
+                
+                tr += `<td style="${style}">${displayHTML}</td>`;
             });
             b.innerHTML += tr + '</tr>';
         });
     }
 
     function updateGraph() {
-        // MXSwat Style: Damage accumulation over time (0s to 25s)
-        const timeLimit = 25; 
+        const timeLimit = 30; 
         const labels = Array.from({length: timeLimit + 1}, (_, i) => i + "s");
         
         const datasets = builds.map((b, idx) => {
             let data = [];
-            let damage = 0;
-            let currentMag = b.stats.mag;
-            let state = 'firing'; // or 'reloading'
-            let stateTimer = 0;
-            
-            // Simulation per second (simplified for graph)
-            // Precise calculation per second tick
             for (let t = 0; t <= timeLimit; t++) {
-                let timeInSecond = 1.0;
-                let dmgInSecond = 0;
-                
-                // Very simple simulation logic for graph curve
-                // This approximates the burst/reload cycle
                 let shotsPerSec = b.stats.rps;
-                
-                // Total cycle capacity
+                if(shotsPerSec <= 0) { data.push(0); continue; }
+
                 let cycleDmg = b.stats.mag * b.stats.avg;
                 let emptyTime = b.stats.mag / shotsPerSec;
                 let cycleTime = emptyTime + b.stats.rel;
                 
-                // Full cycles passed
                 let fullCycles = Math.floor(t / cycleTime);
                 let remainder = t % cycleTime;
                 
                 let currentDmg = fullCycles * cycleDmg;
-                
                 if (remainder < emptyTime) {
                     currentDmg += remainder * shotsPerSec * b.stats.avg;
                 } else {
-                    currentDmg += cycleDmg; // reloading, damage stays flat
+                    currentDmg += cycleDmg;
                 }
-                
                 data.push(currentDmg);
             }
 
