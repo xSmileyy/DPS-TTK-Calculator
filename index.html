@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V8.9 (Fix Load)</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V9.1 (Safe Load)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -272,28 +272,29 @@
             <div class="input-block">
                 <div class="group" style="grid-column: span 4;">
                     <select id="preset-select" onchange="applyPreset()">
-                        <option value="">-- Select Weapon --</option>
+                        <option value="">-- Select Weapon (Base Damage Only) --</option>
                         <optgroup label="Assault Rifles">
-                            <option value="lexington">Lexington (AR)</option>
+                            <option value="lexington">Lexington</option>
                             <option value="st-elmos">St. Elmo's Engine</option>
                             <option value="eagle-bearer">Eagle Bearer</option>
                             <option value="the-bighorn">The Bighorn</option>
                             <option value="capacitor">Capacitor</option>
-                            <option value="famas">FAMAS 2010</option>
-                            <option value="m4">Police M4</option>
-                            <option value="carbine7">Carbine 7</option>
+                            <option value="chameleon">Chameleon</option>
+                            <option value="strega">Strega</option>
+                            <option value="oxpecker">Oxpecker</option>
                         </optgroup>
                         <optgroup label="SMGs">
                             <option value="ouroboros">Ouroboros</option>
                             <option value="lady-death">Lady Death</option>
-                            <option value="mpx">MPX</option>
-                            <option value="vector">Vector SBR .45</option>
+                            <option value="backfire">Backfire</option>
+                            <option value="chatterbox">The Chatterbox</option>
                         </optgroup>
                         <optgroup label="LMGs & Rifles">
                             <option value="iron-lung">Iron Lung</option>
                             <option value="pestilence">Pestilence</option>
-                            <option value="gr9">GR9</option>
-                            <option value="m1a">Classic M1A</option>
+                            <option value="bullet-king">Bullet King</option>
+                            <option value="bluescreen">Bluescreen</option>
+                            <option value="pakhan">Pakhan</option>
                         </optgroup>
                     </select>
                 </div>
@@ -302,9 +303,9 @@
             <div class="section-title">1. Weapon Data & Damage %</div>
             <div class="input-block">
                 <div class="group"><label style="color:var(--orange)">Base Damage</label><input type="number" id="base" style="border-color:var(--orange)" oninput="calculate()"></div>
-                <div class="group"><label>RPM</label><input type="number" id="rpm" oninput="calculate()"></div>
-                <div class="group"><label>Mag Size</label><input type="number" id="mag" oninput="calculate()"></div>
-                <div class="group"><label>Reload (s)</label><input type="number" id="rel" oninput="calculate()"></div>
+                <div class="group"><label>RPM</label><input type="number" id="rpm" placeholder="Enter RPM..." oninput="calculate()"></div>
+                <div class="group"><label>Mag Size</label><input type="number" id="mag" placeholder="Enter Mag..." oninput="calculate()"></div>
+                <div class="group"><label>Reload (s)</label><input type="number" id="rel" placeholder="Enter Reload..." oninput="calculate()"></div>
                 
                 <div class="group"><label>AWD %</label><input type="number" id="awd" oninput="calculate()"></div>
                 <div class="group"><label>SWD %</label><input type="number" id="swd" oninput="calculate()"></div>
@@ -459,23 +460,27 @@
         }
     }
 
+    // UPDATED PRESETS (Data from Images)
     const presets = {
-        'lexington': { base: 53200, rpm: 850, mag: 30, rel: 2.2 },
-        'st-elmos': { base: 56223, rpm: 850, mag: 70, rel: 2.2 },
-        'eagle-bearer': { base: 64120, rpm: 750, mag: 60, rel: 2.3 },
-        'the-bighorn': { base: 82500, rpm: 800, mag: 30, rel: 2.1 },
-        'capacitor': { base: 48200, rpm: 700, mag: 40, rel: 2.0 },
-        'famas': { base: 51154, rpm: 900, mag: 30, rel: 2.1 },
-        'm4': { base: 53200, rpm: 850, mag: 30, rel: 2.2 },
-        'carbine7': { base: 49500, rpm: 790, mag: 30, rel: 2.1 },
-        'ouroboros': { base: 37922, rpm: 1485, mag: 50, rel: 1.8 },
-        'lady-death': { base: 38200, rpm: 900, mag: 32, rel: 1.8 },
-        'mpx': { base: 45000, rpm: 850, mag: 35, rel: 2.1 },
-        'vector': { base: 39500, rpm: 1200, mag: 40, rel: 1.7 },
-        'iron-lung': { base: 56223, rpm: 800, mag: 85, rel: 2.4 },
-        'pestilence': { base: 58500, rpm: 550, mag: 100, rel: 4.0 },
-        'gr9': { base: 39500, rpm: 750, mag: 200, rel: 3.5 },
-        'm1a': { base: 195000, rpm: 180, mag: 10, rel: 2.5 }
+        'lexington': { base: 48699.5 },
+        'st-elmos': { base: 46917.5 },
+        'eagle-bearer': { base: 47364.5 },
+        'the-bighorn': { base: 57218.0 },
+        'capacitor': { base: 57617.5 },
+        'chameleon': { base: 44670.5 },
+        'strega': { base: 57646.0 },
+        'oxpecker': { base: 46405.5 },
+        
+        'ouroboros': { base: 38300.5 },
+        'lady-death': { base: 35409.0 },
+        'backfire': { base: 50998.5 },
+        'chatterbox': { base: 39457.0 },
+        
+        'iron-lung': { base: 54322.0 },
+        'pestilence': { base: 48300.0 },
+        'bullet-king': { base: 54604.0 },
+        'bluescreen': { base: 62361.0 },
+        'pakhan': { base: 71538.0 }
     };
 
     window.onload = function() {
@@ -614,6 +619,7 @@
     function applyPreset() {
         const v = document.getElementById('preset-select').value;
         if (presets[v]) {
+            // ONLY UPDATE BASE DAMAGE
             document.getElementById('base').value = presets[v].base;
             calculate();
         }
@@ -801,20 +807,20 @@
 
     function loadBuild(i) {
         const data = builds[i].inputs;
-        // 1. Load Inputs to DOM
+        
+        // 1. Reset Preset & Calc to prevent conflicts
+        document.getElementById('preset-select').value = "";
+        document.getElementById('calc-base-res').value = "";
+
+        // 2. Load All Saved Inputs
         for (const [key, val] of Object.entries(data)) {
             if(document.getElementById(key)) document.getElementById(key).value = val;
         }
         
-        // 2. CRITICAL FIX: Do NOT call calculateBase() here. 
-        // We do not want to recalculate base from the calculator menu (which might be empty).
-        // We trust the 'base' value we just loaded into the input field.
+        // 3. FORCE base override (double check)
+        if(data['base']) document.getElementById('base').value = data['base'];
 
-        // 3. Ensure AWD/SWD inputs are synced if needed visually
-        if(data['awd']) document.getElementById('awd').value = data['awd'];
-        if(data['swd']) document.getElementById('swd').value = data['swd'];
-        
-        // 4. Run standard calc
+        // 4. Recalculate
         calculate();
     }
 
