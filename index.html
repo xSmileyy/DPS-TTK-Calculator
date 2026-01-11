@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V18 (Fixed Reverse Sim)</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V19 (Stable)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -162,57 +162,6 @@
         }
         input:focus { border-color: var(--orange); outline: none; }
         
-        .stack-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #0a0a0a;
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid #222;
-        }
-        .stack-row label { width: 70px; color: #888; }
-        .stack-input-group { display: flex; align-items: center; gap: 5px; }
-        .stack-input-group input { 
-            width: 90px !important; 
-            flex: none; 
-            text-align: right;
-            font-weight: bold;
-            color: var(--orange);
-        }
-        .stack-input-group span { font-size: 12px; color: #666; font-family: 'JetBrains Mono'; }
-
-        /* Sim Controls inside Header */
-        .sim-header-controls {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(51, 153, 255, 0.1);
-            border: 1px solid rgba(51, 153, 255, 0.3);
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-        }
-        .sim-header-group { display: flex; align-items: center; gap: 10px; }
-        
-        /* Ramp Checkbox */
-        .ramp-label {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 10px;
-            color: var(--ingame-blue);
-            font-weight: 800;
-            cursor: pointer;
-            text-transform: uppercase;
-            white-space: nowrap;
-            margin-left: 5px;
-        }
-        .ramp-check { cursor: pointer; }
-
-        .checkbox-wrapper { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .checkbox-wrapper input { width: auto; margin: 0; cursor: pointer; }
-
         .hint-text { font-size: 11px; color: #888; margin-bottom: 15px; font-style: italic; line-height: 1.4; padding-left: 5px; }
         .hint-text i { color: var(--orange); margin-right: 5px; }
 
@@ -256,34 +205,12 @@
         .chart-controls { display: flex; align-items: center; gap: 10px; }
         .chart-input { width: 60px; padding: 5px; text-align: center; border: 1px solid var(--orange); font-size: 12px; }
 
-        /* Chart Tabs */
-        .chart-tabs { display: flex; gap: 5px; margin-bottom: 10px; }
-        .chart-tab {
-            padding: 8px 16px;
-            background: #222;
-            border: 1px solid #333;
-            border-radius: 6px 6px 0 0;
-            color: #888;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 12px;
-            text-transform: uppercase;
-        }
-        .chart-tab.active {
-            background: #080808;
-            border-bottom: 1px solid #080808;
-            color: var(--orange);
-            border-color: var(--orange);
-        }
-
         /* Modal Styles */
         .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
         .modal-content { margin: 5% auto; padding: 0; border: 1px solid var(--orange); width: 90%; max-width: 800px; background: #111; border-radius: 10px; position: relative; animation: fadeIn 0.3s; }
         .modal-img { width: 100%; height: auto; display: block; border-radius: 10px; }
         .close { color: #fff; position: absolute; top: 10px; right: 20px; font-size: 30px; font-weight: bold; cursor: pointer; text-shadow: 0 0 10px #000; }
         @keyframes fadeIn { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
-        
-        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -298,7 +225,7 @@
 <div class="container">
     <header class="header">
         <div class="logo">xSmileyy's <span>DPS Analyzer</span></div>
-        <div class="version-tag">ALPHA 1.8 (Fixed Logic)</div>
+        <div class="version-tag">ALPHA 1.9 (Stable)</div>
         <div class="discord-info"><i class="fab fa-discord"></i> <span>xsmileyy.</span></div>
     </header>
 
@@ -415,7 +342,7 @@
             </div>
 
             <div class="section-title">4. Amplifiers</div>
-            <div class="hint-text"><i class="fas fa-info-circle"></i> e.g. Static Multipliers (Glass Cannon)</div>
+            <div class="hint-text"><i class="fas fa-info-circle"></i> e.g. Striker Stacks in %, Glass Cannon %</div>
             <div class="input-block">
                 <div class="group"><label>AMP %</label><input type="number" id="m1" oninput="calculate()"></div>
                 <div class="group"><label>AMP %</label><input type="number" id="m2" oninput="calculate()"></div>
@@ -436,10 +363,10 @@
                 <button class="t-btn" id="t-health" onclick="setTarget('health')">Target: Health (DtH)</button>
             </div>
             <div class="range-grid">
-                <div class="range-box"><label>Body Hit (Max)</label><span class="range-val" id="st-body">-</span></div>
-                <div class="range-box"><label>Crit Body (Max)</label><span class="range-val" id="st-crit" style="color:var(--crit)">-</span></div>
-                <div class="range-box"><label>Headshot (Max)</label><span class="range-val" id="st-head" style="color:var(--orange)">-</span></div>
-                <div class="range-box"><label>Crit Head (Max)</label><span class="range-val" id="st-head-crit" style="color:var(--head)">-</span></div>
+                <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body">-</span></div>
+                <div class="range-box"><label>Crit Body</label><span class="range-val" id="st-crit" style="color:var(--crit)">-</span></div>
+                <div class="range-box"><label>Headshot</label><span class="range-val" id="st-head" style="color:var(--orange)">-</span></div>
+                <div class="range-box"><label>Crit Head</label><span class="range-val" id="st-head-crit" style="color:var(--head)">-</span></div>
             </div>
 
             <div class="section-title">Kill Efficiency</div>
@@ -468,142 +395,11 @@
                 <div class="res-box"><span class="res-label">TTK Sustain</span><span class="res-val" id="res-ttks">-</span></div>
             </div>
             
-            <div class="section-title">Timeline Graph</div>
-            
-            <div class="chart-header" style="margin-bottom:0; display:block;">
-                <div class="chart-controls" style="width:100%; display:flex; justify-content:space-between; align-items:center;">
-                    <div class="chart-tabs">
-                        <div class="chart-tab active" id="tab-std" onclick="switchChartTab('std')">Standard (Max Potential)</div>
-                        <div class="chart-tab" id="tab-sim" onclick="switchChartTab('sim')">Ramp-Up Simulation</div>
-                    </div>
-                    
-                    <div style="display:flex; align-items:center; gap:5px;">
-                        <label style="margin:0;">Time (s):</label>
-                        <input type="number" id="graph-time" class="chart-input" value="15" min="1" max="300" oninput="updateGraph()">
-                    </div>
-                </div>
-            </div>
-            
-            <div id="stacking-container" class="hidden">
-                <div style="background:#111; padding:15px; border:1px solid #333; border-top:none; border-radius:0 0 8px 8px; margin-bottom:15px;">
-                    <div class="sim-header-controls">
-                        <div class="checkbox-wrapper">
-                            <input type="checkbox" id="sim-enabled" onchange="updateGraph()">
-                            <label for="sim-enabled" style="color:var(--ingame-blue); font-weight:800; cursor:pointer; font-size:12px;">Enable Simulation</label>
-                        </div>
-                        <div class="sim-header-group">
-                            <label>Max Stacks:</label>
-                            <input type="number" id="sim-max-stacks" value="100" style="width:60px; text-align:center;" oninput="updateGraph()">
-                        </div>
-                    </div>
-
-                    <div class="hint-text">
-                        <strong>Logic:</strong> Enter the <strong>MAX Potential</strong> (Fully Stacked) value here. 
-                        <br>Check <strong>RAMP?</strong> to simulate starting from 0 (Reverse Calculation).
-                        <br><em>Example: Enter 90% Amp for Striker. If Ramp is checked, Sim starts at 0% and builds to 90%.</em>
-                    </div>
-
-                    <div class="input-block" style="grid-template-columns: 1fr; gap: 8px; margin-bottom: 0;">
-                        <div class="stack-row">
-                            <label>Source #1</label>
-                            <div class="stack-input-group">
-                                <input type="number" id="stack-val-1" oninput="calculate()" placeholder="0">
-                                <span>%</span>
-                            </div>
-                            <select id="stack-type-1" onchange="calculate()">
-                                <option value="awd">AWD (Additive)</option>
-                                <option value="twd">TWD (Total Wep Dmg)</option>
-                                <option value="amp">Amplified (Multi)</option>
-                                <option value="crit">Crit Damage</option>
-                                <option value="hsd">Headshot Dmg</option>
-                                <option value="dta">Dmg to Armor</option>
-                                <option value="dth">Dmg to Health</option>
-                            </select>
-                            <label class="ramp-label">
-                                <input type="checkbox" class="ramp-check" id="ramp-check-1" onchange="updateGraph()"> Ramp?
-                            </label>
-                        </div>
-
-                        <div class="stack-row">
-                            <label>Source #2</label>
-                            <div class="stack-input-group">
-                                <input type="number" id="stack-val-2" oninput="calculate()" placeholder="0">
-                                <span>%</span>
-                            </div>
-                            <select id="stack-type-2" onchange="calculate()">
-                                <option value="awd">AWD (Additive)</option>
-                                <option value="twd">TWD (Total Wep Dmg)</option>
-                                <option value="amp">Amplified (Multi)</option>
-                                <option value="crit">Crit Damage</option>
-                                <option value="hsd">Headshot Dmg</option>
-                                <option value="dta">Dmg to Armor</option>
-                                <option value="dth">Dmg to Health</option>
-                            </select>
-                            <label class="ramp-label">
-                                <input type="checkbox" class="ramp-check" id="ramp-check-2" onchange="updateGraph()"> Ramp?
-                            </label>
-                        </div>
-
-                        <div class="stack-row">
-                            <label>Source #3</label>
-                            <div class="stack-input-group">
-                                <input type="number" id="stack-val-3" oninput="calculate()" placeholder="0">
-                                <span>%</span>
-                            </div>
-                            <select id="stack-type-3" onchange="calculate()">
-                                <option value="awd">AWD (Additive)</option>
-                                <option value="twd">TWD (Total Wep Dmg)</option>
-                                <option value="amp">Amplified (Multi)</option>
-                                <option value="crit">Crit Damage</option>
-                                <option value="hsd">Headshot Dmg</option>
-                                <option value="dta">Dmg to Armor</option>
-                                <option value="dth">Dmg to Health</option>
-                            </select>
-                            <label class="ramp-label">
-                                <input type="checkbox" class="ramp-check" id="ramp-check-3" onchange="updateGraph()"> Ramp?
-                            </label>
-                        </div>
-
-                        <div class="stack-row">
-                            <label>Source #4</label>
-                            <div class="stack-input-group">
-                                <input type="number" id="stack-val-4" oninput="calculate()" placeholder="0">
-                                <span>%</span>
-                            </div>
-                            <select id="stack-type-4" onchange="calculate()">
-                                <option value="awd">AWD (Additive)</option>
-                                <option value="twd">TWD (Total Wep Dmg)</option>
-                                <option value="amp">Amplified (Multi)</option>
-                                <option value="crit">Crit Damage</option>
-                                <option value="hsd">Headshot Dmg</option>
-                                <option value="dta">Dmg to Armor</option>
-                                <option value="dth">Dmg to Health</option>
-                            </select>
-                            <label class="ramp-label">
-                                <input type="checkbox" class="ramp-check" id="ramp-check-4" onchange="updateGraph()"> Ramp?
-                            </label>
-                        </div>
-
-                        <div class="stack-row">
-                            <label>Source #5</label>
-                            <div class="stack-input-group">
-                                <input type="number" id="stack-val-5" oninput="calculate()" placeholder="0">
-                                <span>%</span>
-                            </div>
-                            <select id="stack-type-5" onchange="calculate()">
-                                <option value="awd">AWD (Additive)</option>
-                                <option value="twd">TWD (Total Wep Dmg)</option>
-                                <option value="amp">Amplified (Multi)</option>
-                                <option value="crit">Crit Damage</option>
-                                <option value="hsd">Headshot Dmg</option>
-                                <option value="dta">Dmg to Armor</option>
-                                <option value="dth">Dmg to Health</option>
-                            </select>
-                            <label class="ramp-label">
-                                <input type="checkbox" class="ramp-check" id="ramp-check-5" onchange="updateGraph()"> Ramp?
-                            </label>
-                        </div>
-                    </div>
+            <div class="chart-header">
+                <div class="section-title" style="margin:0;">Total Damage Timeline (Burst vs. Sustain)</div>
+                <div class="chart-controls">
+                    <label style="margin:0;">Graph Time (s):</label>
+                    <input type="number" id="graph-time" class="chart-input" value="15" min="1" max="300" oninput="updateGraph()">
                 </div>
             </div>
             
@@ -631,7 +427,6 @@
     let currentTarget = 'elite';
     let builds = [];
     let dpsChart;
-    let currentChartMode = 'std'; // 'std' or 'sim'
 
     const INPUT_KEYS = [
         'build-name', 
@@ -641,14 +436,6 @@
         'dttooc', 'dta', 'dth', 
         'h-rate', 'd-rate', 'a-rate', 
         'm1', 'm2', 'm3', 'm4', 
-        // Stacking
-        'stack-val-1', 'stack-type-1', 'ramp-check-1',
-        'stack-val-2', 'stack-type-2', 'ramp-check-2',
-        'stack-val-3', 'stack-type-3', 'ramp-check-3',
-        'stack-val-4', 'stack-type-4', 'ramp-check-4',
-        'stack-val-5', 'stack-type-5', 'ramp-check-5',
-        // Sim Settings
-        'sim-enabled', 'sim-max-stacks',
         'menu-dmg', 'menu-awd', 'menu-swd',
         'grade' 
     ];
@@ -680,22 +467,6 @@
             content.classList.add('active');
             arrow.style.transform = "rotate(180deg)";
         }
-    }
-    
-    function switchChartTab(mode) {
-        currentChartMode = mode;
-        document.getElementById('tab-std').classList.toggle('active', mode === 'std');
-        document.getElementById('tab-sim').classList.toggle('active', mode === 'sim');
-        
-        // Toggle visibility of stacking container
-        const stackCont = document.getElementById('stacking-container');
-        if (mode === 'sim') {
-            stackCont.classList.remove('hidden');
-        } else {
-            stackCont.classList.add('hidden');
-        }
-        
-        updateGraph();
     }
 
     const presets = {
@@ -738,10 +509,7 @@
 
                     for (const [key, val] of Object.entries(inputObj)) {
                         const el = document.getElementById(key);
-                        if(el) {
-                            if(el.type === 'checkbox') el.checked = (val === 'true' || val === true);
-                            else el.value = val;
-                        }
+                        if(el) el.value = val;
                     }
 
                     const stats = calculate(); 
@@ -892,48 +660,21 @@
         const reload = v('rel');
 
         // SECTION 4 - STANDARD AMPS
-        const ampSec4 = (1 + v('m1')/100) * (1 + v('m2')/100) * (1 + v('m3')/100) * (1 + v('m4')/100);
+        const amp = (1 + v('m1')/100) * (1 + v('m2')/100) * (1 + v('m3')/100) * (1 + v('m4')/100);
 
-        // SECTION 5 - STACKING SOURCES CALCULATION (Added to MAX)
-        let addedAWD = 0;
-        let addedTWD = 0;
-        let addedAmp = 1; 
-        let addedCrit = 0;
-        let addedHSD = 0;
-        let addedDta = 0;
-        let addedDth = 0;
-
-        for (let i = 1; i <= 5; i++) {
-            let val = v('stack-val-' + i);
-            let type = document.getElementById('stack-type-' + i).value;
-            
-            if (val > 0) {
-                switch(type) {
-                    case 'awd': addedAWD += val; break;
-                    case 'twd': addedTWD += val; break;
-                    case 'amp': addedAmp *= (1 + val/100); break;
-                    case 'crit': addedCrit += val; break;
-                    case 'hsd': addedHSD += val; break;
-                    case 'dta': addedDta += val; break;
-                    case 'dth': addedDth += val; break;
-                }
-            }
-        }
-
-        // --- FORMULAS (MAX POTENTIAL) ---
-        const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100) + (v('grade')/100) + (addedAWD/100); 
-        const twdFactor = 1 + (v('twd')/100) + (addedTWD/100);
-        const totalAmp = ampSec4 * addedAmp;
+        // FORMULAS
+        const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100) + (v('grade')/100); 
+        const twdFactor = 1 + (v('twd')/100);
         
         const range_dtoc = 1 + (v('dttooc')/100); 
-        const dtaVal = v('dta') + addedDta;
-        const dthVal = v('dth') + addedDth;
+        const dtaVal = v('dta');
+        const dthVal = v('dth');
         const range_target = currentTarget === 'elite' ? (1 + dtaVal/100) : (1 + dthVal/100); 
         
-        const fBaseRange = base * totalWpDmg * twdFactor * range_dtoc * range_target * totalAmp;
+        const fBaseRange = base * totalWpDmg * twdFactor * range_dtoc * range_target * amp;
         
-        const chdTotal = v('chd') + addedCrit;
-        const hsdTotal = v('hsd') + addedHSD;
+        const chdTotal = v('chd');
+        const hsdTotal = v('hsd');
 
         const body = fBaseRange;
         const crit = fBaseRange * (1 + chdTotal/100);
@@ -953,7 +694,7 @@
         const avgArmorHealth = 1 + ((dtaVal/100) * aRateDec) + ((dthVal/100) * (1 - aRateDec));
 
         // Average Hit (Max Potential)
-        const avgHit = base * totalWpDmg * twdFactor * avgCritHead * avgDtoc * avgArmorHealth * totalAmp;
+        const avgHit = base * totalWpDmg * twdFactor * avgCritHead * avgDtoc * avgArmorHealth * amp;
 
         const rps = rpm > 0 ? (rpm / 60) : 0;
         const magDmg = avgHit * mag;
@@ -999,8 +740,6 @@
             document.getElementById('res-ttks').innerText = "-";
         }
 
-        updateGraph(); // Call to update preview line
-
         return { 
             avg: avgHit, 
             rps: rps, 
@@ -1011,29 +750,8 @@
             burst: burstDps, 
             sustain: sustainDps,
             ttkb: (burstDps > 0 ? hp / burstDps : Infinity), 
-            ttks: ttksVal,
-            // Capture for Sim (Raw Factors)
-            raw: { 
-                base: base, 
-                awd_swd_grade: totalWpDmg, // includes stack AWD
-                twd: twdFactor, 
-                amp: totalAmp, 
-                crit_dtoc_armor: avgCritHead * avgDtoc * avgArmorHealth,
-            }
+            ttks: ttksVal
         };
-    }
-
-    function getLiveInputs() {
-        // Collect current input states specifically for the Live Preview Line
-        let inputs = {};
-        INPUT_KEYS.forEach(k => {
-            const el = document.getElementById(k);
-            if(el) {
-                if(el.type === 'checkbox') inputs[k] = el.checked;
-                else inputs[k] = el.value;
-            }
-        });
-        return inputs;
     }
 
     function captureBuild() {
@@ -1041,10 +759,7 @@
         let inputs = {};
         INPUT_KEYS.forEach(k => {
             const el = document.getElementById(k);
-            if(el) {
-                if(el.type === 'checkbox') inputs[k] = el.checked;
-                else inputs[k] = el.value;
-            }
+            if(el) inputs[k] = el.value;
         });
         
         const b = {
@@ -1074,10 +789,7 @@
         document.getElementById('calc-base-res').value = "";
         for (const [key, val] of Object.entries(data)) {
             const el = document.getElementById(key);
-            if(el) {
-                if(el.type === 'checkbox') el.checked = (val === 'true' || val === true);
-                else el.value = val;
-            }
+            if(el) el.value = val;
         }
         if(data['base']) document.getElementById('base').value = data['base'];
         calculate();
@@ -1176,33 +888,13 @@
         });
     }
 
-    // --- GRAPH LOGIC ---
+    // --- CLEAN GRAPH LOGIC (BURST VS SUSTAIN) ---
     function updateGraph() {
         const timeInput = document.getElementById('graph-time');
         const timeLimit = parseInt(timeInput.value) || 30; 
         const labels = Array.from({length: timeLimit + 1}, (_, i) => i + "s");
 
-        // 1. Prepare Datasets list. Start with saved builds.
-        let graphItems = builds.map((b, idx) => ({
-            name: b.name + (currentChartMode === 'sim' && (b.inputs['sim-enabled'] === true || b.inputs['sim-enabled'] === 'true') ? ' (Saved)' : ''),
-            inputs: b.inputs,
-            stats: b.stats, // saved stats
-            color: ['#ff6600', '#00ff88', '#3399ff', '#ffcc00', '#ff4444'][idx % 5],
-            isLive: false
-        }));
-
-        // 2. IF SIM MODE: Add "Live Preview" line based on current inputs
-        if (currentChartMode === 'sim') {
-            graphItems.unshift({
-                name: ">> CURRENT PREVIEW <<",
-                inputs: getLiveInputs(),
-                stats: calculate(), // calculates based on current inputs
-                color: '#ffffff',
-                isLive: true
-            });
-        }
-
-        const datasets = graphItems.map((b) => {
+        const datasets = builds.map((b, idx) => {
             let data = [];
             let shotsPerSec = b.stats.rps;
             
@@ -1211,58 +903,9 @@
             } else {
                 let magSize = b.stats.mag;
                 let reloadTime = b.stats.rel;
-                
-                let currentStacks = 0;
                 let damageAccumulated = 0;
-                let totalShotsFired = 0;
 
-                // SIM SETTINGS
-                const simEnabled = b.inputs['sim-enabled'] === true || b.inputs['sim-enabled'] === 'true';
-                const maxStacks = parseFloat(b.inputs['sim-max-stacks']) || 100;
-
-                // --- TAB LOGIC: STANDARD vs SIMULATION ---
-                let useRamp = (currentChartMode === 'sim' && simEnabled);
-
-                // --- REVERSE CALCULATION LOGIC (Only if Ramping is active) ---
-                // We need to calculate the "Start Hit" (at 0 Stacks) vs "Max Hit" (at Full Stacks)
-                let baseHitStart = b.stats.avg; // Default: Start = Max
-                let dmgPerStack = 0;
-
-                if (useRamp) {
-                    // 1. Identify which stacks are "Ramping"
-                    let rampingAwd = 0;
-                    let rampingTwd = 0;
-                    let rampingAmpDivisor = 1;
-
-                    for(let i=1; i<=5; i++) {
-                        let val = parseFloat(b.inputs['stack-val-'+i]) || 0;
-                        let type = b.inputs['stack-type-'+i];
-                        let isRamp = b.inputs['ramp-check-'+i] === true || b.inputs['ramp-check-'+i] === 'true';
-                        
-                        if (isRamp && val > 0) {
-                            switch(type) {
-                                case 'awd': rampingAwd += val; break;
-                                case 'twd': rampingTwd += val; break;
-                                case 'amp': rampingAmpDivisor *= (1 + val/100); break;
-                            }
-                        }
-                    }
-
-                    // 2. Subtract Ramping parts from the Total (b.stats.raw)
-                    // b.stats.raw has the FULL values. We strip the ramp parts to find START values.
-                    let startTotalAwd = b.stats.raw.awd_swd_grade - (rampingAwd/100);
-                    let startTotalTwd = b.stats.raw.twd - (rampingTwd/100);
-                    let startTotalAmp = b.stats.raw.amp / rampingAmpDivisor;
-
-                    // 3. Calc Start Hit
-                    baseHitStart = b.stats.raw.base * startTotalAwd * startTotalTwd * startTotalAmp * b.stats.raw.crit_dtoc_armor;
-                    
-                    // 4. Calc Slope
-                    dmgPerStack = (b.stats.avg - baseHitStart) / maxStacks;
-                    if(dmgPerStack < 0) dmgPerStack = 0; // Safety
-                }
-
-                // SIMULATION LOOP
+                // Simple Simulation Loop
                 for (let t = 0; t <= timeLimit; t++) {
                     if (t === 0) {
                         data.push(0);
@@ -1284,22 +927,7 @@
                             let shootTime = Math.min(timeRemainingInSecond, timeToEmpty);
                             let shotsNow = shootTime * shotsPerSec;
                             
-                            if (useRamp) {
-                                // Ramp Logic
-                                let startStack = currentStacks;
-                                let endStack = Math.min(maxStacks, currentStacks + shotsNow);
-                                let avgStackCount = (startStack + endStack) / 2;
-                                
-                                let avgHitForBurst = baseHitStart + (avgStackCount * dmgPerStack);
-                                damageAccumulated += shotsNow * avgHitForBurst;
-                                
-                                currentStacks = endStack;
-                            } else {
-                                // Standard Logic (Max Potential)
-                                damageAccumulated += shotsNow * b.stats.avg;
-                            }
-                            
-                            totalShotsFired += shotsNow;
+                            damageAccumulated += shotsNow * b.stats.avg;
                             timeRemainingInSecond -= shootTime;
                         } else {
                             // RELOAD
@@ -1312,12 +940,11 @@
                 }
             }
 
+            const colors = ['#ff6600', '#00ff88', '#3399ff', '#ffcc00', '#ff4444'];
             return {
                 label: b.name,
                 data: data,
-                borderColor: b.color,
-                borderDash: b.isLive ? [5, 5] : [], // Dashed line for preview
-                borderWidth: b.isLive ? 3 : 2,
+                borderColor: colors[idx % colors.length],
                 fill: false,
                 tension: 0.1
             };
