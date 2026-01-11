@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V9.5 (Smart Stacks)</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V10 (Hybrid Stacks)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -162,6 +162,20 @@
         }
         input:focus { border-color: var(--orange); outline: none; }
         
+        /* NEW STACKING CSS */
+        .stack-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #0a0a0a;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #222;
+        }
+        .stack-row label { width: 70px; color: #888; }
+        .stack-input-group { display: flex; align-items: center; flex: 1; gap: 5px; }
+        .stack-input-group span { font-size: 12px; color: #666; font-family: 'JetBrains Mono'; }
+
         /* Checkbox Style */
         .checkbox-wrapper { display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .checkbox-wrapper input { width: auto; margin: 0; cursor: pointer; }
@@ -243,7 +257,7 @@
 <div class="container">
     <header class="header">
         <div class="logo">xSmileyy's <span>DPS Analyzer</span></div>
-        <div class="version-tag">ALPHA 1.3.2 (Smart Stacks)</div>
+        <div class="version-tag">ALPHA 1.4 (Hybrid Stacks)</div>
         <div class="discord-info"><i class="fab fa-discord"></i> <span>xsmileyy.</span></div>
     </header>
 
@@ -367,7 +381,99 @@
                 <div class="group"><label>AMP %</label><input type="number" id="m3" oninput="calculate()"></div>
                 <div class="group"><label>AMP %</label><input type="number" id="m4" oninput="calculate()"></div>
             </div>
+
+            <div class="section-title">5. Additional Stacking Sources</div>
+            <div class="hint-text">
+                Input the <strong>Max Potential</strong> value on the left and select the corresponding <strong>Damage Type</strong> on the right.
+                These are added to the calculation.
+            </div>
             
+            <div class="input-block" style="grid-template-columns: 1fr; gap: 8px;">
+                <div class="stack-row">
+                    <label>Source #1</label>
+                    <div class="stack-input-group">
+                        <input type="number" id="stack-val-1" oninput="calculate()" placeholder="0">
+                        <span>%</span>
+                    </div>
+                    <select id="stack-type-1" onchange="calculate()">
+                        <option value="awd">AWD (Additive)</option>
+                        <option value="twd">TWD (Total Wep Dmg)</option>
+                        <option value="amp">Amplified (Multi)</option>
+                        <option value="crit">Crit Damage</option>
+                        <option value="hsd">Headshot Dmg</option>
+                        <option value="dta">Dmg to Armor</option>
+                        <option value="dth">Dmg to Health</option>
+                    </select>
+                </div>
+
+                <div class="stack-row">
+                    <label>Source #2</label>
+                    <div class="stack-input-group">
+                        <input type="number" id="stack-val-2" oninput="calculate()" placeholder="0">
+                        <span>%</span>
+                    </div>
+                    <select id="stack-type-2" onchange="calculate()">
+                        <option value="awd">AWD (Additive)</option>
+                        <option value="twd">TWD (Total Wep Dmg)</option>
+                        <option value="amp">Amplified (Multi)</option>
+                        <option value="crit">Crit Damage</option>
+                        <option value="hsd">Headshot Dmg</option>
+                        <option value="dta">Dmg to Armor</option>
+                        <option value="dth">Dmg to Health</option>
+                    </select>
+                </div>
+
+                <div class="stack-row">
+                    <label>Source #3</label>
+                    <div class="stack-input-group">
+                        <input type="number" id="stack-val-3" oninput="calculate()" placeholder="0">
+                        <span>%</span>
+                    </div>
+                    <select id="stack-type-3" onchange="calculate()">
+                        <option value="awd">AWD (Additive)</option>
+                        <option value="twd">TWD (Total Wep Dmg)</option>
+                        <option value="amp">Amplified (Multi)</option>
+                        <option value="crit">Crit Damage</option>
+                        <option value="hsd">Headshot Dmg</option>
+                        <option value="dta">Dmg to Armor</option>
+                        <option value="dth">Dmg to Health</option>
+                    </select>
+                </div>
+
+                <div class="stack-row">
+                    <label>Source #4</label>
+                    <div class="stack-input-group">
+                        <input type="number" id="stack-val-4" oninput="calculate()" placeholder="0">
+                        <span>%</span>
+                    </div>
+                    <select id="stack-type-4" onchange="calculate()">
+                        <option value="awd">AWD (Additive)</option>
+                        <option value="twd">TWD (Total Wep Dmg)</option>
+                        <option value="amp">Amplified (Multi)</option>
+                        <option value="crit">Crit Damage</option>
+                        <option value="hsd">Headshot Dmg</option>
+                        <option value="dta">Dmg to Armor</option>
+                        <option value="dth">Dmg to Health</option>
+                    </select>
+                </div>
+
+                <div class="stack-row">
+                    <label>Source #5</label>
+                    <div class="stack-input-group">
+                        <input type="number" id="stack-val-5" oninput="calculate()" placeholder="0">
+                        <span>%</span>
+                    </div>
+                    <select id="stack-type-5" onchange="calculate()">
+                        <option value="awd">AWD (Additive)</option>
+                        <option value="twd">TWD (Total Wep Dmg)</option>
+                        <option value="amp">Amplified (Multi)</option>
+                        <option value="crit">Crit Damage</option>
+                        <option value="hsd">Headshot Dmg</option>
+                        <option value="dta">Dmg to Armor</option>
+                        <option value="dth">Dmg to Health</option>
+                    </select>
+                </div>
+            </div>
             <div class="input-block" style="border: 1px dashed var(--orange); grid-template-columns: repeat(3, 1fr);">
                 <div class="group" style="grid-column: span 2;"><label>Build Name</label><input type="text" id="build-name" placeholder="Name..."></div>
                 <div class="group"><button class="btn-capture" onclick="captureBuild()">Add to Matrix</button></div>
@@ -476,6 +582,12 @@
         'dttooc', 'dta', 'dth', 
         'h-rate', 'd-rate', 'a-rate', 
         'm1', 'm2', 'm3', 'm4', 
+        // Added Stacking Keys
+        'stack-val-1', 'stack-type-1',
+        'stack-val-2', 'stack-type-2',
+        'stack-val-3', 'stack-type-3',
+        'stack-val-4', 'stack-type-4',
+        'stack-val-5', 'stack-type-5',
         'menu-dmg', 'menu-awd', 'menu-swd',
         'grade' 
     ];
@@ -698,17 +810,57 @@
         const mag = v('mag');
         const reload = v('rel');
 
-        const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100) + (v('grade')/100); 
-        const amp = (1 + v('m1')/100) * (1 + v('m2')/100) * (1 + v('m3')/100) * (1 + v('m4')/100);
+        // SECTION 4 - STANDARD AMPS
+        const ampSec4 = (1 + v('m1')/100) * (1 + v('m2')/100) * (1 + v('m3')/100) * (1 + v('m4')/100);
+
+        // SECTION 5 - STACKING SOURCES CALCULATION
+        let addedAWD = 0;
+        let addedTWD = 0;
+        let addedAmp = 1; 
+        let addedCrit = 0;
+        let addedHSD = 0;
+        let addedDta = 0;
+        let addedDth = 0;
+
+        for (let i = 1; i <= 5; i++) {
+            let val = v('stack-val-' + i);
+            let type = document.getElementById('stack-type-' + i).value;
+            
+            if (val > 0) {
+                switch(type) {
+                    case 'awd': addedAWD += val; break;
+                    case 'twd': addedTWD += val; break;
+                    case 'amp': addedAmp *= (1 + val/100); break;
+                    case 'crit': addedCrit += val; break;
+                    case 'hsd': addedHSD += val; break;
+                    case 'dta': addedDta += val; break;
+                    case 'dth': addedDth += val; break;
+                }
+            }
+        }
+
+        // --- FORMULAS ---
+        // Combine Inputs + Section 5 Additions
+        const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100) + (v('grade')/100) + (addedAWD/100); 
+        const twdFactor = 1 + (v('twd')/100) + (addedTWD/100);
+        
+        // Combine Sec 4 Amps * Sec 5 Amps
+        const totalAmp = ampSec4 * addedAmp;
         
         const range_dtoc = 1 + (v('dttooc')/100); 
-        const range_target = currentTarget === 'elite' ? (1 + v('dta')/100) : (1 + v('dth')/100); 
-        const fBaseRange = base * totalWpDmg * (1 + v('twd')/100) * range_dtoc * range_target * amp;
+        const dtaVal = v('dta') + addedDta;
+        const dthVal = v('dth') + addedDth;
+        const range_target = currentTarget === 'elite' ? (1 + dtaVal/100) : (1 + dthVal/100); 
         
+        const fBaseRange = base * totalWpDmg * twdFactor * range_dtoc * range_target * totalAmp;
+        
+        const chdTotal = v('chd') + addedCrit;
+        const hsdTotal = v('hsd') + addedHSD;
+
         const body = fBaseRange;
-        const crit = fBaseRange * (1 + v('chd')/100);
-        const head = fBaseRange * (1 + v('hsd')/100);
-        const hCrit = fBaseRange * (1 + (v('chd') + v('hsd'))/100);
+        const crit = fBaseRange * (1 + chdTotal/100);
+        const head = fBaseRange * (1 + hsdTotal/100);
+        const hCrit = fBaseRange * (1 + (chdTotal + hsdTotal)/100);
 
         const bodyElem = document.getElementById('st-body');
         bodyElem.innerText = Math.round(body).toLocaleString();
@@ -717,14 +869,13 @@
         document.getElementById('st-head').innerText = Math.round(head).toLocaleString();
         document.getElementById('st-head-crit').innerText = Math.round(hCrit).toLocaleString();
 
-        const twdFactor = 1 + (v('twd')/100);
-        const avgCritHead = 1 + ((v('chc')/100) * (v('chd')/100)) + ((v('hsd')/100) * (v('h-rate')/100));
+        const avgCritHead = 1 + ((v('chc')/100) * (chdTotal/100)) + ((hsdTotal/100) * (v('h-rate')/100));
         const avgDtoc = 1 + ((v('dttooc')/100) * (v('d-rate')/100));
         const aRateDec = v('a-rate')/100;
-        const avgArmorHealth = 1 + ((v('dta')/100) * aRateDec) + ((v('dth')/100) * (1 - aRateDec));
+        const avgArmorHealth = 1 + ((dtaVal/100) * aRateDec) + ((dthVal/100) * (1 - aRateDec));
 
-        // This avgHit includes ALL stackable bonuses (Max Potential)
-        const avgHit = base * totalWpDmg * twdFactor * avgCritHead * avgDtoc * avgArmorHealth * amp;
+        // Average Hit (Max Potential)
+        const avgHit = base * totalWpDmg * twdFactor * avgCritHead * avgDtoc * avgArmorHealth * totalAmp;
 
         const rps = rpm > 0 ? (rpm / 60) : 0;
         const magDmg = avgHit * mag;
@@ -785,9 +936,9 @@
             // Capture raw inputs for Sim Logic
             raw: { 
                 base: base, 
-                awd_swd_grade: totalWpDmg, // This is (1 + AWD + SWD + Grade)
+                awd_swd_grade: totalWpDmg, 
                 twd: twdFactor, 
-                amp: amp, 
+                amp: totalAmp, 
                 crit_dtoc_armor: avgCritHead * avgDtoc * avgArmorHealth
             }
         };
@@ -795,33 +946,11 @@
 
     function captureBuild() {
         const stats = calculate();
-        const inputs = {
-            'menu-dmg': document.getElementById('menu-dmg').value,
-            'menu-awd': document.getElementById('menu-awd').value,
-            'menu-swd': document.getElementById('menu-swd').value,
-            'base': document.getElementById('base').value,
-            'rpm': document.getElementById('rpm').value,
-            'mag': document.getElementById('mag').value,
-            'rel': document.getElementById('rel').value,
-            'awd': document.getElementById('awd').value,
-            'swd': document.getElementById('swd').value,
-            'twd': document.getElementById('twd').value,
-            'grade': document.getElementById('grade').value,
-            'chc': document.getElementById('chc').value,
-            'chd': document.getElementById('chd').value,
-            'hsd': document.getElementById('hsd').value,
-            'dttooc': document.getElementById('dttooc').value,
-            'dta': document.getElementById('dta').value,
-            'dth': document.getElementById('dth').value,
-            'h-rate': document.getElementById('h-rate').value,
-            'd-rate': document.getElementById('d-rate').value,
-            'a-rate': document.getElementById('a-rate').value,
-            'm1': document.getElementById('m1').value,
-            'm2': document.getElementById('m2').value,
-            'm3': document.getElementById('m3').value,
-            'm4': document.getElementById('m4').value,
-            'build-name': document.getElementById('build-name').value
-        };
+        let inputs = {};
+        INPUT_KEYS.forEach(k => {
+            const el = document.getElementById(k);
+            if(el) inputs[k] = el.value;
+        });
         
         const b = {
             name: inputs['build-name'] || "Build " + (builds.length + 1),
@@ -958,7 +1087,7 @@
         const simEnabled = document.getElementById('sim-enabled').checked;
         const simMaxStacks = parseFloat(document.getElementById('sim-max-stacks').value) || 100;
         const simTotalBonus = parseFloat(document.getElementById('sim-total-bonus').value) || 0;
-        const simType = document.getElementById('sim-type').value; // 'amp' or 'twd'
+        const simType = document.getElementById('sim-type').value; 
         
         const datasets = builds.map((b, idx) => {
             let data = [];
@@ -970,50 +1099,26 @@
                 let magSize = b.stats.mag;
                 let reloadTime = b.stats.rel;
                 
-                // Stack Variables
                 let currentStacks = 0;
                 let damageAccumulated = 0;
                 let totalShotsFired = 0;
 
-                // --- SMART REVERSE CALCULATION ---
-                // We calculate what the damage WOULD be at 0 stacks based on the User's input "Total Bonus".
-                // We assume the user has ALREADY entered the Full Bonus in the left panel.
-                
                 let bonusDec = simTotalBonus / 100;
                 let damagePerStackValue = 0;
                 let baseHitZeroStacks = 0;
 
-                // Reconstruct Base Hit (with 0 stacks) from the Full Hit
                 if (simEnabled && bonusDec > 0) {
                     if (simType === 'amp') {
-                        // Math: FullHit = Base * (OtherMults) * (1 + Bonus)
-                        // So: BaseHit (0 stacks) = FullHit / (1 + Bonus)
-                        // Difference per stack = (FullHit - BaseHit) / MaxStacks
                         baseHitZeroStacks = b.stats.avg / (1 + bonusDec);
                     } else {
-                        // TWD is Additive. This is trickier.
-                        // FullHit = Base * (1 + StaticTWD + BonusTWD) * OtherMults
-                        // We need to isolate the TWD factor.
-                        // b.stats.raw contains the factors.
-                        
-                        // Current Total TWD Factor used in calc:
-                        let currentTotalTWD = b.stats.raw.twd; // This is (1 + TWD_Input)
-                        
-                        // We want the factor WITHOUT the SimBonus.
-                        // StaticTWD Factor = currentTotalTWD - BonusDec
+                        let currentTotalTWD = b.stats.raw.twd; 
                         let staticTWDFactor = currentTotalTWD - bonusDec;
-                        
-                        // Protection against negative (if user entered less TWD than bonus)
                         if (staticTWDFactor < 1) staticTWDFactor = 1; 
-
-                        // Re-Calculate Hit with Static Factor
-                        // Formula: Base * (AWD+SWD+Grade) * STATIC_TWD * AMP * CRIT/ETC
                         baseHitZeroStacks = b.stats.raw.base * b.stats.raw.awd_swd_grade * staticTWDFactor * b.stats.raw.amp * b.stats.raw.crit_dtoc_armor;
                     }
                     
                     damagePerStackValue = (b.stats.avg - baseHitZeroStacks) / simMaxStacks;
                 } else {
-                    // No Sim or 0 Bonus -> Constant Damage
                     baseHitZeroStacks = b.stats.avg;
                 }
 
@@ -1030,9 +1135,6 @@
                         let burstTime = magSize / shotsPerSec;
                         let cycleTime = burstTime + reloadTime;
                         
-                        // Where are we in the cycle?
-                        // We need continuous time tracking for accuracy.
-                        // Current exact time = (t - 1) + (1.0 - timeRemainingInSecond)
                         let exactTimeNow = (t - 1) + (1.0 - timeRemainingInSecond);
                         let timeInCycle = exactTimeNow % cycleTime;
                         
@@ -1043,10 +1145,8 @@
                             let shotsNow = shootTime * shotsPerSec;
                             
                             if (simEnabled && bonusDec > 0) {
-                                // Ramp Logic
                                 let startStack = currentStacks;
                                 let endStack = Math.min(simMaxStacks, currentStacks + shotsNow);
-                                // Average stack count for this micro-burst
                                 let avgStackCount = (startStack + endStack) / 2;
                                 
                                 let dmgForTheseShots = shotsNow * (baseHitZeroStacks + (avgStackCount * damagePerStackValue));
@@ -1054,7 +1154,6 @@
                                 
                                 currentStacks = endStack;
                             } else {
-                                // Static Logic
                                 damageAccumulated += shotsNow * b.stats.avg;
                             }
                             
@@ -1064,9 +1163,6 @@
                             // RELOAD PHASE
                             let timeToReloadFinish = cycleTime - timeInCycle;
                             let reloadWait = Math.min(timeRemainingInSecond, timeToReloadFinish);
-                            
-                            // Optional: Here you could add stack decay logic
-                            // currentStacks = Math.max(0, currentStacks - (reloadWait * decayRate));
                             
                             timeRemainingInSecond -= reloadWait;
                         }
