@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V10 (Hybrid Stacks)</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V12 (Per-Build Sim)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -162,7 +162,6 @@
         }
         input:focus { border-color: var(--orange); outline: none; }
         
-        /* NEW STACKING CSS */
         .stack-row {
             display: flex;
             align-items: center;
@@ -176,7 +175,6 @@
         .stack-input-group { display: flex; align-items: center; flex: 1; gap: 5px; }
         .stack-input-group span { font-size: 12px; color: #666; font-family: 'JetBrains Mono'; }
 
-        /* Checkbox Style */
         .checkbox-wrapper { display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .checkbox-wrapper input { width: auto; margin: 0; cursor: pointer; }
 
@@ -223,19 +221,19 @@
         .chart-controls { display: flex; align-items: center; gap: 10px; }
         .chart-input { width: 60px; padding: 5px; text-align: center; border: 1px solid var(--orange); font-size: 12px; }
 
-        /* Sim Controls */
-        .sim-controls {
+        /* Sim Divider */
+        .sim-divider {
+            border-top: 1px solid #333;
             margin-top: 15px;
-            padding: 10px;
-            background: rgba(51, 153, 255, 0.05);
-            border: 1px solid rgba(51, 153, 255, 0.2);
-            border-radius: 8px;
-            display: grid;
-            grid-template-columns: auto 1fr 1fr 1.2fr;
-            gap: 15px;
-            align-items: center;
+            padding-top: 15px;
         }
-        .sim-controls label { margin: 0; color: #ddd; font-size: 11px; }
+        .sim-sub-title {
+            color: var(--ingame-blue);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
 
         /* Modal Styles */
         .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
@@ -257,7 +255,7 @@
 <div class="container">
     <header class="header">
         <div class="logo">xSmileyy's <span>DPS Analyzer</span></div>
-        <div class="version-tag">ALPHA 1.4 (Hybrid Stacks)</div>
+        <div class="version-tag">ALPHA 1.6 (Per-Build Sim)</div>
         <div class="discord-info"><i class="fab fa-discord"></i> <span>xsmileyy.</span></div>
     </header>
 
@@ -381,99 +379,7 @@
                 <div class="group"><label>AMP %</label><input type="number" id="m3" oninput="calculate()"></div>
                 <div class="group"><label>AMP %</label><input type="number" id="m4" oninput="calculate()"></div>
             </div>
-
-            <div class="section-title">5. Additional Stacking Sources</div>
-            <div class="hint-text">
-                Input the <strong>Max Potential</strong> value on the left and select the corresponding <strong>Damage Type</strong> on the right.
-                These are added to the calculation.
-            </div>
             
-            <div class="input-block" style="grid-template-columns: 1fr; gap: 8px;">
-                <div class="stack-row">
-                    <label>Source #1</label>
-                    <div class="stack-input-group">
-                        <input type="number" id="stack-val-1" oninput="calculate()" placeholder="0">
-                        <span>%</span>
-                    </div>
-                    <select id="stack-type-1" onchange="calculate()">
-                        <option value="awd">AWD (Additive)</option>
-                        <option value="twd">TWD (Total Wep Dmg)</option>
-                        <option value="amp">Amplified (Multi)</option>
-                        <option value="crit">Crit Damage</option>
-                        <option value="hsd">Headshot Dmg</option>
-                        <option value="dta">Dmg to Armor</option>
-                        <option value="dth">Dmg to Health</option>
-                    </select>
-                </div>
-
-                <div class="stack-row">
-                    <label>Source #2</label>
-                    <div class="stack-input-group">
-                        <input type="number" id="stack-val-2" oninput="calculate()" placeholder="0">
-                        <span>%</span>
-                    </div>
-                    <select id="stack-type-2" onchange="calculate()">
-                        <option value="awd">AWD (Additive)</option>
-                        <option value="twd">TWD (Total Wep Dmg)</option>
-                        <option value="amp">Amplified (Multi)</option>
-                        <option value="crit">Crit Damage</option>
-                        <option value="hsd">Headshot Dmg</option>
-                        <option value="dta">Dmg to Armor</option>
-                        <option value="dth">Dmg to Health</option>
-                    </select>
-                </div>
-
-                <div class="stack-row">
-                    <label>Source #3</label>
-                    <div class="stack-input-group">
-                        <input type="number" id="stack-val-3" oninput="calculate()" placeholder="0">
-                        <span>%</span>
-                    </div>
-                    <select id="stack-type-3" onchange="calculate()">
-                        <option value="awd">AWD (Additive)</option>
-                        <option value="twd">TWD (Total Wep Dmg)</option>
-                        <option value="amp">Amplified (Multi)</option>
-                        <option value="crit">Crit Damage</option>
-                        <option value="hsd">Headshot Dmg</option>
-                        <option value="dta">Dmg to Armor</option>
-                        <option value="dth">Dmg to Health</option>
-                    </select>
-                </div>
-
-                <div class="stack-row">
-                    <label>Source #4</label>
-                    <div class="stack-input-group">
-                        <input type="number" id="stack-val-4" oninput="calculate()" placeholder="0">
-                        <span>%</span>
-                    </div>
-                    <select id="stack-type-4" onchange="calculate()">
-                        <option value="awd">AWD (Additive)</option>
-                        <option value="twd">TWD (Total Wep Dmg)</option>
-                        <option value="amp">Amplified (Multi)</option>
-                        <option value="crit">Crit Damage</option>
-                        <option value="hsd">Headshot Dmg</option>
-                        <option value="dta">Dmg to Armor</option>
-                        <option value="dth">Dmg to Health</option>
-                    </select>
-                </div>
-
-                <div class="stack-row">
-                    <label>Source #5</label>
-                    <div class="stack-input-group">
-                        <input type="number" id="stack-val-5" oninput="calculate()" placeholder="0">
-                        <span>%</span>
-                    </div>
-                    <select id="stack-type-5" onchange="calculate()">
-                        <option value="awd">AWD (Additive)</option>
-                        <option value="twd">TWD (Total Wep Dmg)</option>
-                        <option value="amp">Amplified (Multi)</option>
-                        <option value="crit">Crit Damage</option>
-                        <option value="hsd">Headshot Dmg</option>
-                        <option value="dta">Dmg to Armor</option>
-                        <option value="dth">Dmg to Health</option>
-                    </select>
-                </div>
-            </div>
             <div class="input-block" style="border: 1px dashed var(--orange); grid-template-columns: repeat(3, 1fr);">
                 <div class="group" style="grid-column: span 2;"><label>Build Name</label><input type="text" id="build-name" placeholder="Name..."></div>
                 <div class="group"><button class="btn-capture" onclick="captureBuild()">Add to Matrix</button></div>
@@ -518,34 +424,134 @@
                 <div class="res-box"><span class="res-label">TTK Burst</span><span class="res-val" id="res-ttkb">-</span></div>
                 <div class="res-box"><span class="res-label">TTK Sustain</span><span class="res-val" id="res-ttks">-</span></div>
             </div>
+            
+            <div class="section-title">Timeline Graph</div>
+            
+            <div class="accordion-header" onclick="toggleStacks()" style="margin-top:0;">
+                <span>Advanced: Custom Stacks & Sim (Click)</span>
+                <i id="stack-arrow" class="fas fa-chevron-down accordion-arrow"></i>
+            </div>
+            
+            <div id="stack-content" class="accordion-content">
+                <div class="hint-text">
+                    <strong>1. Static Stacks:</strong> Added directly to damage stats.
+                </div>
+                <div class="input-block" style="grid-template-columns: 1fr; gap: 8px; margin-bottom: 0;">
+                    <div class="stack-row">
+                        <label>Source #1</label>
+                        <div class="stack-input-group">
+                            <input type="number" id="stack-val-1" oninput="calculate()" placeholder="0">
+                            <span>%</span>
+                        </div>
+                        <select id="stack-type-1" onchange="calculate()">
+                            <option value="awd">AWD (Additive)</option>
+                            <option value="twd">TWD (Total Wep Dmg)</option>
+                            <option value="amp">Amplified (Multi)</option>
+                            <option value="crit">Crit Damage</option>
+                            <option value="hsd">Headshot Dmg</option>
+                            <option value="dta">Dmg to Armor</option>
+                            <option value="dth">Dmg to Health</option>
+                        </select>
+                    </div>
+                    <div class="stack-row">
+                        <label>Source #2</label>
+                        <div class="stack-input-group">
+                            <input type="number" id="stack-val-2" oninput="calculate()" placeholder="0">
+                            <span>%</span>
+                        </div>
+                        <select id="stack-type-2" onchange="calculate()">
+                            <option value="awd">AWD (Additive)</option>
+                            <option value="twd">TWD (Total Wep Dmg)</option>
+                            <option value="amp">Amplified (Multi)</option>
+                            <option value="crit">Crit Damage</option>
+                            <option value="hsd">Headshot Dmg</option>
+                            <option value="dta">Dmg to Armor</option>
+                            <option value="dth">Dmg to Health</option>
+                        </select>
+                    </div>
+                    <div class="stack-row">
+                        <label>Source #3</label>
+                        <div class="stack-input-group">
+                            <input type="number" id="stack-val-3" oninput="calculate()" placeholder="0">
+                            <span>%</span>
+                        </div>
+                        <select id="stack-type-3" onchange="calculate()">
+                            <option value="awd">AWD (Additive)</option>
+                            <option value="twd">TWD (Total Wep Dmg)</option>
+                            <option value="amp">Amplified (Multi)</option>
+                            <option value="crit">Crit Damage</option>
+                            <option value="hsd">Headshot Dmg</option>
+                            <option value="dta">Dmg to Armor</option>
+                            <option value="dth">Dmg to Health</option>
+                        </select>
+                    </div>
+                    <div class="stack-row">
+                        <label>Source #4</label>
+                        <div class="stack-input-group">
+                            <input type="number" id="stack-val-4" oninput="calculate()" placeholder="0">
+                            <span>%</span>
+                        </div>
+                        <select id="stack-type-4" onchange="calculate()">
+                            <option value="awd">AWD (Additive)</option>
+                            <option value="twd">TWD (Total Wep Dmg)</option>
+                            <option value="amp">Amplified (Multi)</option>
+                            <option value="crit">Crit Damage</option>
+                            <option value="hsd">Headshot Dmg</option>
+                            <option value="dta">Dmg to Armor</option>
+                            <option value="dth">Dmg to Health</option>
+                        </select>
+                    </div>
+                    <div class="stack-row">
+                        <label>Source #5</label>
+                        <div class="stack-input-group">
+                            <input type="number" id="stack-val-5" oninput="calculate()" placeholder="0">
+                            <span>%</span>
+                        </div>
+                        <select id="stack-type-5" onchange="calculate()">
+                            <option value="awd">AWD (Additive)</option>
+                            <option value="twd">TWD (Total Wep Dmg)</option>
+                            <option value="amp">Amplified (Multi)</option>
+                            <option value="crit">Crit Damage</option>
+                            <option value="hsd">Headshot Dmg</option>
+                            <option value="dta">Dmg to Armor</option>
+                            <option value="dth">Dmg to Health</option>
+                        </select>
+                    </div>
+                </div>
 
-            <div class="chart-header">
-                <div class="section-title" style="margin:0;">Total Damage Timeline (Burst vs. Sustain)</div>
-                <div class="chart-controls">
-                    <label style="margin:0;">Graph Time (s):</label>
-                    <input type="number" id="graph-time" class="chart-input" value="15" min="1" max="300" oninput="updateGraph()">
+                <div class="sim-divider">
+                    <div class="sim-sub-title">2. Graph Simulation (Ramping)</div>
+                    <div class="hint-text">
+                        Activate to simulate ramping damage (e.g. Striker) in the graph. 
+                        <strong>Settings are saved when adding the build.</strong>
+                    </div>
+                    <div class="input-block" style="grid-template-columns: repeat(2, 1fr);">
+                        <div class="checkbox-wrapper" style="grid-column: span 2; margin-bottom:5px;">
+                            <input type="checkbox" id="sim-enabled">
+                            <label for="sim-enabled" style="color:var(--ingame-blue); font-weight:800; cursor:pointer;">Enable Ramping Simulation</label>
+                        </div>
+                        <div class="group">
+                            <label>Max Stacks</label>
+                            <input type="number" id="sim-max-stacks" value="100" placeholder="100">
+                        </div>
+                        <div class="group">
+                            <label>Total Bonus %</label>
+                            <input type="number" id="sim-total-bonus" value="65" placeholder="65">
+                        </div>
+                        <div class="group" style="grid-column: span 2;">
+                            <label>Stack Type (Reverse Calc)</label>
+                            <select id="sim-type">
+                                <option value="amp">Amplified (e.g. Striker)</option>
+                                <option value="twd">Total Wep Dmg (e.g. Obliterate)</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="sim-controls">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="sim-enabled" onchange="updateGraph()">
-                    <label for="sim-enabled" style="color:var(--ingame-blue); font-weight:800; cursor:pointer;">Advanced Stack Sim</label>
-                </div>
-                <div class="group">
-                    <label>Max Stacks</label>
-                    <input type="number" id="sim-max-stacks" value="100" class="chart-input" style="width:100%" oninput="updateGraph()">
-                </div>
-                <div class="group">
-                    <label>Total Bonus % (e.g. 65)</label>
-                    <input type="number" id="sim-total-bonus" value="65" class="chart-input" style="width:100%" oninput="updateGraph()">
-                </div>
-                <div class="group">
-                    <label>Stack Type</label>
-                    <select id="sim-type" onchange="updateGraph()">
-                        <option value="amp">Amplified (e.g. Striker)</option>
-                        <option value="twd">Total Wep Dmg (e.g. Obliterate)</option>
-                    </select>
+            <div class="chart-header">
+                <div class="chart-controls" style="margin-left:auto;">
+                    <label style="margin:0;">Graph Time (s):</label>
+                    <input type="number" id="graph-time" class="chart-input" value="15" min="1" max="300" oninput="updateGraph()">
                 </div>
             </div>
             
@@ -582,12 +588,14 @@
         'dttooc', 'dta', 'dth', 
         'h-rate', 'd-rate', 'a-rate', 
         'm1', 'm2', 'm3', 'm4', 
-        // Added Stacking Keys
+        // Stacking
         'stack-val-1', 'stack-type-1',
         'stack-val-2', 'stack-type-2',
         'stack-val-3', 'stack-type-3',
         'stack-val-4', 'stack-type-4',
         'stack-val-5', 'stack-type-5',
+        // Per-Build Sim Settings
+        'sim-enabled', 'sim-max-stacks', 'sim-total-bonus', 'sim-type',
         'menu-dmg', 'menu-awd', 'menu-swd',
         'grade' 
     ];
@@ -612,6 +620,18 @@
     function toggleCalc() {
         const content = document.getElementById('calc-content');
         const arrow = document.getElementById('calc-arrow');
+        if (content.classList.contains('active')) {
+            content.classList.remove('active');
+            arrow.style.transform = "rotate(0deg)";
+        } else {
+            content.classList.add('active');
+            arrow.style.transform = "rotate(180deg)";
+        }
+    }
+    
+    function toggleStacks() {
+        const content = document.getElementById('stack-content');
+        const arrow = document.getElementById('stack-arrow');
         if (content.classList.contains('active')) {
             content.classList.remove('active');
             arrow.style.transform = "rotate(0deg)";
@@ -660,7 +680,11 @@
                     });
 
                     for (const [key, val] of Object.entries(inputObj)) {
-                        if(document.getElementById(key)) document.getElementById(key).value = val;
+                        const el = document.getElementById(key);
+                        if(el) {
+                            if(el.type === 'checkbox') el.checked = (val === 'true' || val === true);
+                            else el.value = val;
+                        }
                     }
 
                     const stats = calculate(); 
@@ -949,7 +973,10 @@
         let inputs = {};
         INPUT_KEYS.forEach(k => {
             const el = document.getElementById(k);
-            if(el) inputs[k] = el.value;
+            if(el) {
+                if(el.type === 'checkbox') inputs[k] = el.checked;
+                else inputs[k] = el.value;
+            }
         });
         
         const b = {
@@ -978,7 +1005,11 @@
         document.getElementById('preset-select').value = "";
         document.getElementById('calc-base-res').value = "";
         for (const [key, val] of Object.entries(data)) {
-            if(document.getElementById(key)) document.getElementById(key).value = val;
+            const el = document.getElementById(key);
+            if(el) {
+                if(el.type === 'checkbox') el.checked = (val === 'true' || val === true);
+                else el.value = val;
+            }
         }
         if(data['base']) document.getElementById('base').value = data['base'];
         calculate();
@@ -1077,18 +1108,12 @@
         });
     }
 
-    // --- GRAPH LOGIC (SMART STACKS) ---
+    // --- GRAPH LOGIC (PER-BUILD SIMULATION) ---
     function updateGraph() {
         const timeInput = document.getElementById('graph-time');
         const timeLimit = parseInt(timeInput.value) || 30; 
         const labels = Array.from({length: timeLimit + 1}, (_, i) => i + "s");
 
-        // Sim Settings
-        const simEnabled = document.getElementById('sim-enabled').checked;
-        const simMaxStacks = parseFloat(document.getElementById('sim-max-stacks').value) || 100;
-        const simTotalBonus = parseFloat(document.getElementById('sim-total-bonus').value) || 0;
-        const simType = document.getElementById('sim-type').value; 
-        
         const datasets = builds.map((b, idx) => {
             let data = [];
             
@@ -1103,11 +1128,18 @@
                 let damageAccumulated = 0;
                 let totalShotsFired = 0;
 
+                // --- RETRIEVE PER-BUILD SIM SETTINGS ---
+                const simEnabled = b.inputs['sim-enabled'] === true || b.inputs['sim-enabled'] === 'true';
+                const simMaxStacks = parseFloat(b.inputs['sim-max-stacks']) || 100;
+                const simTotalBonus = parseFloat(b.inputs['sim-total-bonus']) || 0;
+                const simType = b.inputs['sim-type'] || 'amp';
+
                 let bonusDec = simTotalBonus / 100;
                 let damagePerStackValue = 0;
                 let baseHitZeroStacks = 0;
 
                 if (simEnabled && bonusDec > 0) {
+                    // Reverse Calculate Base Hit at 0 stacks
                     if (simType === 'amp') {
                         baseHitZeroStacks = b.stats.avg / (1 + bonusDec);
                     } else {
