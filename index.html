@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V9.3 (Excel Precision)</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V9.5 (Smart Stacks)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -161,6 +161,10 @@
             box-sizing: border-box; 
         }
         input:focus { border-color: var(--orange); outline: none; }
+        
+        /* Checkbox Style */
+        .checkbox-wrapper { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .checkbox-wrapper input { width: auto; margin: 0; cursor: pointer; }
 
         .hint-text { font-size: 11px; color: #888; margin-bottom: 15px; font-style: italic; line-height: 1.4; padding-left: 5px; }
         .hint-text i { color: var(--orange); margin-right: 5px; }
@@ -205,6 +209,20 @@
         .chart-controls { display: flex; align-items: center; gap: 10px; }
         .chart-input { width: 60px; padding: 5px; text-align: center; border: 1px solid var(--orange); font-size: 12px; }
 
+        /* Sim Controls */
+        .sim-controls {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(51, 153, 255, 0.05);
+            border: 1px solid rgba(51, 153, 255, 0.2);
+            border-radius: 8px;
+            display: grid;
+            grid-template-columns: auto 1fr 1fr 1.2fr;
+            gap: 15px;
+            align-items: center;
+        }
+        .sim-controls label { margin: 0; color: #ddd; font-size: 11px; }
+
         /* Modal Styles */
         .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
         .modal-content { margin: 5% auto; padding: 0; border: 1px solid var(--orange); width: 90%; max-width: 800px; background: #111; border-radius: 10px; position: relative; animation: fadeIn 0.3s; }
@@ -225,7 +243,7 @@
 <div class="container">
     <header class="header">
         <div class="logo">xSmileyy's <span>DPS Analyzer</span></div>
-        <div class="version-tag">ALPHA 1.3 WIP</div>
+        <div class="version-tag">ALPHA 1.3.2 (Smart Stacks)</div>
         <div class="discord-info"><i class="fab fa-discord"></i> <span>xsmileyy.</span></div>
     </header>
 
@@ -400,6 +418,28 @@
                 <div class="chart-controls">
                     <label style="margin:0;">Graph Time (s):</label>
                     <input type="number" id="graph-time" class="chart-input" value="15" min="1" max="300" oninput="updateGraph()">
+                </div>
+            </div>
+
+            <div class="sim-controls">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="sim-enabled" onchange="updateGraph()">
+                    <label for="sim-enabled" style="color:var(--ingame-blue); font-weight:800; cursor:pointer;">Advanced Stack Sim</label>
+                </div>
+                <div class="group">
+                    <label>Max Stacks</label>
+                    <input type="number" id="sim-max-stacks" value="100" class="chart-input" style="width:100%" oninput="updateGraph()">
+                </div>
+                <div class="group">
+                    <label>Total Bonus % (e.g. 65)</label>
+                    <input type="number" id="sim-total-bonus" value="65" class="chart-input" style="width:100%" oninput="updateGraph()">
+                </div>
+                <div class="group">
+                    <label>Stack Type</label>
+                    <select id="sim-type" onchange="updateGraph()">
+                        <option value="amp">Amplified (e.g. Striker)</option>
+                        <option value="twd">Total Wep Dmg (e.g. Obliterate)</option>
+                    </select>
                 </div>
             </div>
             
@@ -608,8 +648,6 @@
         currentTarget = t;
         document.getElementById('t-elite').classList.toggle('active', t === 'elite');
         document.getElementById('t-health').classList.toggle('active', t === 'health');
-        // NOTE: calculate() now uses weighted averages (A-Rate) for DPS numbers.
-        // This toggle mainly affects visual feedback in the 'Shooting Range' boxes.
         calculate();
     }
 
@@ -655,20 +693,14 @@
     function calculate() {
         const v = (id) => parseFloat(document.getElementById(id).value) || 0;
         
-        // --- 1. Base Stats ---
         const base = v('base');
         const rpm = v('rpm');
         const mag = v('mag');
         const reload = v('rel');
 
-        // Total Weapon Damage (matches Excel Row 20 formula part 1)
         const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100) + (v('grade')/100); 
-        
-        // Amps (matches Excel: Multiplier columns AH, AJ, AL, AN)
         const amp = (1 + v('m1')/100) * (1 + v('m2')/100) * (1 + v('m3')/100) * (1 + v('m4')/100);
         
-        // --- SHOOTING RANGE DISPLAY ONLY (Toggle dependent) ---
-        // This calculates the "One Shot" number shown in the colored boxes
         const range_dtoc = 1 + (v('dttooc')/100); 
         const range_target = currentTarget === 'elite' ? (1 + v('dta')/100) : (1 + v('dth')/100); 
         const fBaseRange = base * totalWpDmg * (1 + v('twd')/100) * range_dtoc * range_target * amp;
@@ -685,34 +717,15 @@
         document.getElementById('st-head').innerText = Math.round(head).toLocaleString();
         document.getElementById('st-head-crit').innerText = Math.round(hCrit).toLocaleString();
 
-        // --- 2. EXCEL EXACT AVG SHOT CALCULATION (Weighted) ---
-        // This is the number used for all DPS calculations
-        
-        // Factor 1: Weapon Dmg (Done above as totalWpDmg)
-        
-        // Factor 2: TWD
         const twdFactor = 1 + (v('twd')/100);
-
-        // Factor 3: Crit & Headshot Avg (Additive Logic per Excel screenshot formula)
-        // Formula: 1 + (CHC*CHD) + (HSD*H_Rate)
         const avgCritHead = 1 + ((v('chc')/100) * (v('chd')/100)) + ((v('hsd')/100) * (v('h-rate')/100));
-
-        // Factor 4: DTOC Avg
-        // Formula: 1 + (DTOC * D_Rate)
         const avgDtoc = 1 + ((v('dttooc')/100) * (v('d-rate')/100));
-
-        // Factor 5: DTA / DTH Weighted Avg (Matches Excel formula using A-Rate)
-        // Formula: 1 + (DTA * A_Rate) + (DTH * (1 - A_Rate))
         const aRateDec = v('a-rate')/100;
         const avgArmorHealth = 1 + ((v('dta')/100) * aRateDec) + ((v('dth')/100) * (1 - aRateDec));
 
-        // Final Avg Shot Calculation
+        // This avgHit includes ALL stackable bonuses (Max Potential)
         const avgHit = base * totalWpDmg * twdFactor * avgCritHead * avgDtoc * avgArmorHealth * amp;
 
-
-        // --- 3. DPS & TIME CALCULATIONS ---
-        // Matches Excel Formulas
-        
         const rps = rpm > 0 ? (rpm / 60) : 0;
         const magDmg = avgHit * mag;
         const burstDps = rps * avgHit;
@@ -757,6 +770,7 @@
             document.getElementById('res-ttks').innerText = "-";
         }
 
+        // Return inputs needed for graph simulation reuse
         return { 
             avg: avgHit, 
             rps: rps, 
@@ -767,7 +781,15 @@
             burst: burstDps, 
             sustain: sustainDps,
             ttkb: (burstDps > 0 ? hp / burstDps : Infinity), 
-            ttks: ttksVal
+            ttks: ttksVal,
+            // Capture raw inputs for Sim Logic
+            raw: { 
+                base: base, 
+                awd_swd_grade: totalWpDmg, // This is (1 + AWD + SWD + Grade)
+                twd: twdFactor, 
+                amp: amp, 
+                crit_dtoc_armor: avgCritHead * avgDtoc * avgArmorHealth
+            }
         };
     }
 
@@ -926,29 +948,133 @@
         });
     }
 
+    // --- GRAPH LOGIC (SMART STACKS) ---
     function updateGraph() {
         const timeInput = document.getElementById('graph-time');
         const timeLimit = parseInt(timeInput.value) || 30; 
         const labels = Array.from({length: timeLimit + 1}, (_, i) => i + "s");
+
+        // Sim Settings
+        const simEnabled = document.getElementById('sim-enabled').checked;
+        const simMaxStacks = parseFloat(document.getElementById('sim-max-stacks').value) || 100;
+        const simTotalBonus = parseFloat(document.getElementById('sim-total-bonus').value) || 0;
+        const simType = document.getElementById('sim-type').value; // 'amp' or 'twd'
         
         const datasets = builds.map((b, idx) => {
             let data = [];
-            for (let t = 0; t <= timeLimit; t++) {
-                let shotsPerSec = b.stats.rps;
-                if(shotsPerSec <= 0) { data.push(0); continue; }
-                let cycleDmg = b.stats.mag * b.stats.avg;
-                let emptyTime = b.stats.mag / shotsPerSec;
-                let cycleTime = emptyTime + b.stats.rel;
-                let fullCycles = Math.floor(t / cycleTime);
-                let remainder = t % cycleTime;
-                let currentDmg = fullCycles * cycleDmg;
-                if (remainder < emptyTime) {
-                    currentDmg += remainder * shotsPerSec * b.stats.avg;
+            
+            let shotsPerSec = b.stats.rps;
+            if(shotsPerSec <= 0) {
+                for(let t=0; t<=timeLimit; t++) data.push(0);
+            } else {
+                let magSize = b.stats.mag;
+                let reloadTime = b.stats.rel;
+                
+                // Stack Variables
+                let currentStacks = 0;
+                let damageAccumulated = 0;
+                let totalShotsFired = 0;
+
+                // --- SMART REVERSE CALCULATION ---
+                // We calculate what the damage WOULD be at 0 stacks based on the User's input "Total Bonus".
+                // We assume the user has ALREADY entered the Full Bonus in the left panel.
+                
+                let bonusDec = simTotalBonus / 100;
+                let damagePerStackValue = 0;
+                let baseHitZeroStacks = 0;
+
+                // Reconstruct Base Hit (with 0 stacks) from the Full Hit
+                if (simEnabled && bonusDec > 0) {
+                    if (simType === 'amp') {
+                        // Math: FullHit = Base * (OtherMults) * (1 + Bonus)
+                        // So: BaseHit (0 stacks) = FullHit / (1 + Bonus)
+                        // Difference per stack = (FullHit - BaseHit) / MaxStacks
+                        baseHitZeroStacks = b.stats.avg / (1 + bonusDec);
+                    } else {
+                        // TWD is Additive. This is trickier.
+                        // FullHit = Base * (1 + StaticTWD + BonusTWD) * OtherMults
+                        // We need to isolate the TWD factor.
+                        // b.stats.raw contains the factors.
+                        
+                        // Current Total TWD Factor used in calc:
+                        let currentTotalTWD = b.stats.raw.twd; // This is (1 + TWD_Input)
+                        
+                        // We want the factor WITHOUT the SimBonus.
+                        // StaticTWD Factor = currentTotalTWD - BonusDec
+                        let staticTWDFactor = currentTotalTWD - bonusDec;
+                        
+                        // Protection against negative (if user entered less TWD than bonus)
+                        if (staticTWDFactor < 1) staticTWDFactor = 1; 
+
+                        // Re-Calculate Hit with Static Factor
+                        // Formula: Base * (AWD+SWD+Grade) * STATIC_TWD * AMP * CRIT/ETC
+                        baseHitZeroStacks = b.stats.raw.base * b.stats.raw.awd_swd_grade * staticTWDFactor * b.stats.raw.amp * b.stats.raw.crit_dtoc_armor;
+                    }
+                    
+                    damagePerStackValue = (b.stats.avg - baseHitZeroStacks) / simMaxStacks;
                 } else {
-                    currentDmg += cycleDmg;
+                    // No Sim or 0 Bonus -> Constant Damage
+                    baseHitZeroStacks = b.stats.avg;
                 }
-                data.push(currentDmg);
+
+                // Simulation Step
+                for (let t = 0; t <= timeLimit; t++) {
+                    if (t === 0) {
+                        data.push(0);
+                        continue;
+                    }
+                    
+                    let timeRemainingInSecond = 1.0;
+                    
+                    while (timeRemainingInSecond > 0) {
+                        let burstTime = magSize / shotsPerSec;
+                        let cycleTime = burstTime + reloadTime;
+                        
+                        // Where are we in the cycle?
+                        // We need continuous time tracking for accuracy.
+                        // Current exact time = (t - 1) + (1.0 - timeRemainingInSecond)
+                        let exactTimeNow = (t - 1) + (1.0 - timeRemainingInSecond);
+                        let timeInCycle = exactTimeNow % cycleTime;
+                        
+                        if (timeInCycle < burstTime) {
+                            // SHOOTING PHASE
+                            let timeToEmpty = burstTime - timeInCycle;
+                            let shootTime = Math.min(timeRemainingInSecond, timeToEmpty);
+                            let shotsNow = shootTime * shotsPerSec;
+                            
+                            if (simEnabled && bonusDec > 0) {
+                                // Ramp Logic
+                                let startStack = currentStacks;
+                                let endStack = Math.min(simMaxStacks, currentStacks + shotsNow);
+                                // Average stack count for this micro-burst
+                                let avgStackCount = (startStack + endStack) / 2;
+                                
+                                let dmgForTheseShots = shotsNow * (baseHitZeroStacks + (avgStackCount * damagePerStackValue));
+                                damageAccumulated += dmgForTheseShots;
+                                
+                                currentStacks = endStack;
+                            } else {
+                                // Static Logic
+                                damageAccumulated += shotsNow * b.stats.avg;
+                            }
+                            
+                            totalShotsFired += shotsNow;
+                            timeRemainingInSecond -= shootTime;
+                        } else {
+                            // RELOAD PHASE
+                            let timeToReloadFinish = cycleTime - timeInCycle;
+                            let reloadWait = Math.min(timeRemainingInSecond, timeToReloadFinish);
+                            
+                            // Optional: Here you could add stack decay logic
+                            // currentStacks = Math.max(0, currentStacks - (reloadWait * decayRate));
+                            
+                            timeRemainingInSecond -= reloadWait;
+                        }
+                    }
+                    data.push(damageAccumulated);
+                }
             }
+
             const colors = ['#ff6600', '#00ff88', '#3399ff', '#ffcc00', '#ff4444'];
             return {
                 label: b.name,
