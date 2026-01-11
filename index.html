@@ -225,7 +225,7 @@
 <div class="container">
     <header class="header">
         <div class="logo">xSmileyy's <span>DPS Analyzer</span></div>
-        <div class="version-tag">ALPHA 1.1 WIP</div>
+        <div class="version-tag">ALPHA 1.2 WIP</div>
         <div class="discord-info"><i class="fab fa-discord"></i> <span>xsmileyy.</span></div>
     </header>
 
@@ -310,7 +310,16 @@
                 <div class="group"><label>AWD %</label><input type="number" id="awd" oninput="calculate()"></div>
                 <div class="group"><label>SWD %</label><input type="number" id="swd" oninput="calculate()"></div>
                 <div class="group"><label>TWD (e.g. Obliterate)</label><input type="number" id="twd" oninput="calculate()"></div>
-                <div class="group"></div>
+                
+                <div class="group">
+                    <label>
+                        Expertise 
+                        <i class="fas fa-exclamation-triangle" style="color:var(--crit); margin-left:5px; cursor:pointer;" 
+                           title="Note: If you enter Expertise here, remove it from AWD to avoid double counting!"
+                           onclick="alert('IMPORTANT:\nIf you enter a value here (e.g. 20 for Grade 20), make sure you subtract that amount from your AWD % field.\n\nDo not count it twice!')"></i>
+                    </label>
+                    <input type="number" id="grade" placeholder="Lvl (e.g. 25)" oninput="calculate()">
+                </div>
             </div>
 
             <div class="section-title">2. Combat Stats</div>
@@ -418,15 +427,17 @@
     let builds = [];
     let dpsChart;
 
+    // ACHTUNG: 'grade' wurde AM ENDE hinzugefügt, um alte Links kompatibel zu halten!
     const INPUT_KEYS = [
-        'build-name', // 0
-        'base', 'rpm', 'mag', 'rel', // 1-4
-        'awd', 'swd', 'twd', // 5-7
-        'chc', 'chd', 'hsd', // 8-10
-        'dttooc', 'dta', 'dth', // 11-13
-        'h-rate', 'd-rate', 'a-rate', // 14-16
-        'm1', 'm2', 'm3', 'm4', // 17-20
-        'menu-dmg', 'menu-awd', 'menu-swd' // 21-23
+        'build-name', 
+        'base', 'rpm', 'mag', 'rel', 
+        'awd', 'swd', 'twd', 
+        'chc', 'chd', 'hsd', 
+        'dttooc', 'dta', 'dth', 
+        'h-rate', 'd-rate', 'a-rate', 
+        'm1', 'm2', 'm3', 'm4', 
+        'menu-dmg', 'menu-awd', 'menu-swd',
+        'grade' // <--- NEU
     ];
 
     const helpImages = {
@@ -446,11 +457,9 @@
         document.getElementById('imageModal').style.display = "none";
     }
 
-    // ACCORDION LOGIC
     function toggleCalc() {
         const content = document.getElementById('calc-content');
         const arrow = document.getElementById('calc-arrow');
-        
         if (content.classList.contains('active')) {
             content.classList.remove('active');
             arrow.style.transform = "rotate(0deg)";
@@ -460,7 +469,6 @@
         }
     }
 
-    // UPDATED PRESETS (Data from Images)
     const presets = {
         'lexington': { base: 48699.5 },
         'st-elmos': { base: 46917.5 },
@@ -470,12 +478,10 @@
         'chameleon': { base: 44670.5 },
         'strega': { base: 57646.0 },
         'oxpecker': { base: 46405.5 },
-        
         'ouroboros': { base: 38300.5 },
         'lady-death': { base: 35409.0 },
         'backfire': { base: 50998.5 },
         'chatterbox': { base: 39457.0 },
-        
         'iron-lung': { base: 54322.0 },
         'pestilence': { base: 48300.0 },
         'bullet-king': { base: 54604.0 },
@@ -485,7 +491,6 @@
 
     window.onload = function() {
         initChart();
-        
         const params = new URLSearchParams(window.location.search);
         if (params.has('b')) {
             try {
@@ -497,23 +502,24 @@
                 minifiedBuilds.forEach(minArray => {
                     let inputObj = {};
                     INPUT_KEYS.forEach((key, index) => {
-                        inputObj[key] = minArray[index];
+                        // Schutz gegen undefined, falls alte Links weniger Felder haben
+                        if (index < minArray.length) {
+                            inputObj[key] = minArray[index];
+                        }
                     });
 
+                    // UI füllen
                     for (const [key, val] of Object.entries(inputObj)) {
                         if(document.getElementById(key)) document.getElementById(key).value = val;
                     }
-                    // IMPORTANT: DO NOT recalculate base on load, trust the saved inputs
-                    // calculateBase(); 
-                    calculate();
-                    
-                    const stats = calculate();
+
+                    const stats = calculate(); 
                     builds.push({
                         name: inputObj['build-name'] || "Shared",
                         stats: stats,
                         inputs: inputObj,
                         ui: {
-                            mDmg: stats.avg * stats.mag,
+                            mDmg: stats.magDmg,
                             omk: document.getElementById('res-omk').innerText,
                             kpm: document.getElementById('res-kpm').innerText, 
                             burst: stats.burst,
@@ -524,7 +530,6 @@
                         }
                     });
                 });
-                
                 updateMatrix();
                 updateGraph();
             } catch(e) {
@@ -538,19 +543,15 @@
 
     function generateShareLink() {
         if(builds.length === 0) { alert("Add a build first."); return; }
-        
         const minifiedBuilds = builds.map(b => {
             return INPUT_KEYS.map(key => b.inputs[key] || "");
         });
-
         const json = JSON.stringify(minifiedBuilds);
         const compressed = LZString.compressToEncodedURIComponent(json);
-        
         const url = new URL(window.location.href);
         url.searchParams.set('b', compressed);
-        
         navigator.clipboard.writeText(url.toString()).then(() => {
-            alert("Link copied! It uses smart compression to be as short as possible.");
+            alert("Link copied!");
         }).catch(err => {
             prompt("Copy link:", url.toString());
         });
@@ -564,26 +565,11 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                hover: {
-                    mode: 'index',
-                    intersect: false
-                },
-                elements: {
-                    point: {
-                        radius: 0,
-                        hitRadius: 10,
-                        hoverRadius: 4
-                    }
-                },
+                interaction: { mode: 'index', intersect: false },
+                hover: { mode: 'index', intersect: false },
+                elements: { point: { radius: 0, hitRadius: 10, hoverRadius: 4 } },
                 scales: { 
-                    y: { 
-                        grid: { color: '#222' }, 
-                        ticks: { color: '#888', callback: function(value) { return (value/1000000).toFixed(1) + 'M'; } } 
-                    }, 
+                    y: { grid: { color: '#222' }, ticks: { color: '#888', callback: function(value) { return (value/1000000).toFixed(1) + 'M'; } } }, 
                     x: { grid: { color: '#222' }, ticks: { color: '#888' } } 
                 },
                 plugins: { legend: { labels: { color: '#fff' } } }
@@ -591,22 +577,18 @@
         });
     }
 
-    // CALCULATOR SECTION 0
     function calculateBase() {
         const rawD = document.getElementById('menu-dmg').value;
         const rawA = document.getElementById('menu-awd').value;
         const rawS = document.getElementById('menu-swd').value;
-
         const d = parseFloat(rawD) || 0;
         const a = parseFloat(rawA) || 0;
         const s = parseFloat(rawS) || 0;
         
-        // Push Values to Section 1
         document.getElementById('awd').value = a;
         document.getElementById('swd').value = s;
 
         if (d > 0) {
-            // Formula: Displayed / (1 + AllWep + SpecificWep)
             const b = d / (1 + (a/100) + (s/100));
             document.getElementById('calc-base-res').value = b.toFixed(1); 
             document.getElementById('base').value = b.toFixed(1); 
@@ -619,7 +601,6 @@
     function applyPreset() {
         const v = document.getElementById('preset-select').value;
         if (presets[v]) {
-            // ONLY UPDATE BASE DAMAGE
             document.getElementById('base').value = presets[v].base;
             calculate();
         }
@@ -634,15 +615,16 @@
 
     function recalculateAll() {
         const hp = parseFloat(document.getElementById('enemy-select').value);
-        calculate();
+        calculate(); 
 
         builds.forEach(b => {
-            const magDmg = b.stats.avg * b.stats.mag;
-            const kpm = magDmg / hp;
-            const rps = b.stats.rps;
+            const magDmg = b.stats.magDmg; 
             const burstDps = b.stats.burst;
-            const cycleTime = (b.stats.mag / rps) + b.stats.rel;
-
+            const rps = b.stats.rps;
+            const mag = b.stats.mag;
+            const cycleTime = b.stats.cycleTime;
+            const kpm = magDmg / hp;
+            
             b.ui.kpm = kpm.toFixed(2);
             b.ui.omk = (kpm >= 1) ? "YES" : "NO";
             
@@ -652,14 +634,14 @@
                 b.ui.ttkb = Infinity;
             }
 
-            if(isFinite(rps) && rps > 0 && b.stats.mag > 0) {
+            if(isFinite(rps) && rps > 0 && mag > 0) {
                 let shotsToKill = Math.ceil(hp / b.stats.avg);
-                let magsNeeded = Math.ceil(shotsToKill / b.stats.mag);
+                let magsNeeded = Math.ceil(shotsToKill / mag);
                 let ttks = 0;
                 if (magsNeeded <= 1) {
                     ttks = shotsToKill / rps;
                 } else {
-                    ttks = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * b.stats.mag)) / rps);
+                    ttks = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * mag)) / rps);
                 }
                 b.ui.ttks = ttks; 
             } else {
@@ -673,20 +655,28 @@
     function calculate() {
         const v = (id) => parseFloat(document.getElementById(id).value) || 0;
         
+        // --- 1. Base Stats ---
         const base = v('base');
-        const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100); 
+        const rpm = v('rpm');
+        const mag = v('mag');
+        const reload = v('rel');
+
+        // Total Weapon Damage Calculation mit EXPERTISE (v('grade'))
+        // Expertise ist additiv zu AWD
+        const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100) + (v('grade')/100); 
+        
         const amp = (1 + v('m1')/100) * (1 + v('m2')/100) * (1 + v('m3')/100) * (1 + v('m4')/100);
         
+        // --- 2. Ranges & Sims ---
         const range_dtoc = 1 + (v('dttooc')/100); 
         const range_target = currentTarget === 'elite' ? (1 + v('dta')/100) : (1 + v('dth')/100); 
-        
         const fBaseRange = base * totalWpDmg * (1 + v('twd')/100) * range_dtoc * range_target * amp;
 
         const sim_dtoc = 1 + ((v('dttooc')/100) * (v('d-rate')/100));
         const sim_target = currentTarget === 'elite' ? (1 + (v('dta')/100 * (v('a-rate')/100))) : (1 + (v('dth')/100));
-        
         const fBaseSim = base * totalWpDmg * (1 + v('twd')/100) * sim_dtoc * sim_target * amp;
         
+        // --- 3. Crit & Hit Logic ---
         const chc = Math.min(60, v('chc')) / 100;
         const hRate = v('h-rate') / 100;
 
@@ -697,13 +687,7 @@
 
         const bodyElem = document.getElementById('st-body');
         bodyElem.innerText = Math.round(body).toLocaleString();
-        
-        if (currentTarget === 'elite') {
-            bodyElem.style.color = 'var(--ingame-blue)';
-        } else {
-            bodyElem.style.color = '#fff';
-        }
-
+        bodyElem.style.color = currentTarget === 'elite' ? 'var(--ingame-blue)' : '#fff';
         document.getElementById('st-crit').innerText = Math.round(crit).toLocaleString();
         document.getElementById('st-head').innerText = Math.round(head).toLocaleString();
         document.getElementById('st-head-crit').innerText = Math.round(hCrit).toLocaleString();
@@ -711,37 +695,45 @@
         const avgHit = (fBaseSim * (1-chc) + (fBaseSim * (1 + v('chd')/100)) * chc) * (1-hRate) + 
                        (fBaseSim * (1 + v('hsd')/100) * (1-chc) + (fBaseSim * (1 + (v('chd') + v('hsd'))/100)) * chc) * hRate;
 
+        // --- 4. EXCEL FORMULA IMPLEMENTATION ---
+        const rps = rpm > 0 ? (rpm / 60) : 0;
+        const magDmg = avgHit * mag;
+        const burstDps = rps * avgHit;
+
+        let sustainDps = 0;
+        let burstTime = 0;
+        let cycleTime = 0;
+
+        if (rps > 0) {
+            burstTime = mag / rps;
+            cycleTime = reload + burstTime;
+            if (cycleTime > 0) {
+                sustainDps = magDmg / cycleTime;
+            }
+        }
+
         const hp = v('enemy-select');
-        const magDmg = avgHit * v('mag');
-        
-        const kpm = magDmg / hp;
-        const rps = v('rpm')/60;
-        const burstTime = v('mag') / rps;
-        const cycleTime = burstTime + v('rel');
-        const burstDps = avgHit * rps;
-        const sustainDps = magDmg / cycleTime;
+        const kpm = hp > 0 ? magDmg / hp : 0;
 
         document.getElementById('res-omk').innerText = kpm >= 1 ? "YES" : "NO";
         document.getElementById('res-omk').style.color = kpm >= 1 ? "var(--pos)" : "var(--neg)";
         document.getElementById('res-kpm').innerText = kpm.toFixed(2);
         
-        let ttkbVal = 0, ttksVal = 0;
-
-        if(isFinite(burstDps) && burstDps > 0) {
-             ttkbVal = hp / burstDps;
-             document.getElementById('res-ttkb').innerText = ttkbVal.toFixed(3) + "s";
+        if(burstDps > 0) {
+             document.getElementById('res-ttkb').innerText = (hp / burstDps).toFixed(3) + "s";
         } else {
              document.getElementById('res-ttkb').innerText = "-";
         }
         
-        if(isFinite(rps) && rps > 0 && v('mag') > 0) {
+        let ttksVal = 0;
+        if(rps > 0 && mag > 0 && hp > 0) {
             let shotsToKill = Math.ceil(hp / avgHit);
-            let magsNeeded = Math.ceil(shotsToKill / v('mag'));
+            let magsNeeded = Math.ceil(shotsToKill / mag);
             
             if (magsNeeded <= 1) {
                 ttksVal = shotsToKill / rps;
             } else {
-                ttksVal = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * v('mag'))) / rps);
+                ttksVal = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * mag)) / rps);
             }
             document.getElementById('res-ttks').innerText = ttksVal.toFixed(3) + "s";
         } else {
@@ -749,9 +741,16 @@
         }
 
         return { 
-            avg: avgHit, rps, mag: v('mag'), rel: v('rel'), name: "", 
-            burst: burstDps, sustain: sustainDps,
-            ttkb: ttkbVal, ttks: ttksVal
+            avg: avgHit, 
+            rps: rps, 
+            mag: mag, 
+            rel: reload, 
+            magDmg: magDmg, 
+            cycleTime: cycleTime,
+            burst: burstDps, 
+            sustain: sustainDps,
+            ttkb: (burstDps > 0 ? hp / burstDps : Infinity), 
+            ttks: ttksVal
         };
     }
 
@@ -768,6 +767,7 @@
             'awd': document.getElementById('awd').value,
             'swd': document.getElementById('swd').value,
             'twd': document.getElementById('twd').value,
+            'grade': document.getElementById('grade').value, // <--- NEU
             'chc': document.getElementById('chc').value,
             'chd': document.getElementById('chd').value,
             'hsd': document.getElementById('hsd').value,
@@ -789,7 +789,7 @@
             stats: stats,
             inputs: inputs,
             ui: {
-                mDmg: stats.avg * stats.mag,
+                mDmg: stats.magDmg,
                 omk: document.getElementById('res-omk').innerText,
                 kpm: document.getElementById('res-kpm').innerText, 
                 burst: stats.burst,
@@ -807,20 +807,12 @@
 
     function loadBuild(i) {
         const data = builds[i].inputs;
-        
-        // 1. Reset Preset & Calc to prevent conflicts
         document.getElementById('preset-select').value = "";
         document.getElementById('calc-base-res').value = "";
-
-        // 2. Load All Saved Inputs
         for (const [key, val] of Object.entries(data)) {
             if(document.getElementById(key)) document.getElementById(key).value = val;
         }
-        
-        // 3. FORCE base override (double check)
         if(data['base']) document.getElementById('base').value = data['base'];
-
-        // 4. Recalculate
         calculate();
     }
 
@@ -919,7 +911,7 @@
 
     function updateGraph() {
         const timeInput = document.getElementById('graph-time');
-        const timeLimit = parseInt(timeInput.value) || 30; // Use input value or 30 default
+        const timeLimit = parseInt(timeInput.value) || 30; 
         const labels = Array.from({length: timeLimit + 1}, (_, i) => i + "s");
         
         const datasets = builds.map((b, idx) => {
