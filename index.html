@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V16 (Live Sim)</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V18 (Fixed Reverse Sim)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -298,7 +298,7 @@
 <div class="container">
     <header class="header">
         <div class="logo">xSmileyy's <span>DPS Analyzer</span></div>
-        <div class="version-tag">ALPHA 1.8 (Live Preview)</div>
+        <div class="version-tag">ALPHA 1.8 (Fixed Logic)</div>
         <div class="discord-info"><i class="fab fa-discord"></i> <span>xsmileyy.</span></div>
     </header>
 
@@ -415,7 +415,7 @@
             </div>
 
             <div class="section-title">4. Amplifiers</div>
-            <div class="hint-text"><i class="fas fa-info-circle"></i> e.g. Striker Stacks in %, Glass Cannon %</div>
+            <div class="hint-text"><i class="fas fa-info-circle"></i> e.g. Static Multipliers (Glass Cannon)</div>
             <div class="input-block">
                 <div class="group"><label>AMP %</label><input type="number" id="m1" oninput="calculate()"></div>
                 <div class="group"><label>AMP %</label><input type="number" id="m2" oninput="calculate()"></div>
@@ -436,10 +436,10 @@
                 <button class="t-btn" id="t-health" onclick="setTarget('health')">Target: Health (DtH)</button>
             </div>
             <div class="range-grid">
-                <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body">-</span></div>
-                <div class="range-box"><label>Crit Body</label><span class="range-val" id="st-crit" style="color:var(--crit)">-</span></div>
-                <div class="range-box"><label>Headshot</label><span class="range-val" id="st-head" style="color:var(--orange)">-</span></div>
-                <div class="range-box"><label>Crit Head</label><span class="range-val" id="st-head-crit" style="color:var(--head)">-</span></div>
+                <div class="range-box"><label>Body Hit (Max)</label><span class="range-val" id="st-body">-</span></div>
+                <div class="range-box"><label>Crit Body (Max)</label><span class="range-val" id="st-crit" style="color:var(--crit)">-</span></div>
+                <div class="range-box"><label>Headshot (Max)</label><span class="range-val" id="st-head" style="color:var(--orange)">-</span></div>
+                <div class="range-box"><label>Crit Head (Max)</label><span class="range-val" id="st-head-crit" style="color:var(--head)">-</span></div>
             </div>
 
             <div class="section-title">Kill Efficiency</div>
@@ -473,8 +473,8 @@
             <div class="chart-header" style="margin-bottom:0; display:block;">
                 <div class="chart-controls" style="width:100%; display:flex; justify-content:space-between; align-items:center;">
                     <div class="chart-tabs">
-                        <div class="chart-tab active" id="tab-std" onclick="switchChartTab('std')">Damage Timeline (Burst vs. Sustain)</div>
-                        <div class="chart-tab" id="tab-sim" onclick="switchChartTab('sim')">Stacking & Ramp-Up Simulation</div>
+                        <div class="chart-tab active" id="tab-std" onclick="switchChartTab('std')">Standard (Max Potential)</div>
+                        <div class="chart-tab" id="tab-sim" onclick="switchChartTab('sim')">Ramp-Up Simulation</div>
                     </div>
                     
                     <div style="display:flex; align-items:center; gap:5px;">
@@ -489,7 +489,7 @@
                     <div class="sim-header-controls">
                         <div class="checkbox-wrapper">
                             <input type="checkbox" id="sim-enabled" onchange="updateGraph()">
-                            <label for="sim-enabled" style="color:var(--ingame-blue); font-weight:800; cursor:pointer; font-size:12px;">Enable Ramping Simulation</label>
+                            <label for="sim-enabled" style="color:var(--ingame-blue); font-weight:800; cursor:pointer; font-size:12px;">Enable Simulation</label>
                         </div>
                         <div class="sim-header-group">
                             <label>Max Stacks:</label>
@@ -498,7 +498,7 @@
                     </div>
 
                     <div class="hint-text">
-                        <strong>Instruction:</strong> Enter the <strong>MAX Potential</strong> (Fully Stacked) value here. 
+                        <strong>Logic:</strong> Enter the <strong>MAX Potential</strong> (Fully Stacked) value here. 
                         <br>Check <strong>RAMP?</strong> to simulate starting from 0 (Reverse Calculation).
                         <br><em>Example: Enter 90% Amp for Striker. If Ramp is checked, Sim starts at 0% and builds to 90%.</em>
                     </div>
@@ -1223,15 +1223,17 @@
                 // --- TAB LOGIC: STANDARD vs SIMULATION ---
                 let useRamp = (currentChartMode === 'sim' && simEnabled);
 
-                // --- REVERSE CALCULATION LOGIC ---
-                let baseHitStart = b.stats.avg; 
+                // --- REVERSE CALCULATION LOGIC (Only if Ramping is active) ---
+                // We need to calculate the "Start Hit" (at 0 Stacks) vs "Max Hit" (at Full Stacks)
+                let baseHitStart = b.stats.avg; // Default: Start = Max
                 let dmgPerStack = 0;
 
                 if (useRamp) {
-                    let rampAWD = 0;
-                    let rampTWD = 0;
-                    let rampAmpDiv = 1;
-                    
+                    // 1. Identify which stacks are "Ramping"
+                    let rampingAwd = 0;
+                    let rampingTwd = 0;
+                    let rampingAmpDivisor = 1;
+
                     for(let i=1; i<=5; i++) {
                         let val = parseFloat(b.inputs['stack-val-'+i]) || 0;
                         let type = b.inputs['stack-type-'+i];
@@ -1239,24 +1241,25 @@
                         
                         if (isRamp && val > 0) {
                             switch(type) {
-                                case 'awd': rampAWD += val; break;
-                                case 'twd': rampTWD += val; break;
-                                case 'amp': rampAmpDiv *= (1 + val/100); break;
+                                case 'awd': rampingAwd += val; break;
+                                case 'twd': rampingTwd += val; break;
+                                case 'amp': rampingAmpDivisor *= (1 + val/100); break;
                             }
                         }
                     }
 
-                    // Remove ramping parts from MAX
-                    let startTotalAwd = b.stats.raw.awd_swd_grade - (rampAWD/100);
-                    let startTotalTwd = b.stats.raw.twd - (rampTWD/100);
-                    let startTotalAmp = b.stats.raw.amp / rampAmpDiv; 
+                    // 2. Subtract Ramping parts from the Total (b.stats.raw)
+                    // b.stats.raw has the FULL values. We strip the ramp parts to find START values.
+                    let startTotalAwd = b.stats.raw.awd_swd_grade - (rampingAwd/100);
+                    let startTotalTwd = b.stats.raw.twd - (rampingTwd/100);
+                    let startTotalAmp = b.stats.raw.amp / rampingAmpDivisor;
 
-                    // Re-calculate "Start" Hit
+                    // 3. Calc Start Hit
                     baseHitStart = b.stats.raw.base * startTotalAwd * startTotalTwd * startTotalAmp * b.stats.raw.crit_dtoc_armor;
                     
-                    // Slope per stack
+                    // 4. Calc Slope
                     dmgPerStack = (b.stats.avg - baseHitStart) / maxStacks;
-                    if(dmgPerStack < 0) dmgPerStack = 0; 
+                    if(dmgPerStack < 0) dmgPerStack = 0; // Safety
                 }
 
                 // SIMULATION LOOP
@@ -1292,7 +1295,7 @@
                                 
                                 currentStacks = endStack;
                             } else {
-                                // Standard Logic
+                                // Standard Logic (Max Potential)
                                 damageAccumulated += shotsNow * b.stats.avg;
                             }
                             
