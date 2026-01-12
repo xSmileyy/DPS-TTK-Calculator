@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Analyzer | Elite Matrix V19 (Stable)</title>
+    <title>xSmileyy's DPS Tool | V20 (Dual Mode)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -40,7 +40,7 @@
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            margin-bottom: 30px; 
+            margin-bottom: 20px; 
             border-bottom: 1px solid var(--border); 
             padding-bottom: 20px; 
         }
@@ -49,72 +49,58 @@
         .logo span { color: var(--orange); text-shadow: 0 0 15px var(--orange-glow); }
         .version-tag { font-size: 10px; color: #888; font-weight: 800; letter-spacing: 1px; }
 
-        .discord-info { 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            background: var(--glass); 
-            padding: 8px 15px; 
-            border-radius: 50px; 
-            border: 1px solid #333; 
+        /* --- MODE SWITCHER (NEU) --- */
+        .mode-switch-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 20px;
         }
+        .mode-btn {
+            background: #111;
+            border: 1px solid #333;
+            color: #888;
+            padding: 15px 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 800;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+        .mode-btn:hover { background: #1a1a1a; border-color: #555; }
+        .mode-btn.active {
+            background: rgba(255, 102, 0, 0.1);
+            border-color: var(--orange);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 102, 0, 0.2);
+        }
+        .mode-btn i { font-size: 18px; }
+
+        /* Steuert die Sichtbarkeit der Tabs */
+        .view-section { display: none; animation: fadeIn 0.3s ease-out; }
+        .view-section.active { display: block; }
+
+        /* --- STANDARD STYLES (V19) --- */
+        .discord-info { display: flex; align-items: center; gap: 10px; background: var(--glass); padding: 8px 15px; border-radius: 50px; border: 1px solid #333; }
         .discord-info i { color: #5865F2; font-size: 18px; }
         .discord-info span { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 14px; }
 
-        .main-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); 
-            gap: 30px; 
-            align-items: start; 
-        }
-
-        .card { 
-            background: var(--card-bg); 
-            border: 1px solid var(--border); 
-            border-radius: 20px; 
-            padding: 25px; 
-            backdrop-filter: blur(20px); 
-        }
+        .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 30px; align-items: start; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 25px; backdrop-filter: blur(20px); }
         
-        .section-title { 
-            font-size: 14px; 
-            font-weight: 800; 
-            color: var(--orange); 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            margin: 25px 0 15px 0; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-        }
+        .section-title { font-size: 14px; font-weight: 800; color: var(--orange); text-transform: uppercase; letter-spacing: 2px; margin: 25px 0 15px 0; display: flex; align-items: center; gap: 15px; }
         .section-title:first-child { margin-top: 0; }
         .section-title::after { content: ''; height: 1px; flex-grow: 1; background: var(--border); }
 
-        .info-box-prominent {
-            background: rgba(255, 102, 0, 0.1); 
-            border-left: 4px solid var(--orange);
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            font-size: 12px;
-            line-height: 1.5;
-            color: #ccc;
-        }
+        .info-box-prominent { background: rgba(255, 102, 0, 0.1); border-left: 4px solid var(--orange); padding: 15px; border-radius: 4px; margin-bottom: 15px; font-size: 12px; line-height: 1.5; color: #ccc; }
         .info-box-prominent strong { color: #fff; text-transform: uppercase; }
         .info-box-prominent i { color: var(--orange); margin-right: 8px; }
 
-        .accordion-header {
-            background: #111;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: 0.2s;
-            margin-bottom: 10px;
-        }
+        .accordion-header { background: #111; padding: 15px; border-radius: 8px; border: 1px solid #333; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; margin-bottom: 10px; }
         .accordion-header:hover { border-color: var(--orange); background: #161616; }
         .accordion-header span { font-weight: 800; font-size: 12px; text-transform: uppercase; color: #fff; }
         .accordion-arrow { transition: transform 0.3s ease; color: var(--orange); }
@@ -122,44 +108,14 @@
         .accordion-content.active { display: block; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .input-block { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 12px; 
-            background: var(--glass); 
-            padding: 18px; 
-            border-radius: 12px; 
-            margin-bottom: 15px; 
-        }
-
+        .input-block { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; background: var(--glass); padding: 18px; border-radius: 12px; margin-bottom: 15px; }
         .group { display: flex; flex-direction: column; position: relative; }
         
-        label { 
-            font-size: 10px; 
-            font-weight: 700; 
-            color: #fff; 
-            margin-bottom: 4px; 
-            text-transform: uppercase; 
-            white-space: nowrap; 
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
+        label { font-size: 10px; font-weight: 700; color: #fff; margin-bottom: 4px; text-transform: uppercase; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
         .info-icon { color: var(--orange); cursor: pointer; font-size: 12px; transition: 0.2s; }
         .info-icon:hover { transform: scale(1.2); text-shadow: 0 0 5px var(--orange); }
 
-        input, select { 
-            background: #000; 
-            border: 1px solid #333; 
-            color: #fff; 
-            padding: 8px 12px; 
-            border-radius: 6px; 
-            font-size: 15px; 
-            font-family: 'JetBrains Mono'; 
-            width: 100%; 
-            box-sizing: border-box; 
-        }
+        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 15px; font-family: 'JetBrains Mono'; width: 100%; box-sizing: border-box; }
         input:focus { border-color: var(--orange); outline: none; }
         
         .hint-text { font-size: 11px; color: #888; margin-bottom: 15px; font-style: italic; line-height: 1.4; padding-left: 5px; }
@@ -224,206 +180,296 @@
 
 <div class="container">
     <header class="header">
-        <div class="logo">xSmileyy's <span>DPS Analyzer</span></div>
-        <div class="version-tag">ALPHA 1.9 (Stable)</div>
+        <div class="logo">xSmileyy's <span>DPS Tool</span></div>
+        <div class="version-tag">BETA 20 (Dual Mode)</div>
         <div class="discord-info"><i class="fab fa-discord"></i> <span>xsmileyy.</span></div>
     </header>
 
-    <div class="main-grid">
-        <div class="card">
-            
-            <div class="info-box-prominent">
-                <i class="fas fa-info-circle"></i>
-                <strong>Optional Tool:</strong> Use this if you don't know your Base Damage.
-                <br>If your weapon is in the "Weapon Presets" list, you can <strong>skip this step</strong>.
-            </div>
+    <div class="mode-switch-container">
+        <button class="mode-btn active" id="btn-analyzer" onclick="switchView('analyzer')">
+            <i class="fas fa-calculator"></i> Simple Analyzer
+        </button>
+        <button class="mode-btn" id="btn-theory" onclick="switchView('theory')">
+            <i class="fas fa-flask"></i> Theorycrafter
+        </button>
+    </div>
 
-            <div class="accordion-header" onclick="toggleCalc()">
-                <span>0. Calculate Base Damage (Click to Open)</span>
-                <i id="calc-arrow" class="fas fa-chevron-down accordion-arrow"></i>
-            </div>
-
-            <div id="calc-content" class="accordion-content">
-                <div class="hint-text">
-                    <strong>Guide:</strong> Enter stats from Inventory to find Base Damage.<br>
-                    <i class="fas fa-hand-pointer"></i> Tap <i class="fas fa-question-circle" style="color:var(--orange)"></i> icons for screenshots.
+    <div id="view-analyzer" class="view-section active">
+        <div class="main-grid">
+            <div class="card">
+                
+                <div class="info-box-prominent">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Standard Mode:</strong> Ideal for comparing builds you already have (Screenshots).
+                    <br>If your weapon is in the "Weapon Presets" list, you can <strong>skip step 0</strong>.
                 </div>
-                <div class="input-block" style="grid-template-columns: repeat(3, 1fr);">
+
+                <div class="accordion-header" onclick="toggleCalc()">
+                    <span>0. Calculate Base Damage (Click to Open)</span>
+                    <i id="calc-arrow" class="fas fa-chevron-down accordion-arrow"></i>
+                </div>
+
+                <div id="calc-content" class="accordion-content">
+                    <div class="hint-text">
+                        <strong>Guide:</strong> Enter stats from Inventory to find Base Damage.<br>
+                        <i class="fas fa-hand-pointer"></i> Tap <i class="fas fa-question-circle" style="color:var(--orange)"></i> icons for screenshots.
+                    </div>
+                    <div class="input-block" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="group">
+                            <label>Weapon Damage <i class="fas fa-question-circle info-icon" onclick="showHelp('dmg')"></i></label>
+                            <input type="number" id="menu-dmg" oninput="calculateBase()">
+                        </div>
+                        <div class="group">
+                            <label>AWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('awd')"></i></label>
+                            <input type="number" id="menu-awd" oninput="calculateBase()">
+                        </div>
+                        <div class="group">
+                            <label>SWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('swd')"></i></label>
+                            <input type="number" id="menu-swd" oninput="calculateBase()">
+                        </div>
+                        <div class="group" style="grid-column: span 3; border-top: 1px solid #222; padding-top: 10px; margin-top: 5px;">
+                            <label style="color:var(--orange)">Result: Base Damage</label>
+                            <input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">Weapon Presets (Base Dmg)</div>
+                <div class="input-block">
+                    <div class="group" style="grid-column: span 4;">
+                        <select id="preset-select" onchange="applyPreset()">
+                            <option value="">-- Select Weapon (Base Damage Only) --</option>
+                            <optgroup label="Assault Rifles">
+                                <option value="lexington">Lexington</option>
+                                <option value="st-elmos">St. Elmo's Engine</option>
+                                <option value="eagle-bearer">Eagle Bearer</option>
+                                <option value="the-bighorn">The Bighorn</option>
+                                <option value="capacitor">Capacitor</option>
+                                <option value="chameleon">Chameleon</option>
+                                <option value="strega">Strega</option>
+                                <option value="oxpecker">Oxpecker</option>
+                            </optgroup>
+                            <optgroup label="SMGs">
+                                <option value="ouroboros">Ouroboros</option>
+                                <option value="lady-death">Lady Death</option>
+                                <option value="backfire">Backfire</option>
+                                <option value="chatterbox">The Chatterbox</option>
+                            </optgroup>
+                            <optgroup label="LMGs & Rifles">
+                                <option value="iron-lung">Iron Lung</option>
+                                <option value="pestilence">Pestilence</option>
+                                <option value="bullet-king">Bullet King</option>
+                                <option value="bluescreen">Bluescreen</option>
+                                <option value="pakhan">Pakhan</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section-title">1. Weapon Data & Damage %</div>
+                <div class="input-block">
+                    <div class="group"><label style="color:var(--orange)">Base Damage</label><input type="number" id="base" style="border-color:var(--orange)" oninput="calculate()"></div>
+                    <div class="group"><label>RPM</label><input type="number" id="rpm" oninput="calculate()"></div>
+                    <div class="group"><label>Mag Size</label><input type="number" id="mag" oninput="calculate()"></div>
+                    <div class="group"><label>Reload (s)</label><input type="number" id="rel" oninput="calculate()"></div>
+                    
+                    <div class="group"><label>AWD %</label><input type="number" id="awd" oninput="calculate()"></div>
+                    <div class="group"><label>SWD %</label><input type="number" id="swd" oninput="calculate()"></div>
+                    
                     <div class="group">
-                        <label>Weapon Damage <i class="fas fa-question-circle info-icon" onclick="showHelp('dmg')"></i></label>
-                        <input type="number" id="menu-dmg" oninput="calculateBase()">
+                        <label>
+                            Expertise 
+                            <i class="fas fa-exclamation-triangle" style="color:var(--crit); margin-left:5px; cursor:pointer;" 
+                               title="Note: If you enter Expertise here, remove it from AWD to avoid double counting!"
+                               onclick="alert('IMPORTANT:\nIf you enter a value here (e.g. 20 for Grade 20), make sure you subtract that amount from your AWD % field.\n\nDo not count it twice!')"></i>
+                        </label>
+                        <input type="number" id="grade" oninput="calculate()">
                     </div>
-                    <div class="group">
-                        <label>AWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('awd')"></i></label>
-                        <input type="number" id="menu-awd" oninput="calculateBase()">
-                    </div>
-                    <div class="group">
-                        <label>SWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('swd')"></i></label>
-                        <input type="number" id="menu-swd" oninput="calculateBase()">
-                    </div>
-                    <div class="group" style="grid-column: span 3; border-top: 1px solid #222; padding-top: 10px; margin-top: 5px;">
-                        <label style="color:var(--orange)">Result: Base Damage</label>
-                        <input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;">
-                    </div>
+
+                    <div class="group"><label>TWD (e.g. Obliterate)</label><input type="number" id="twd" oninput="calculate()"></div>
+                </div>
+
+                <div class="section-title">2. Combat Stats</div>
+                <div class="input-block">
+                    <div class="group"><label>CHC %</label><input type="number" id="chc" oninput="calculate()"></div>
+                    <div class="group"><label>CHD %</label><input type="number" id="chd" oninput="calculate()"></div>
+                    <div class="group"><label>HSD %</label><input type="number" id="hsd" oninput="calculate()"></div>
+                    <div class="group"><label>DTOC %</label><input type="number" id="dttooc" oninput="calculate()"></div>
+                    <div class="group"><label>DtA %</label><input type="number" id="dta" oninput="calculate()"></div>
+                    <div class="group"><label>DtH %</label><input type="number" id="dth" oninput="calculate()"></div>
+                </div>
+
+                <div class="section-title">3. %-Rate Uptime</div>
+                <div class="hint-text"><i class="fas fa-info-circle"></i> Recommended: HS 20% | DTOC 60% | DTA 80%</div>
+                <div class="input-block">
+                    <div class="group"><label>HS-Rate %</label><input type="number" id="h-rate" value="20" oninput="calculate()"></div>
+                    <div class="group"><label>DTOC-Rate %</label><input type="number" id="d-rate" value="60" oninput="calculate()"></div>
+                    <div class="group"><label>DTA-Rate %</label><input type="number" id="a-rate" value="80" oninput="calculate()"></div>
+                </div>
+
+                <div class="section-title">4. Amplifiers</div>
+                <div class="hint-text"><i class="fas fa-info-circle"></i> e.g. Striker Stacks in %, Glass Cannon %</div>
+                <div class="input-block">
+                    <div class="group"><label>AMP %</label><input type="number" id="m1" oninput="calculate()"></div>
+                    <div class="group"><label>AMP %</label><input type="number" id="m2" oninput="calculate()"></div>
+                    <div class="group"><label>AMP %</label><input type="number" id="m3" oninput="calculate()"></div>
+                    <div class="group"><label>AMP %</label><input type="number" id="m4" oninput="calculate()"></div>
+                </div>
+                
+                <div class="input-block" style="border: 1px dashed var(--orange); grid-template-columns: repeat(3, 1fr);">
+                    <div class="group" style="grid-column: span 2;"><label>Build Name</label><input type="text" id="build-name" placeholder="Name..."></div>
+                    <div class="group"><button class="btn-capture" onclick="captureBuild()">Add to Matrix</button></div>
                 </div>
             </div>
 
-            <div class="section-title">Weapon Presets (Base Dmg)</div>
-            <div class="input-block">
-                <div class="group" style="grid-column: span 4;">
-                    <select id="preset-select" onchange="applyPreset()">
-                        <option value="">-- Select Weapon (Base Damage Only) --</option>
-                        <optgroup label="Assault Rifles">
-                            <option value="lexington">Lexington</option>
-                            <option value="st-elmos">St. Elmo's Engine</option>
-                            <option value="eagle-bearer">Eagle Bearer</option>
-                            <option value="the-bighorn">The Bighorn</option>
-                            <option value="capacitor">Capacitor</option>
-                            <option value="chameleon">Chameleon</option>
-                            <option value="strega">Strega</option>
-                            <option value="oxpecker">Oxpecker</option>
+            <div class="card">
+                <div class="section-title">Shooting Range</div>
+                <div class="target-toggle">
+                    <button class="t-btn active" id="t-elite" onclick="setTarget('elite')">Target: Elite (DtA)</button>
+                    <button class="t-btn" id="t-health" onclick="setTarget('health')">Target: Health (DtH)</button>
+                </div>
+                <div class="range-grid">
+                    <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body">-</span></div>
+                    <div class="range-box"><label>Crit Body</label><span class="range-val" id="st-crit" style="color:var(--crit)">-</span></div>
+                    <div class="range-box"><label>Headshot</label><span class="range-val" id="st-head" style="color:var(--orange)">-</span></div>
+                    <div class="range-box"><label>Crit Head</label><span class="range-val" id="st-head-crit" style="color:var(--head)">-</span></div>
+                </div>
+
+                <div class="accordion-header" onclick="toggleKillEff()">
+                    <span>Kill Efficiency (Click to Expand)</span>
+                    <i id="kill-arrow" class="fas fa-chevron-down accordion-arrow"></i>
+                </div>
+                <div id="kill-content" class="accordion-content">
+                    <select id="enemy-select" style="width:100%; margin-bottom:15px;" onchange="recalculateAll()">
+                        <optgroup label="Heroic (1 Player)">
+                            <option value="6050000">Heroic Elite (6.05M)</option>
+                            <option value="18000000">Heroic Named (18.0M)</option>
+                            <option value="22000000">Heroic Chunga (22.0M)</option>
                         </optgroup>
-                        <optgroup label="SMGs">
-                            <option value="ouroboros">Ouroboros</option>
-                            <option value="lady-death">Lady Death</option>
-                            <option value="backfire">Backfire</option>
-                            <option value="chatterbox">The Chatterbox</option>
+                        <optgroup label="Heroic (4 Player)" selected>
+                            <option value="16905653" selected>Heroic Elite (16.9M)</option>
+                            <option value="47296250">Heroic Named (47.3M)</option>
+                            <option value="58000000">Heroic Chunga (58.0M)</option>
                         </optgroup>
-                        <optgroup label="LMGs & Rifles">
-                            <option value="iron-lung">Iron Lung</option>
-                            <option value="pestilence">Pestilence</option>
-                            <option value="bullet-king">Bullet King</option>
-                            <option value="bluescreen">Bluescreen</option>
-                            <option value="pakhan">Pakhan</option>
+                        <optgroup label="Legendary (4 Player)">
+                            <option value="25172134">Legendary Elite (25.2M)</option>
+                            <option value="72146660">Legendary Named (72.1M)</option>
+                            <option value="108000000">Legendary Chunga (108M)</option>
                         </optgroup>
                     </select>
+                    
+                    <div class="results-grid">
+                        <div class="res-box"><span class="res-label">One-Mag Kill?</span><span class="res-val" id="res-omk">-</span></div>
+                        <div class="res-box"><span class="res-label">Kills / Mag</span><span class="res-val" id="res-kpm">-</span></div>
+                        <div class="res-box"><span class="res-label">TTK Burst</span><span class="res-val" id="res-ttkb">-</span></div>
+                        <div class="res-box"><span class="res-label">TTK Sustain</span><span class="res-val" id="res-ttks">-</span></div>
+                    </div>
                 </div>
-            </div>
-
-            <div class="section-title">1. Weapon Data & Damage %</div>
-            <div class="input-block">
-                <div class="group"><label style="color:var(--orange)">Base Damage</label><input type="number" id="base" style="border-color:var(--orange)" oninput="calculate()"></div>
-                <div class="group"><label>RPM</label><input type="number" id="rpm" oninput="calculate()"></div>
-                <div class="group"><label>Mag Size</label><input type="number" id="mag" oninput="calculate()"></div>
-                <div class="group"><label>Reload (s)</label><input type="number" id="rel" oninput="calculate()"></div>
                 
-                <div class="group"><label>AWD %</label><input type="number" id="awd" oninput="calculate()"></div>
-                <div class="group"><label>SWD %</label><input type="number" id="swd" oninput="calculate()"></div>
+                <div class="chart-header">
+                    <div class="section-title" style="margin:0;">Total Damage Timeline (Burst vs. Sustain)</div>
+                    <div class="chart-controls">
+                        <label style="margin:0;">Graph Time (s):</label>
+                        <input type="number" id="graph-time" class="chart-input" value="15" min="1" max="300" oninput="updateGraph()">
+                    </div>
+                </div>
                 
-                <div class="group">
-                    <label>
-                        Expertise 
-                        <i class="fas fa-exclamation-triangle" style="color:var(--crit); margin-left:5px; cursor:pointer;" 
-                           title="Note: If you enter Expertise here, remove it from AWD to avoid double counting!"
-                           onclick="alert('IMPORTANT:\nIf you enter a value here (e.g. 20 for Grade 20), make sure you subtract that amount from your AWD % field.\n\nDo not count it twice!')"></i>
-                    </label>
-                    <input type="number" id="grade" oninput="calculate()">
+                <div class="chart-container">
+                    <canvas id="dpsChart"></canvas>
                 </div>
 
-                <div class="group"><label>TWD (e.g. Obliterate)</label><input type="number" id="twd" oninput="calculate()"></div>
-            </div>
-
-            <div class="section-title">2. Combat Stats</div>
-            <div class="input-block">
-                <div class="group"><label>CHC %</label><input type="number" id="chc" oninput="calculate()"></div>
-                <div class="group"><label>CHD %</label><input type="number" id="chd" oninput="calculate()"></div>
-                <div class="group"><label>HSD %</label><input type="number" id="hsd" oninput="calculate()"></div>
-                <div class="group"><label>DTOC %</label><input type="number" id="dttooc" oninput="calculate()"></div>
-                <div class="group"><label>DtA %</label><input type="number" id="dta" oninput="calculate()"></div>
-                <div class="group"><label>DtH %</label><input type="number" id="dth" oninput="calculate()"></div>
-            </div>
-
-            <div class="section-title">3. %-Rate Uptime</div>
-            <div class="hint-text"><i class="fas fa-info-circle"></i> Recommended: HS 20% | DTOC 60% | DTA 80%</div>
-            <div class="input-block">
-                <div class="group"><label>HS-Rate %</label><input type="number" id="h-rate" value="20" oninput="calculate()"></div>
-                <div class="group"><label>DTOC-Rate %</label><input type="number" id="d-rate" value="60" oninput="calculate()"></div>
-                <div class="group"><label>DTA-Rate %</label><input type="number" id="a-rate" value="80" oninput="calculate()"></div>
-            </div>
-
-            <div class="section-title">4. Amplifiers</div>
-            <div class="hint-text"><i class="fas fa-info-circle"></i> e.g. Striker Stacks in %, Glass Cannon %</div>
-            <div class="input-block">
-                <div class="group"><label>AMP %</label><input type="number" id="m1" oninput="calculate()"></div>
-                <div class="group"><label>AMP %</label><input type="number" id="m2" oninput="calculate()"></div>
-                <div class="group"><label>AMP %</label><input type="number" id="m3" oninput="calculate()"></div>
-                <div class="group"><label>AMP %</label><input type="number" id="m4" oninput="calculate()"></div>
-            </div>
-            
-            <div class="input-block" style="border: 1px dashed var(--orange); grid-template-columns: repeat(3, 1fr);">
-                <div class="group" style="grid-column: span 2;"><label>Build Name</label><input type="text" id="build-name" placeholder="Name..."></div>
-                <div class="group"><button class="btn-capture" onclick="captureBuild()">Add to Matrix</button></div>
+                <div class="section-title">Comparison Matrix</div>
+                <div style="overflow-x: auto;">
+                    <table class="comp-table">
+                        <thead><tr id="comp-header"><th>Metric</th></tr></thead>
+                        <tbody id="comp-body"></tbody>
+                    </table>
+                </div>
+                
+                <div class="action-row">
+                    <button class="btn-small" onclick="generateShareLink()" style="color:var(--ingame-blue)">Share / Copy Link</button>
+                    <button class="btn-small" onclick="clearMatrix()" style="color:#ff4444;">Reset Matrix</button>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div class="card">
-            <div class="section-title">Shooting Range</div>
-            <div class="target-toggle">
-                <button class="t-btn active" id="t-elite" onclick="setTarget('elite')">Target: Elite (DtA)</button>
-                <button class="t-btn" id="t-health" onclick="setTarget('health')">Target: Health (DtH)</button>
-            </div>
-            <div class="range-grid">
-                <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body">-</span></div>
-                <div class="range-box"><label>Crit Body</label><span class="range-val" id="st-crit" style="color:var(--crit)">-</span></div>
-                <div class="range-box"><label>Headshot</label><span class="range-val" id="st-head" style="color:var(--orange)">-</span></div>
-                <div class="range-box"><label>Crit Head</label><span class="range-val" id="st-head-crit" style="color:var(--head)">-</span></div>
-            </div>
+    <div id="view-theory" class="view-section">
+        <div class="main-grid">
+            <div class="card">
+                <div class="info-box-prominent" style="border-color: #3399ff; background: rgba(51, 153, 255, 0.1);">
+                    <i class="fas fa-flask" style="color:#3399ff;"></i>
+                    <strong>Theorycrafter Mode:</strong> Build from scratch. Inputs calculate totals automatically.
+                </div>
 
-            <div class="section-title">Kill Efficiency</div>
-            <select id="enemy-select" style="width:100%; margin-bottom:15px;" onchange="recalculateAll()">
-                <optgroup label="Heroic (1 Player)">
-                    <option value="6050000">Heroic Elite (6.05M)</option>
-                    <option value="18000000">Heroic Named (18.0M)</option>
-                    <option value="22000000">Heroic Chunga (22.0M)</option>
-                </optgroup>
-                <optgroup label="Heroic (4 Player)" selected>
-                    <option value="16905653" selected>Heroic Elite (16.9M)</option>
-                    <option value="47296250">Heroic Named (47.3M)</option>
-                    <option value="58000000">Heroic Chunga (58.0M)</option>
-                </optgroup>
-                <optgroup label="Legendary (4 Player)">
-                    <option value="25172134">Legendary Elite (25.2M)</option>
-                    <option value="72146660">Legendary Named (72.1M)</option>
-                    <option value="108000000">Legendary Chunga (108M)</option>
-                </optgroup>
-            </select>
-            
-            <div class="results-grid">
-                <div class="res-box"><span class="res-label">One-Mag Kill?</span><span class="res-val" id="res-omk">-</span></div>
-                <div class="res-box"><span class="res-label">Kills / Mag</span><span class="res-val" id="res-kpm">-</span></div>
-                <div class="res-box"><span class="res-label">TTK Burst</span><span class="res-val" id="res-ttkb">-</span></div>
-                <div class="res-box"><span class="res-label">TTK Sustain</span><span class="res-val" id="res-ttks">-</span></div>
-            </div>
-            
-            <div class="chart-header">
-                <div class="section-title" style="margin:0;">Total Damage Timeline (Burst vs. Sustain)</div>
-                <div class="chart-controls">
-                    <label style="margin:0;">Graph Time (s):</label>
-                    <input type="number" id="graph-time" class="chart-input" value="15" min="1" max="300" oninput="updateGraph()">
+                <div class="section-title">1. AWD Builder (All Weapon Dmg)</div>
+                <div class="input-block">
+                    <div class="group">
+                        <label>Red Cores (15%)</label>
+                        <select id="tc-red-cores" onchange="calcTheoryAWD()">
+                            <option value="0">0 Cores</option>
+                            <option value="1">1 Core (15%)</option>
+                            <option value="2">2 Cores (30%)</option>
+                            <option value="3">3 Cores (45%)</option>
+                            <option value="4">4 Cores (60%)</option>
+                            <option value="5">5 Cores (75%)</option>
+                            <option value="6">6 Cores (90%)</option>
+                        </select>
+                    </div>
+                    <div class="group">
+                        <label>SHD Watch</label>
+                        <div style="display:flex; align-items:center; height:35px; background:#000; border:1px solid #333; border-radius:6px; padding:0 10px;">
+                            <input type="checkbox" id="tc-watch" style="width:auto; margin-right:10px;" onchange="calcTheoryAWD()">
+                            <span style="font-size:12px; color:#888;">+10% AWD</span>
+                        </div>
+                    </div>
+                    <div class="group">
+                        <label>Brand/Gear %</label>
+                        <input type="number" id="tc-brand-awd" placeholder="e.g. 10 (Fenris)" oninput="calcTheoryAWD()">
+                    </div>
+                    <div class="group">
+                        <label style="color:#3399ff">Total AWD %</label>
+                        <input type="number" id="tc-total-awd" readonly style="border-color:#3399ff; color:#3399ff; font-weight:bold;">
+                    </div>
+                </div>
+
+                <div class="section-title">2. RPM Builder (Rate of Fire)</div>
+                <div class="input-block" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="group">
+                        <label>Base RPM</label>
+                        <input type="number" id="tc-base-rpm" placeholder="e.g. 850" oninput="calcTheoryRPM()">
+                    </div>
+                    <div class="group">
+                        <label>Bonus ROF %</label>
+                        <input type="number" id="tc-bonus-rpm" placeholder="e.g. 15 (Striker)" oninput="calcTheoryRPM()">
+                    </div>
+                    <div class="group">
+                        <label style="color:#3399ff">Total RPM</label>
+                        <input type="number" id="tc-total-rpm" readonly style="border-color:#3399ff; color:#3399ff; font-weight:bold;">
+                    </div>
+                </div>
+
+                <div style="margin-top:20px; text-align:center; color:#555; font-style:italic;">
+                    More detailed theory modules (Crit, Headshot, etc.) coming soon based on feedback!
+                    <br>For now, use the calculated values above in the Analyzer.
                 </div>
             </div>
             
-            <div class="chart-container">
-                <canvas id="dpsChart"></canvas>
-            </div>
-
-            <div class="section-title">Comparison Matrix</div>
-            <div style="overflow-x: auto;">
-                <table class="comp-table">
-                    <thead><tr id="comp-header"><th>Metric</th></tr></thead>
-                    <tbody id="comp-body"></tbody>
-                </table>
-            </div>
-            
-            <div class="action-row">
-                <button class="btn-small" onclick="generateShareLink()" style="color:var(--ingame-blue)">Share / Copy Link</button>
-                <button class="btn-small" onclick="clearMatrix()" style="color:#ff4444;">Reset Matrix</button>
+            <div class="card">
+                <div class="section-title">Instructions</div>
+                <div class="hint-text">
+                    This mode helps you calculate the inputs for the main analyzer without doing math in your head.
+                    <br><br>
+                    1. Use the builders on the left to calculate <strong>Total AWD</strong> or <strong>Total RPM</strong>.
+                    <br>2. Copy the blue result values into the <strong>Simple Analyzer</strong> tab.
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    // --- GLOBAL VARIABLES & SETUP ---
     let currentTarget = 'elite';
     let builds = [];
     let dpsChart;
@@ -436,57 +482,23 @@
         'dttooc', 'dta', 'dth', 
         'h-rate', 'd-rate', 'a-rate', 
         'm1', 'm2', 'm3', 'm4', 
-        'menu-dmg', 'menu-awd', 'menu-swd',
+        'menu-dmg', 'menu-awd', 'menu-swd', 
         'grade' 
     ];
+
+    const presets = {
+        'lexington': { base: 48699.5 }, 'st-elmos': { base: 46917.5 }, 'eagle-bearer': { base: 47364.5 },
+        'the-bighorn': { base: 57218.0 }, 'capacitor': { base: 57617.5 }, 'chameleon': { base: 44670.5 },
+        'strega': { base: 57646.0 }, 'oxpecker': { base: 46405.5 }, 'ouroboros': { base: 38300.5 },
+        'lady-death': { base: 35409.0 }, 'backfire': { base: 50998.5 }, 'chatterbox': { base: 39457.0 },
+        'iron-lung': { base: 54322.0 }, 'pestilence': { base: 48300.0 }, 'bullet-king': { base: 54604.0 },
+        'bluescreen': { base: 62361.0 }, 'pakhan': { base: 71538.0 }
+    };
 
     const helpImages = {
         'dmg': 'https://i.imgur.com/NBsyfoh.png',
         'awd': 'https://i.imgur.com/4SN8wG5.png',
         'swd': 'https://i.imgur.com/gG2aIhn.png'
-    };
-
-    function showHelp(type) {
-        const modal = document.getElementById('imageModal');
-        const img = document.getElementById('modalImg');
-        img.src = helpImages[type] || ''; 
-        modal.style.display = "block";
-    }
-
-    function closeModal() {
-        document.getElementById('imageModal').style.display = "none";
-    }
-
-    function toggleCalc() {
-        const content = document.getElementById('calc-content');
-        const arrow = document.getElementById('calc-arrow');
-        if (content.classList.contains('active')) {
-            content.classList.remove('active');
-            arrow.style.transform = "rotate(0deg)";
-        } else {
-            content.classList.add('active');
-            arrow.style.transform = "rotate(180deg)";
-        }
-    }
-
-    const presets = {
-        'lexington': { base: 48699.5 },
-        'st-elmos': { base: 46917.5 },
-        'eagle-bearer': { base: 47364.5 },
-        'the-bighorn': { base: 57218.0 },
-        'capacitor': { base: 57617.5 },
-        'chameleon': { base: 44670.5 },
-        'strega': { base: 57646.0 },
-        'oxpecker': { base: 46405.5 },
-        'ouroboros': { base: 38300.5 },
-        'lady-death': { base: 35409.0 },
-        'backfire': { base: 50998.5 },
-        'chatterbox': { base: 39457.0 },
-        'iron-lung': { base: 54322.0 },
-        'pestilence': { base: 48300.0 },
-        'bullet-king': { base: 54604.0 },
-        'bluescreen': { base: 62361.0 },
-        'pakhan': { base: 71538.0 }
     };
 
     window.onload = function() {
@@ -497,83 +509,79 @@
                 const compressed = params.get('b');
                 const json = LZString.decompressFromEncodedURIComponent(compressed);
                 const minifiedBuilds = JSON.parse(json);
-                
                 builds = [];
                 minifiedBuilds.forEach(minArray => {
                     let inputObj = {};
-                    INPUT_KEYS.forEach((key, index) => {
-                        if (index < minArray.length) {
-                            inputObj[key] = minArray[index];
-                        }
-                    });
-
-                    for (const [key, val] of Object.entries(inputObj)) {
-                        const el = document.getElementById(key);
-                        if(el) el.value = val;
-                    }
-
+                    INPUT_KEYS.forEach((key, index) => { if (index < minArray.length) inputObj[key] = minArray[index]; });
+                    for (const [key, val] of Object.entries(inputObj)) { const el = document.getElementById(key); if(el) el.value = val; }
                     const stats = calculate(); 
-                    builds.push({
-                        name: inputObj['build-name'] || "Shared",
-                        stats: stats,
-                        inputs: inputObj,
-                        ui: {
-                            mDmg: stats.magDmg,
-                            omk: document.getElementById('res-omk').innerText,
-                            kpm: document.getElementById('res-kpm').innerText, 
-                            burst: stats.burst,
-                            ttkb: stats.ttkb, 
-                            sustain: stats.sustain,
-                            ttks: stats.ttks, 
-                            crit: document.getElementById('st-crit').innerText
-                        }
-                    });
+                    builds.push({ name: inputObj['build-name'] || "Shared", stats: stats, inputs: inputObj, ui: getUIObj(stats) });
                 });
-                updateMatrix();
-                updateGraph();
-            } catch(e) {
-                console.error("Load error", e);
-                loadFromStorage();
-            }
-        } else {
-            loadFromStorage();
-        }
+                updateMatrix(); updateGraph();
+            } catch(e) { console.error("Load error", e); loadFromStorage(); }
+        } else { loadFromStorage(); }
     };
 
-    function generateShareLink() {
-        if(builds.length === 0) { alert("Add a build first."); return; }
-        const minifiedBuilds = builds.map(b => {
-            return INPUT_KEYS.map(key => b.inputs[key] || "");
-        });
-        const json = JSON.stringify(minifiedBuilds);
-        const compressed = LZString.compressToEncodedURIComponent(json);
-        const url = new URL(window.location.href);
-        url.searchParams.set('b', compressed);
-        navigator.clipboard.writeText(url.toString()).then(() => {
-            alert("Link copied!");
-        }).catch(err => {
-            prompt("Copy link:", url.toString());
-        });
+    // --- VIEW SWITCHER ---
+    function switchView(mode) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.mode-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById('view-' + mode).classList.add('active');
+        document.getElementById('btn-' + mode).classList.add('active');
     }
 
-    function initChart() {
-        const ctx = document.getElementById('dpsChart').getContext('2d');
-        dpsChart = new Chart(ctx, {
-            type: 'line',
-            data: { labels: [], datasets: [] },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                hover: { mode: 'index', intersect: false },
-                elements: { point: { radius: 0, hitRadius: 10, hoverRadius: 4 } },
-                scales: { 
-                    y: { grid: { color: '#222' }, ticks: { color: '#888', callback: function(value) { return (value/1000000).toFixed(1) + 'M'; } } }, 
-                    x: { grid: { color: '#222' }, ticks: { color: '#888' } } 
-                },
-                plugins: { legend: { labels: { color: '#fff' } } }
-            }
-        });
+    // --- THEORYCRAFTER LOGIC ---
+    function calcTheoryAWD() {
+        let cores = parseInt(document.getElementById('tc-red-cores').value) || 0;
+        let watch = document.getElementById('tc-watch').checked ? 10 : 0;
+        let brand = parseFloat(document.getElementById('tc-brand-awd').value) || 0;
+        
+        let total = (cores * 15) + watch + brand;
+        document.getElementById('tc-total-awd').value = total;
+    }
+
+    function calcTheoryRPM() {
+        let base = parseFloat(document.getElementById('tc-base-rpm').value) || 0;
+        let bonus = parseFloat(document.getElementById('tc-bonus-rpm').value) || 0;
+        
+        let total = base * (1 + bonus/100);
+        document.getElementById('tc-total-rpm').value = Math.round(total);
+    }
+
+    // --- ANALYZER FUNCTIONS (FULL V19 LOGIC) ---
+    function showHelp(type) { 
+        const modal = document.getElementById('imageModal'); 
+        document.getElementById('modalImg').src = helpImages[type] || ''; 
+        modal.style.display = "block"; 
+    }
+    
+    function closeModal() { 
+        document.getElementById('imageModal').style.display = "none"; 
+    }
+    
+    function toggleCalc() { 
+        const c = document.getElementById('calc-content'); 
+        const a = document.getElementById('calc-arrow');
+        if (c.classList.contains('active')) {
+            c.classList.remove('active'); 
+            a.style.transform = "rotate(0deg)";
+        } else {
+            c.classList.add('active'); 
+            a.style.transform = "rotate(180deg)";
+        }
+    }
+    
+    function toggleKillEff() {
+        const c = document.getElementById('kill-content');
+        const a = document.getElementById('kill-arrow');
+        if (c.classList.contains('active')) {
+            c.classList.remove('active'); 
+            a.style.transform = "rotate(0deg)";
+        } else {
+            c.classList.add('active'); 
+            a.style.transform = "rotate(180deg)";
+        }
     }
 
     function calculateBase() {
@@ -599,9 +607,9 @@
 
     function applyPreset() {
         const v = document.getElementById('preset-select').value;
-        if (presets[v]) {
-            document.getElementById('base').value = presets[v].base;
-            calculate();
+        if (presets[v]) { 
+            document.getElementById('base').value = presets[v].base; 
+            calculate(); 
         }
     }
 
@@ -615,7 +623,6 @@
     function recalculateAll() {
         const hp = parseFloat(document.getElementById('enemy-select').value);
         calculate(); 
-
         builds.forEach(b => {
             const magDmg = b.stats.magDmg; 
             const burstDps = b.stats.burst;
@@ -647,7 +654,6 @@
                 b.ui.ttks = Infinity;
             }
         });
-
         updateMatrix();
     }
 
@@ -682,11 +688,13 @@
         const hCrit = fBaseRange * (1 + (chdTotal + hsdTotal)/100);
 
         const bodyElem = document.getElementById('st-body');
-        bodyElem.innerText = Math.round(body).toLocaleString();
-        bodyElem.style.color = currentTarget === 'elite' ? 'var(--ingame-blue)' : '#fff';
-        document.getElementById('st-crit').innerText = Math.round(crit).toLocaleString();
-        document.getElementById('st-head').innerText = Math.round(head).toLocaleString();
-        document.getElementById('st-head-crit').innerText = Math.round(hCrit).toLocaleString();
+        if(bodyElem) {
+            bodyElem.innerText = Math.round(body).toLocaleString();
+            bodyElem.style.color = currentTarget === 'elite' ? 'var(--ingame-blue)' : '#fff';
+            document.getElementById('st-crit').innerText = Math.round(crit).toLocaleString();
+            document.getElementById('st-head').innerText = Math.round(head).toLocaleString();
+            document.getElementById('st-head-crit').innerText = Math.round(hCrit).toLocaleString();
+        }
 
         const avgCritHead = 1 + ((v('chc')/100) * (chdTotal/100)) + ((hsdTotal/100) * (v('h-rate')/100));
         const avgDtoc = 1 + ((v('dttooc')/100) * (v('d-rate')/100));
@@ -715,42 +723,61 @@
         const hp = v('enemy-select');
         const kpm = hp > 0 ? magDmg / hp : 0;
 
-        document.getElementById('res-omk').innerText = kpm >= 1 ? "YES" : "NO";
-        document.getElementById('res-omk').style.color = kpm >= 1 ? "var(--pos)" : "var(--neg)";
-        document.getElementById('res-kpm').innerText = kpm.toFixed(2);
-        
-        if(burstDps > 0) {
-             document.getElementById('res-ttkb').innerText = (hp / burstDps).toFixed(3) + "s";
-        } else {
-             document.getElementById('res-ttkb').innerText = "-";
-        }
-        
-        let ttksVal = 0;
-        if(rps > 0 && mag > 0 && hp > 0) {
-            let shotsToKill = Math.ceil(hp / avgHit);
-            let magsNeeded = Math.ceil(shotsToKill / mag);
+        const resOmk = document.getElementById('res-omk');
+        if(resOmk) {
+            resOmk.innerText = kpm >= 1 ? "YES" : "NO";
+            resOmk.style.color = kpm >= 1 ? "var(--pos)" : "var(--neg)";
+            document.getElementById('res-kpm').innerText = kpm.toFixed(2);
             
-            if (magsNeeded <= 1) {
-                ttksVal = shotsToKill / rps;
+            if(burstDps > 0) {
+                 document.getElementById('res-ttkb').innerText = (hp / burstDps).toFixed(3) + "s";
             } else {
-                ttksVal = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * mag)) / rps);
+                 document.getElementById('res-ttkb').innerText = "-";
             }
-            document.getElementById('res-ttks').innerText = ttksVal.toFixed(3) + "s";
-        } else {
-            document.getElementById('res-ttks').innerText = "-";
+            
+            let ttksVal = 0;
+            if(rps > 0 && mag > 0 && hp > 0) {
+                let shotsToKill = Math.ceil(hp / avgHit);
+                let magsNeeded = Math.ceil(shotsToKill / mag);
+                
+                if (magsNeeded <= 1) {
+                    ttksVal = shotsToKill / rps;
+                } else {
+                    ttksVal = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * mag)) / rps);
+                }
+                document.getElementById('res-ttks').innerText = ttksVal.toFixed(3) + "s";
+            } else {
+                document.getElementById('res-ttks').innerText = "-";
+            }
+            
+            return { 
+                avg: avgHit, 
+                rps: rps, 
+                mag: mag, 
+                rel: reload, 
+                magDmg: magDmg, 
+                cycleTime: cycleTime,
+                burst: burstDps, 
+                sustain: sustainDps,
+                ttkb: (burstDps > 0 ? hp / burstDps : Infinity), 
+                ttks: ttksVal
+            };
         }
+        
+        // Fallback return if elements not found (e.g. initial load)
+        return { avg: avgHit, rps: rps, mag: mag, rel: reload, magDmg: magDmg, cycleTime: cycleTime, burst: burstDps, sustain: sustainDps, ttkb: 0, ttks: 0 };
+    }
 
-        return { 
-            avg: avgHit, 
-            rps: rps, 
-            mag: mag, 
-            rel: reload, 
-            magDmg: magDmg, 
-            cycleTime: cycleTime,
-            burst: burstDps, 
-            sustain: sustainDps,
-            ttkb: (burstDps > 0 ? hp / burstDps : Infinity), 
-            ttks: ttksVal
+    function getUIObj(stats) {
+        return {
+            mDmg: stats.magDmg,
+            omk: document.getElementById('res-omk').innerText,
+            kpm: document.getElementById('res-kpm').innerText, 
+            burst: stats.burst,
+            ttkb: stats.ttkb, 
+            sustain: stats.sustain,
+            ttks: stats.ttks, 
+            crit: document.getElementById('st-crit').innerText
         };
     }
 
@@ -766,23 +793,14 @@
             name: inputs['build-name'] || "Build " + (builds.length + 1),
             stats: stats,
             inputs: inputs,
-            ui: {
-                mDmg: stats.magDmg,
-                omk: document.getElementById('res-omk').innerText,
-                kpm: document.getElementById('res-kpm').innerText, 
-                burst: stats.burst,
-                ttkb: stats.ttkb, 
-                sustain: stats.sustain,
-                ttks: stats.ttks, 
-                crit: document.getElementById('st-crit').innerText
-            }
+            ui: getUIObj(stats)
         };
         builds.push(b);
         saveToStorage();
         updateMatrix();
         updateGraph();
     }
-
+    
     function loadBuild(i) {
         const data = builds[i].inputs;
         document.getElementById('preset-select').value = "";
@@ -804,6 +822,20 @@
         saveToStorage();
         updateMatrix();
         updateGraph();
+    }
+
+    function deleteBuild(i) { 
+        builds.splice(i, 1); 
+        saveToStorage(); 
+        updateMatrix(); 
+        updateGraph(); 
+    }
+    
+    function clearMatrix() { 
+        builds = []; 
+        saveToStorage(); 
+        updateMatrix(); 
+        updateGraph(); 
     }
 
     function updateMatrix() {
@@ -888,7 +920,6 @@
         });
     }
 
-    // --- CLEAN GRAPH LOGIC (BURST VS SUSTAIN) ---
     function updateGraph() {
         const timeInput = document.getElementById('graph-time');
         const timeLimit = parseInt(timeInput.value) || 30; 
@@ -905,7 +936,6 @@
                 let reloadTime = b.stats.rel;
                 let damageAccumulated = 0;
 
-                // Simple Simulation Loop
                 for (let t = 0; t <= timeLimit; t++) {
                     if (t === 0) {
                         data.push(0);
@@ -922,7 +952,6 @@
                         let timeInCycle = exactTimeNow % cycleTime;
                         
                         if (timeInCycle < burstTime) {
-                            // SHOOTING
                             let timeToEmpty = burstTime - timeInCycle;
                             let shootTime = Math.min(timeRemainingInSecond, timeToEmpty);
                             let shotsNow = shootTime * shotsPerSec;
@@ -930,7 +959,6 @@
                             damageAccumulated += shotsNow * b.stats.avg;
                             timeRemainingInSecond -= shootTime;
                         } else {
-                            // RELOAD
                             let timeToReloadFinish = cycleTime - timeInCycle;
                             let reloadWait = Math.min(timeRemainingInSecond, timeToReloadFinish);
                             timeRemainingInSecond -= reloadWait;
@@ -955,13 +983,47 @@
         dpsChart.update();
     }
 
+    function initChart() {
+        const ctx = document.getElementById('dpsChart').getContext('2d');
+        dpsChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: [], datasets: [] },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                hover: { mode: 'index', intersect: false },
+                elements: { point: { radius: 0, hitRadius: 10, hoverRadius: 4 } },
+                scales: { 
+                    y: { grid: { color: '#222' }, ticks: { color: '#888', callback: function(value) { return (value/1000000).toFixed(1) + 'M'; } } }, 
+                    x: { grid: { color: '#222' }, ticks: { color: '#888' } } 
+                },
+                plugins: { legend: { labels: { color: '#fff' } } }
+            }
+        });
+    }
+
+    function generateShareLink() {
+        if(builds.length === 0) { alert("Add a build first."); return; }
+        const minifiedBuilds = builds.map(b => {
+            return INPUT_KEYS.map(key => b.inputs[key] || "");
+        });
+        const json = JSON.stringify(minifiedBuilds);
+        const compressed = LZString.compressToEncodedURIComponent(json);
+        const url = new URL(window.location.href);
+        url.searchParams.set('b', compressed);
+        navigator.clipboard.writeText(url.toString()).then(() => {
+            alert("Link copied!");
+        }).catch(err => {
+            prompt("Copy link:", url.toString());
+        });
+    }
+
     function saveToStorage() { localStorage.setItem('xsmileyy_builds', JSON.stringify(builds)); }
     function loadFromStorage() {
         const saved = localStorage.getItem('xsmileyy_builds');
         if (saved) { builds = JSON.parse(saved); updateMatrix(); updateGraph(); }
     }
-    function deleteBuild(i) { builds.splice(i, 1); saveToStorage(); updateMatrix(); updateGraph(); }
-    function clearMatrix() { builds = []; saveToStorage(); updateMatrix(); updateGraph(); }
 </script>
 </body>
 </html>
