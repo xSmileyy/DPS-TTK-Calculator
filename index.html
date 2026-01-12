@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Tool | V22 (Theorycrafter Remastered)</title>
+    <title>xSmileyy's DPS Analyzer | Elite Matrix V19 (Stable)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -40,7 +40,7 @@
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            margin-bottom: 20px; 
+            margin-bottom: 30px; 
             border-bottom: 1px solid var(--border); 
             padding-bottom: 20px; 
         }
@@ -49,57 +49,72 @@
         .logo span { color: var(--orange); text-shadow: 0 0 15px var(--orange-glow); }
         .version-tag { font-size: 10px; color: #888; font-weight: 800; letter-spacing: 1px; }
 
-        /* --- MODE SWITCHER --- */
-        .mode-switch-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-            gap: 20px;
+        .discord-info { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            background: var(--glass); 
+            padding: 8px 15px; 
+            border-radius: 50px; 
+            border: 1px solid #333; 
         }
-        .mode-btn {
-            background: #111;
-            border: 1px solid #333;
-            color: #888;
-            padding: 15px 30px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 800;
-            text-transform: uppercase;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-        }
-        .mode-btn:hover { background: #1a1a1a; border-color: #555; }
-        .mode-btn.active {
-            background: rgba(255, 102, 0, 0.1);
-            border-color: var(--orange);
-            color: #fff;
-            box-shadow: 0 0 15px rgba(255, 102, 0, 0.2);
-        }
-        .mode-btn i { font-size: 18px; }
-
-        .view-section { display: none; animation: fadeIn 0.3s ease-out; }
-        .view-section.active { display: block; }
-
-        /* --- STANDARD STYLES --- */
-        .discord-info { display: flex; align-items: center; gap: 10px; background: var(--glass); padding: 8px 15px; border-radius: 50px; border: 1px solid #333; }
         .discord-info i { color: #5865F2; font-size: 18px; }
         .discord-info span { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 14px; }
 
-        .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 30px; align-items: start; }
-        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 25px; backdrop-filter: blur(20px); }
+        .main-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); 
+            gap: 30px; 
+            align-items: start; 
+        }
+
+        .card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border); 
+            border-radius: 20px; 
+            padding: 25px; 
+            backdrop-filter: blur(20px); 
+        }
         
-        .section-title { font-size: 14px; font-weight: 800; color: var(--orange); text-transform: uppercase; letter-spacing: 2px; margin: 25px 0 15px 0; display: flex; align-items: center; gap: 15px; }
+        .section-title { 
+            font-size: 14px; 
+            font-weight: 800; 
+            color: var(--orange); 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            margin: 25px 0 15px 0; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+        }
         .section-title:first-child { margin-top: 0; }
         .section-title::after { content: ''; height: 1px; flex-grow: 1; background: var(--border); }
 
-        .info-box-prominent { background: rgba(255, 102, 0, 0.1); border-left: 4px solid var(--orange); padding: 15px; border-radius: 4px; margin-bottom: 15px; font-size: 12px; line-height: 1.5; color: #ccc; }
+        .info-box-prominent {
+            background: rgba(255, 102, 0, 0.1); 
+            border-left: 4px solid var(--orange);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #ccc;
+        }
         .info-box-prominent strong { color: #fff; text-transform: uppercase; }
         .info-box-prominent i { color: var(--orange); margin-right: 8px; }
 
-        .accordion-header { background: #111; padding: 15px; border-radius: 8px; border: 1px solid #333; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; margin-bottom: 10px; }
+        .accordion-header {
+            background: #111;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+            margin-bottom: 10px;
+        }
         .accordion-header:hover { border-color: var(--orange); background: #161616; }
         .accordion-header span { font-weight: 800; font-size: 12px; text-transform: uppercase; color: #fff; }
         .accordion-arrow { transition: transform 0.3s ease; color: var(--orange); }
@@ -107,16 +122,45 @@
         .accordion-content.active { display: block; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .input-block { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; background: var(--glass); padding: 18px; border-radius: 12px; margin-bottom: 15px; }
+        .input-block { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 12px; 
+            background: var(--glass); 
+            padding: 18px; 
+            border-radius: 12px; 
+            margin-bottom: 15px; 
+        }
+
         .group { display: flex; flex-direction: column; position: relative; }
         
-        label { font-size: 10px; font-weight: 700; color: #fff; margin-bottom: 4px; text-transform: uppercase; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
+        label { 
+            font-size: 10px; 
+            font-weight: 700; 
+            color: #fff; 
+            margin-bottom: 4px; 
+            text-transform: uppercase; 
+            white-space: nowrap; 
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         .info-icon { color: var(--orange); cursor: pointer; font-size: 12px; transition: 0.2s; }
         .info-icon:hover { transform: scale(1.2); text-shadow: 0 0 5px var(--orange); }
 
-        input, select { background: #000; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 15px; font-family: 'JetBrains Mono'; width: 100%; box-sizing: border-box; }
+        input, select { 
+            background: #000; 
+            border: 1px solid #333; 
+            color: #fff; 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            font-size: 15px; 
+            font-family: 'JetBrains Mono'; 
+            width: 100%; 
+            box-sizing: border-box; 
+        }
         input:focus { border-color: var(--orange); outline: none; }
-        input:disabled, select:disabled { background-color: #1a1a1a; color: #555; border-color: #222; cursor: not-allowed; }
         
         .hint-text { font-size: 11px; color: #888; margin-bottom: 15px; font-style: italic; line-height: 1.4; padding-left: 5px; }
         .hint-text i { color: var(--orange); margin-right: 5px; }
@@ -136,21 +180,6 @@
 
         .btn-capture { background: #fff; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px; }
         .btn-capture:hover { background: var(--orange); color: #fff; }
-
-        /* --- THEORYCRAFTER SPECIFIC --- */
-        .theory-row { display: flex; gap: 10px; margin-bottom: 8px; align-items: center; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 6px; border: 1px solid #222; }
-        .theory-row input { font-size: 13px; }
-        .theory-row .t-name { flex: 2; }
-        .theory-row .t-val { flex: 1; }
-        .theory-row .t-type { flex: 2; }
-        .theory-row .t-del { background: transparent; border: 1px solid #ff4444; color: #ff4444; width: 30px; height: 30px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .theory-row .t-del:hover { background: rgba(255, 68, 68, 0.2); }
-        
-        .btn-add-row { background: #111; border: 1px dashed #444; color: #888; width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 12px; text-transform: uppercase; font-weight: bold; margin-bottom: 15px; transition: 0.2s; }
-        .btn-add-row:hover { border-color: var(--ingame-blue); color: var(--ingame-blue); background: rgba(51, 153, 255, 0.1); }
-
-        .link-box { display: block; background: #111; border: 1px solid var(--ingame-blue); color: var(--ingame-blue); padding: 12px; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 12px; margin-bottom: 20px; transition: 0.2s; }
-        .link-box:hover { background: rgba(51, 153, 255, 0.1); }
 
         .comp-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
         .comp-table th { background: rgba(255,255,255,0.05); text-align: left; padding: 10px; color: var(--orange); border-bottom: 1px solid var(--border); }
@@ -195,311 +224,206 @@
 
 <div class="container">
     <header class="header">
-        <div class="logo">xSmileyy's <span>DPS Tool</span></div>
-        <div class="version-tag">V22 (THEORY RELOADED)</div>
+        <div class="logo">xSmileyy's <span>DPS Analyzer</span></div>
+        <div class="version-tag">ALPHA 1.9 (Stable)</div>
         <div class="discord-info"><i class="fab fa-discord"></i> <span>xsmileyy.</span></div>
     </header>
 
-    <div class="mode-switch-container">
-        <button class="mode-btn active" id="btn-analyzer" onclick="switchView('analyzer')">
-            <i class="fas fa-calculator"></i> Simple Analyzer
-        </button>
-        <button class="mode-btn" id="btn-theory" onclick="switchView('theory')">
-            <i class="fas fa-flask"></i> Theorycrafter
-        </button>
-    </div>
+    <div class="main-grid">
+        <div class="card">
+            
+            <div class="info-box-prominent">
+                <i class="fas fa-info-circle"></i>
+                <strong>Optional Tool:</strong> Use this if you don't know your Base Damage.
+                <br>If your weapon is in the "Weapon Presets" list, you can <strong>skip this step</strong>.
+            </div>
 
-    <div id="view-analyzer" class="view-section active">
-        <div class="main-grid">
-            <div class="card">
-                
-                <div class="info-box-prominent">
-                    <i class="fas fa-info-circle"></i>
-                    <strong>Standard Mode:</strong> Ideal for comparing builds you already have (Screenshots).
-                    <br>If your weapon is in the "Weapon Presets" list, you can <strong>skip step 0</strong>.
+            <div class="accordion-header" onclick="toggleCalc()">
+                <span>0. Calculate Base Damage (Click to Open)</span>
+                <i id="calc-arrow" class="fas fa-chevron-down accordion-arrow"></i>
+            </div>
+
+            <div id="calc-content" class="accordion-content">
+                <div class="hint-text">
+                    <strong>Guide:</strong> Enter stats from Inventory to find Base Damage.<br>
+                    <i class="fas fa-hand-pointer"></i> Tap <i class="fas fa-question-circle" style="color:var(--orange)"></i> icons for screenshots.
                 </div>
-
-                <div class="accordion-header" onclick="toggleCalc()">
-                    <span>0. Calculate Base Damage (Click to Open)</span>
-                    <i id="calc-arrow" class="fas fa-chevron-down accordion-arrow"></i>
-                </div>
-
-                <div id="calc-content" class="accordion-content">
-                    <div class="hint-text">
-                        <strong>Guide:</strong> Enter stats from Inventory to find Base Damage.<br>
-                        <i class="fas fa-hand-pointer"></i> Tap <i class="fas fa-question-circle" style="color:var(--orange)"></i> icons for screenshots.
-                    </div>
-                    <div class="input-block" style="grid-template-columns: repeat(3, 1fr);">
-                        <div class="group">
-                            <label>Weapon Damage <i class="fas fa-question-circle info-icon" onclick="showHelp('dmg')"></i></label>
-                            <input type="number" id="menu-dmg" oninput="calculateBase()">
-                        </div>
-                        <div class="group">
-                            <label>AWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('awd')"></i></label>
-                            <input type="number" id="menu-awd" oninput="calculateBase()">
-                        </div>
-                        <div class="group">
-                            <label>SWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('swd')"></i></label>
-                            <input type="number" id="menu-swd" oninput="calculateBase()">
-                        </div>
-                        <div class="group" style="grid-column: span 3; border-top: 1px solid #222; padding-top: 10px; margin-top: 5px;">
-                            <label style="color:var(--orange)">Result: Base Damage</label>
-                            <input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section-title">Weapon Presets (Base Dmg)</div>
-                <div class="input-block">
-                    <div class="group" style="grid-column: span 4;">
-                        <select id="preset-select" onchange="applyPreset()">
-                            <option value="">-- Select Weapon (Base Damage Only) --</option>
-                            <optgroup label="Assault Rifles">
-                                <option value="lexington">Lexington</option>
-                                <option value="st-elmos">St. Elmo's Engine</option>
-                                <option value="eagle-bearer">Eagle Bearer</option>
-                                <option value="the-bighorn">The Bighorn</option>
-                                <option value="capacitor">Capacitor</option>
-                                <option value="chameleon">Chameleon</option>
-                                <option value="strega">Strega</option>
-                                <option value="oxpecker">Oxpecker</option>
-                            </optgroup>
-                            <optgroup label="SMGs">
-                                <option value="ouroboros">Ouroboros</option>
-                                <option value="lady-death">Lady Death</option>
-                                <option value="backfire">Backfire</option>
-                                <option value="chatterbox">The Chatterbox</option>
-                            </optgroup>
-                            <optgroup label="LMGs & Rifles">
-                                <option value="iron-lung">Iron Lung</option>
-                                <option value="pestilence">Pestilence</option>
-                                <option value="bullet-king">Bullet King</option>
-                                <option value="bluescreen">Bluescreen</option>
-                                <option value="pakhan">Pakhan</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="section-title">1. Weapon Data & Damage %</div>
-                <div class="input-block">
-                    <div class="group"><label style="color:var(--orange)">Base Damage</label><input type="number" id="base" style="border-color:var(--orange)" oninput="calculate()"></div>
-                    <div class="group"><label>RPM</label><input type="number" id="rpm" oninput="calculate()"></div>
-                    <div class="group"><label>Mag Size</label><input type="number" id="mag" oninput="calculate()"></div>
-                    <div class="group"><label>Reload (s)</label><input type="number" id="rel" oninput="calculate()"></div>
-                    
-                    <div class="group"><label>AWD %</label><input type="number" id="awd" oninput="calculate()"></div>
-                    <div class="group"><label>SWD %</label><input type="number" id="swd" oninput="calculate()"></div>
-                    
+                <div class="input-block" style="grid-template-columns: repeat(3, 1fr);">
                     <div class="group">
-                        <label>
-                            Expertise 
-                            <i class="fas fa-exclamation-triangle" style="color:var(--crit); margin-left:5px; cursor:pointer;" 
-                               title="Note: If you enter Expertise here, remove it from AWD to avoid double counting!"
-                               onclick="alert('IMPORTANT:\nIf you enter a value here (e.g. 20 for Grade 20), make sure you subtract that amount from your AWD % field.\n\nDo not count it twice!')"></i>
-                        </label>
-                        <input type="number" id="grade" oninput="calculate()">
+                        <label>Weapon Damage <i class="fas fa-question-circle info-icon" onclick="showHelp('dmg')"></i></label>
+                        <input type="number" id="menu-dmg" oninput="calculateBase()">
                     </div>
-
-                    <div class="group"><label>TWD (e.g. Obliterate)</label><input type="number" id="twd" oninput="calculate()"></div>
-                </div>
-
-                <div class="section-title">2. Combat Stats</div>
-                <div class="input-block">
-                    <div class="group"><label>CHC %</label><input type="number" id="chc" oninput="calculate()"></div>
-                    <div class="group"><label>CHD %</label><input type="number" id="chd" oninput="calculate()"></div>
-                    <div class="group"><label>HSD %</label><input type="number" id="hsd" oninput="calculate()"></div>
-                    <div class="group"><label>DTOC %</label><input type="number" id="dttooc" oninput="calculate()"></div>
-                    <div class="group"><label>DtA %</label><input type="number" id="dta" oninput="calculate()"></div>
-                    <div class="group"><label>DtH %</label><input type="number" id="dth" oninput="calculate()"></div>
-                </div>
-
-                <div class="section-title">3. %-Rate Uptime</div>
-                <div class="hint-text"><i class="fas fa-info-circle"></i> Recommended: HS 20% | DTOC 60% | DTA 80%</div>
-                <div class="input-block">
-                    <div class="group"><label>HS-Rate %</label><input type="number" id="h-rate" value="20" oninput="calculate()"></div>
-                    <div class="group"><label>DTOC-Rate %</label><input type="number" id="d-rate" value="60" oninput="calculate()"></div>
-                    <div class="group"><label>DTA-Rate %</label><input type="number" id="a-rate" value="80" oninput="calculate()"></div>
-                </div>
-
-                <div class="section-title">4. Amplifiers</div>
-                <div class="hint-text"><i class="fas fa-info-circle"></i> e.g. Striker Stacks in %, Glass Cannon %</div>
-                <div class="input-block">
-                    <div class="group"><label>AMP %</label><input type="number" id="m1" oninput="calculate()"></div>
-                    <div class="group"><label>AMP %</label><input type="number" id="m2" oninput="calculate()"></div>
-                    <div class="group"><label>AMP %</label><input type="number" id="m3" oninput="calculate()"></div>
-                    <div class="group"><label>AMP %</label><input type="number" id="m4" oninput="calculate()"></div>
-                </div>
-                
-                <div class="input-block" style="border: 1px dashed var(--orange); grid-template-columns: repeat(3, 1fr);">
-                    <div class="group" style="grid-column: span 2;"><label>Build Name</label><input type="text" id="build-name" placeholder="Name..."></div>
-                    <div class="group"><button class="btn-capture" onclick="captureBuild()">Add to Matrix</button></div>
+                    <div class="group">
+                        <label>AWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('awd')"></i></label>
+                        <input type="number" id="menu-awd" oninput="calculateBase()">
+                    </div>
+                    <div class="group">
+                        <label>SWD % <i class="fas fa-question-circle info-icon" onclick="showHelp('swd')"></i></label>
+                        <input type="number" id="menu-swd" oninput="calculateBase()">
+                    </div>
+                    <div class="group" style="grid-column: span 3; border-top: 1px solid #222; padding-top: 10px; margin-top: 5px;">
+                        <label style="color:var(--orange)">Result: Base Damage</label>
+                        <input type="text" id="calc-base-res" readonly style="border-color:var(--orange); color:var(--orange); font-weight:bold;">
+                    </div>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="section-title">Shooting Range</div>
-                <div class="target-toggle">
-                    <button class="t-btn active" id="t-elite" onclick="setTarget('elite')">Target: Elite (DtA)</button>
-                    <button class="t-btn" id="t-health" onclick="setTarget('health')">Target: Health (DtH)</button>
-                </div>
-                <div class="range-grid">
-                    <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body">-</span></div>
-                    <div class="range-box"><label>Crit Body</label><span class="range-val" id="st-crit" style="color:var(--crit)">-</span></div>
-                    <div class="range-box"><label>Headshot</label><span class="range-val" id="st-head" style="color:var(--orange)">-</span></div>
-                    <div class="range-box"><label>Crit Head</label><span class="range-val" id="st-head-crit" style="color:var(--head)">-</span></div>
-                </div>
-
-                <div class="accordion-header" onclick="toggleKillEff()">
-                    <span>Kill Efficiency (Click to Expand)</span>
-                    <i id="kill-arrow" class="fas fa-chevron-down accordion-arrow"></i>
-                </div>
-                <div id="kill-content" class="accordion-content">
-                    <select id="enemy-select" style="width:100%; margin-bottom:15px;" onchange="recalculateAll()">
-                        <optgroup label="Heroic (1 Player)">
-                            <option value="6050000">Heroic Elite (6.05M)</option>
-                            <option value="18000000">Heroic Named (18.0M)</option>
-                            <option value="22000000">Heroic Chunga (22.0M)</option>
+            <div class="section-title">Weapon Presets (Base Dmg)</div>
+            <div class="input-block">
+                <div class="group" style="grid-column: span 4;">
+                    <select id="preset-select" onchange="applyPreset()">
+                        <option value="">-- Select Weapon (Base Damage Only) --</option>
+                        <optgroup label="Assault Rifles">
+                            <option value="lexington">Lexington</option>
+                            <option value="st-elmos">St. Elmo's Engine</option>
+                            <option value="eagle-bearer">Eagle Bearer</option>
+                            <option value="the-bighorn">The Bighorn</option>
+                            <option value="capacitor">Capacitor</option>
+                            <option value="chameleon">Chameleon</option>
+                            <option value="strega">Strega</option>
+                            <option value="oxpecker">Oxpecker</option>
                         </optgroup>
-                        <optgroup label="Heroic (4 Player)" selected>
-                            <option value="16905653" selected>Heroic Elite (16.9M)</option>
-                            <option value="47296250">Heroic Named (47.3M)</option>
-                            <option value="58000000">Heroic Chunga (58.0M)</option>
+                        <optgroup label="SMGs">
+                            <option value="ouroboros">Ouroboros</option>
+                            <option value="lady-death">Lady Death</option>
+                            <option value="backfire">Backfire</option>
+                            <option value="chatterbox">The Chatterbox</option>
                         </optgroup>
-                        <optgroup label="Legendary (4 Player)">
-                            <option value="25172134">Legendary Elite (25.2M)</option>
-                            <option value="72146660">Legendary Named (72.1M)</option>
-                            <option value="108000000">Legendary Chunga (108M)</option>
+                        <optgroup label="LMGs & Rifles">
+                            <option value="iron-lung">Iron Lung</option>
+                            <option value="pestilence">Pestilence</option>
+                            <option value="bullet-king">Bullet King</option>
+                            <option value="bluescreen">Bluescreen</option>
+                            <option value="pakhan">Pakhan</option>
                         </optgroup>
                     </select>
-                    
-                    <div class="results-grid">
-                        <div class="res-box"><span class="res-label">One-Mag Kill?</span><span class="res-val" id="res-omk">-</span></div>
-                        <div class="res-box"><span class="res-label">Kills / Mag</span><span class="res-val" id="res-kpm">-</span></div>
-                        <div class="res-box"><span class="res-label">TTK Burst</span><span class="res-val" id="res-ttkb">-</span></div>
-                        <div class="res-box"><span class="res-label">TTK Sustain</span><span class="res-val" id="res-ttks">-</span></div>
-                    </div>
                 </div>
+            </div>
+
+            <div class="section-title">1. Weapon Data & Damage %</div>
+            <div class="input-block">
+                <div class="group"><label style="color:var(--orange)">Base Damage</label><input type="number" id="base" style="border-color:var(--orange)" oninput="calculate()"></div>
+                <div class="group"><label>RPM</label><input type="number" id="rpm" oninput="calculate()"></div>
+                <div class="group"><label>Mag Size</label><input type="number" id="mag" oninput="calculate()"></div>
+                <div class="group"><label>Reload (s)</label><input type="number" id="rel" oninput="calculate()"></div>
                 
-                <div class="chart-header">
-                    <div class="section-title" style="margin:0;">Total Damage Timeline (Burst vs. Sustain)</div>
-                    <div class="chart-controls">
-                        <label style="margin:0;">Graph Time (s):</label>
-                        <input type="number" id="graph-time" class="chart-input" value="15" min="1" max="300" oninput="updateGraph()">
-                    </div>
-                </div>
+                <div class="group"><label>AWD %</label><input type="number" id="awd" oninput="calculate()"></div>
+                <div class="group"><label>SWD %</label><input type="number" id="swd" oninput="calculate()"></div>
                 
-                <div class="chart-container">
-                    <canvas id="dpsChart"></canvas>
+                <div class="group">
+                    <label>
+                        Expertise 
+                        <i class="fas fa-exclamation-triangle" style="color:var(--crit); margin-left:5px; cursor:pointer;" 
+                           title="Note: If you enter Expertise here, remove it from AWD to avoid double counting!"
+                           onclick="alert('IMPORTANT:\nIf you enter a value here (e.g. 20 for Grade 20), make sure you subtract that amount from your AWD % field.\n\nDo not count it twice!')"></i>
+                    </label>
+                    <input type="number" id="grade" oninput="calculate()">
                 </div>
 
-                <div class="section-title">Comparison Matrix</div>
-                <div style="overflow-x: auto;">
-                    <table class="comp-table">
-                        <thead><tr id="comp-header"><th>Metric</th></tr></thead>
-                        <tbody id="comp-body"></tbody>
-                    </table>
-                </div>
-                
-                <div class="action-row">
-                    <button class="btn-small" onclick="generateShareLink()" style="color:var(--ingame-blue)">Share / Copy Link</button>
-                    <button class="btn-small" onclick="clearMatrix()" style="color:#ff4444;">Reset Matrix</button>
-                </div>
+                <div class="group"><label>TWD (e.g. Obliterate)</label><input type="number" id="twd" oninput="calculate()"></div>
+            </div>
+
+            <div class="section-title">2. Combat Stats</div>
+            <div class="input-block">
+                <div class="group"><label>CHC %</label><input type="number" id="chc" oninput="calculate()"></div>
+                <div class="group"><label>CHD %</label><input type="number" id="chd" oninput="calculate()"></div>
+                <div class="group"><label>HSD %</label><input type="number" id="hsd" oninput="calculate()"></div>
+                <div class="group"><label>DTOC %</label><input type="number" id="dttooc" oninput="calculate()"></div>
+                <div class="group"><label>DtA %</label><input type="number" id="dta" oninput="calculate()"></div>
+                <div class="group"><label>DtH %</label><input type="number" id="dth" oninput="calculate()"></div>
+            </div>
+
+            <div class="section-title">3. %-Rate Uptime</div>
+            <div class="hint-text"><i class="fas fa-info-circle"></i> Recommended: HS 20% | DTOC 60% | DTA 80%</div>
+            <div class="input-block">
+                <div class="group"><label>HS-Rate %</label><input type="number" id="h-rate" value="20" oninput="calculate()"></div>
+                <div class="group"><label>DTOC-Rate %</label><input type="number" id="d-rate" value="60" oninput="calculate()"></div>
+                <div class="group"><label>DTA-Rate %</label><input type="number" id="a-rate" value="80" oninput="calculate()"></div>
+            </div>
+
+            <div class="section-title">4. Amplifiers</div>
+            <div class="hint-text"><i class="fas fa-info-circle"></i> e.g. Striker Stacks in %, Glass Cannon %</div>
+            <div class="input-block">
+                <div class="group"><label>AMP %</label><input type="number" id="m1" oninput="calculate()"></div>
+                <div class="group"><label>AMP %</label><input type="number" id="m2" oninput="calculate()"></div>
+                <div class="group"><label>AMP %</label><input type="number" id="m3" oninput="calculate()"></div>
+                <div class="group"><label>AMP %</label><input type="number" id="m4" oninput="calculate()"></div>
+            </div>
+            
+            <div class="input-block" style="border: 1px dashed var(--orange); grid-template-columns: repeat(3, 1fr);">
+                <div class="group" style="grid-column: span 2;"><label>Build Name</label><input type="text" id="build-name" placeholder="Name..."></div>
+                <div class="group"><button class="btn-capture" onclick="captureBuild()">Add to Matrix</button></div>
             </div>
         </div>
-    </div>
 
-    <div id="view-theory" class="view-section">
-        <div class="main-grid">
-            <div class="card">
-                <div class="info-box-prominent" style="border-color: #3399ff; background: rgba(51, 153, 255, 0.1);">
-                    <i class="fas fa-flask" style="color:#3399ff;"></i>
-                    <strong>Theorycrafter:</strong> Configure from scratch. Manual inputs + Dynamic Mod/Gear list.
-                </div>
-
-                <a href="https://docs.google.com/spreadsheets/d/1nrPBmOrtpkEW1j5fbcRT7L-AXgsGOqMqxXoVtopsiGM/edit?gid=0#gid=0" target="_blank" class="link-box">
-                    <i class="fas fa-external-link-alt"></i> OPEN DIVISION 2 GEAR SPREADSHEET (English)
-                </a>
-
-                <div class="section-title">1. Weapon Configuration</div>
-                <div class="input-block">
-                    <div class="group" style="grid-column: span 2;">
-                        <label>Weapon Preset (Optional)</label>
-                        <select id="tc_preset" onchange="applyTheoryPreset()">
-                            <option value="">Custom / Manual Input</option>
-                            <option value="famas">Famas 2010</option>
-                            <option value="police_m4">Police M4</option>
-                            <option value="st_elmo">St. Elmo's Engine</option>
-                            <option value="ouroboros">Ouroboros</option>
-                            <option value="classic_m1a">Classic M1A</option>
-                        </select>
-                    </div>
-                    <div class="group" style="grid-column: span 2;">
-                        <label>Weapon Name</label>
-                        <input type="text" id="tc_name" placeholder="My Build Name">
-                    </div>
-                </div>
-
-                <div class="input-block">
-                    <div class="group"><label>Base Damage</label><input type="number" id="tc_base" oninput="calcTheoryMain()"></div>
-                    <div class="group"><label>RPM</label><input type="number" id="tc_rpm" oninput="calcTheoryMain()"></div>
-                    <div class="group"><label>Mag Size</label><input type="number" id="tc_mag" oninput="calcTheoryMain()"></div>
-                    <div class="group"><label>Reload (s)</label><input type="number" id="tc_reload" oninput="calcTheoryMain()"></div>
-                </div>
-
-                <div class="section-title">2. SHD Watch</div>
-                <div class="hint-text">Standard Maxed Watch stats (You can reduce these if needed).</div>
-                <div class="input-block">
-                    <div class="group"><label>CHC (10%)</label><input type="number" id="tc_shd_chc" value="10" oninput="calcTheoryMain()"></div>
-                    <div class="group"><label>CHD (20%)</label><input type="number" id="tc_shd_chd" value="20" oninput="calcTheoryMain()"></div>
-                    <div class="group"><label>HSD (20%)</label><input type="number" id="tc_shd_hsd" value="20" oninput="calcTheoryMain()"></div>
-                    <div class="group"><label>Reload (10%)</label><input type="number" id="tc_shd_rel" value="10" oninput="calcTheoryMain()"></div>
-                </div>
-
-                <div class="section-title">3. Brand & Gear Set Bonuses</div>
-                <div class="hint-text">
-                    Add lines for everything: Weapon Cores (15%), Brand Bonuses (e.g. Grupo 15% CHD), Gear Sets, or Mods.
-                    <br><strong>Weapon Handling</strong> counts as Reload Speed here.
-                </div>
-
-                <div id="theory_rows_container">
-                    </div>
-                <button class="btn-add-row" onclick="addTheoryRow()">+ Add Stat Line</button>
-
-                <div class="input-block" style="border: 1px dashed #3399ff; margin-top: 20px;">
-                    <div class="group" style="grid-column: span 4;">
-                        <button class="btn-capture" style="background: #3399ff; color: #fff;" onclick="addTheoryToMatrix()">
-                            Calculate & Add to Matrix
-                        </button>
-                    </div>
-                </div>
-
+        <div class="card">
+            <div class="section-title">Shooting Range</div>
+            <div class="target-toggle">
+                <button class="t-btn active" id="t-elite" onclick="setTarget('elite')">Target: Elite (DtA)</button>
+                <button class="t-btn" id="t-health" onclick="setTarget('health')">Target: Health (DtH)</button>
+            </div>
+            <div class="range-grid">
+                <div class="range-box"><label>Body Hit</label><span class="range-val" id="st-body">-</span></div>
+                <div class="range-box"><label>Crit Body</label><span class="range-val" id="st-crit" style="color:var(--crit)">-</span></div>
+                <div class="range-box"><label>Headshot</label><span class="range-val" id="st-head" style="color:var(--orange)">-</span></div>
+                <div class="range-box"><label>Crit Head</label><span class="range-val" id="st-head-crit" style="color:var(--head)">-</span></div>
             </div>
 
-            <div class="card">
-                <div class="section-title">Live Preview</div>
-                <div class="results-grid">
-                    <div class="res-box"><span class="res-label">Final RPM</span><span class="res-val" id="tc_res_rpm">0</span></div>
-                    <div class="res-box"><span class="res-label">Final Mag</span><span class="res-val" id="tc_res_mag">0</span></div>
-                    <div class="res-box"><span class="res-label">Burst DPS</span><span class="res-val" id="tc_res_dps">0</span></div>
-                    <div class="res-box"><span class="res-label">Damage/Bullet</span><span class="res-val" id="tc_res_dmg">0</span></div>
+            <div class="section-title">Kill Efficiency</div>
+            <select id="enemy-select" style="width:100%; margin-bottom:15px;" onchange="recalculateAll()">
+                <optgroup label="Heroic (1 Player)">
+                    <option value="6050000">Heroic Elite (6.05M)</option>
+                    <option value="18000000">Heroic Named (18.0M)</option>
+                    <option value="22000000">Heroic Chunga (22.0M)</option>
+                </optgroup>
+                <optgroup label="Heroic (4 Player)" selected>
+                    <option value="16905653" selected>Heroic Elite (16.9M)</option>
+                    <option value="47296250">Heroic Named (47.3M)</option>
+                    <option value="58000000">Heroic Chunga (58.0M)</option>
+                </optgroup>
+                <optgroup label="Legendary (4 Player)">
+                    <option value="25172134">Legendary Elite (25.2M)</option>
+                    <option value="72146660">Legendary Named (72.1M)</option>
+                    <option value="108000000">Legendary Chunga (108M)</option>
+                </optgroup>
+            </select>
+            
+            <div class="results-grid">
+                <div class="res-box"><span class="res-label">One-Mag Kill?</span><span class="res-val" id="res-omk">-</span></div>
+                <div class="res-box"><span class="res-label">Kills / Mag</span><span class="res-val" id="res-kpm">-</span></div>
+                <div class="res-box"><span class="res-label">TTK Burst</span><span class="res-val" id="res-ttkb">-</span></div>
+                <div class="res-box"><span class="res-label">TTK Sustain</span><span class="res-val" id="res-ttks">-</span></div>
+            </div>
+            
+            <div class="chart-header">
+                <div class="section-title" style="margin:0;">Total Damage Timeline (Burst vs. Sustain)</div>
+                <div class="chart-controls">
+                    <label style="margin:0;">Graph Time (s):</label>
+                    <input type="number" id="graph-time" class="chart-input" value="15" min="1" max="300" oninput="updateGraph()">
                 </div>
-                <div class="input-block">
-                    <div class="group"><label>Total CHC</label><input type="text" id="tc_res_chc" readonly></div>
-                    <div class="group"><label>Total CHD</label><input type="text" id="tc_res_chd" readonly></div>
-                    <div class="group"><label>Total HSD</label><input type="text" id="tc_res_hsd" readonly></div>
-                    <div class="group"><label>Reload (s)</label><input type="text" id="tc_res_reload" readonly></div>
-                </div>
-                <div class="hint-text">
-                    <i class="fas fa-arrow-left"></i> Click "Add to Matrix" to compare this build with others in the Simple Analyzer matrix below.
-                </div>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="dpsChart"></canvas>
+            </div>
+
+            <div class="section-title">Comparison Matrix</div>
+            <div style="overflow-x: auto;">
+                <table class="comp-table">
+                    <thead><tr id="comp-header"><th>Metric</th></tr></thead>
+                    <tbody id="comp-body"></tbody>
+                </table>
+            </div>
+            
+            <div class="action-row">
+                <button class="btn-small" onclick="generateShareLink()" style="color:var(--ingame-blue)">Share / Copy Link</button>
+                <button class="btn-small" onclick="clearMatrix()" style="color:#ff4444;">Reset Matrix</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // --- GLOBAL VARIABLES & SETUP ---
     let currentTarget = 'elite';
     let builds = [];
     let dpsChart;
@@ -512,32 +436,8 @@
         'dttooc', 'dta', 'dth', 
         'h-rate', 'd-rate', 'a-rate', 
         'm1', 'm2', 'm3', 'm4', 
-        'menu-dmg', 'menu-awd', 'menu-swd', 
+        'menu-dmg', 'menu-awd', 'menu-swd',
         'grade' 
-    ];
-
-    const presets = {
-        'lexington': { base: 48699.5 }, 'st-elmos': { base: 46917.5 }, 'eagle-bearer': { base: 47364.5 },
-        'the-bighorn': { base: 57218.0 }, 'capacitor': { base: 57617.5 }, 'chameleon': { base: 44670.5 },
-        'strega': { base: 57646.0 }, 'oxpecker': { base: 46405.5 }, 'ouroboros': { base: 38300.5 },
-        'lady-death': { base: 35409.0 }, 'backfire': { base: 50998.5 }, 'chatterbox': { base: 39457.0 },
-        'iron-lung': { base: 54322.0 }, 'pestilence': { base: 48300.0 }, 'bullet-king': { base: 54604.0 },
-        'bluescreen': { base: 62361.0 }, 'pakhan': { base: 71538.0 }
-    };
-
-    const theoryPresets = {
-        "famas": { dmg: 44191, rpm: 900, mag: 30, reload: 2.5 },
-        "police_m4": { dmg: 46917, rpm: 850, mag: 30, reload: 2.2 },
-        "st_elmo": { dmg: 46917, rpm: 850, mag: 70, reload: 2.0 },
-        "ouroboros": { dmg: 38300, rpm: 1485, mag: 50, reload: 1.6 },
-        "classic_m1a": { dmg: 231346, rpm: 180, mag: 10, reload: 2.6 }
-    };
-
-    const theoryStats = [
-        "Weapon Damage", "Critical Hit Chance", "Critical Hit Damage", 
-        "Headshot Damage", "Rate of Fire", "Weapon Handling", 
-        "Damage to Armor (DTA)", "Damage to Targets Out of Cover (DTOC)", 
-        "Magazine Size"
     ];
 
     const helpImages = {
@@ -546,295 +446,134 @@
         'swd': 'https://i.imgur.com/gG2aIhn.png'
     };
 
+    function showHelp(type) {
+        const modal = document.getElementById('imageModal');
+        const img = document.getElementById('modalImg');
+        img.src = helpImages[type] || ''; 
+        modal.style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById('imageModal').style.display = "none";
+    }
+
+    function toggleCalc() {
+        const content = document.getElementById('calc-content');
+        const arrow = document.getElementById('calc-arrow');
+        if (content.classList.contains('active')) {
+            content.classList.remove('active');
+            arrow.style.transform = "rotate(0deg)";
+        } else {
+            content.classList.add('active');
+            arrow.style.transform = "rotate(180deg)";
+        }
+    }
+
+    const presets = {
+        'lexington': { base: 48699.5 },
+        'st-elmos': { base: 46917.5 },
+        'eagle-bearer': { base: 47364.5 },
+        'the-bighorn': { base: 57218.0 },
+        'capacitor': { base: 57617.5 },
+        'chameleon': { base: 44670.5 },
+        'strega': { base: 57646.0 },
+        'oxpecker': { base: 46405.5 },
+        'ouroboros': { base: 38300.5 },
+        'lady-death': { base: 35409.0 },
+        'backfire': { base: 50998.5 },
+        'chatterbox': { base: 39457.0 },
+        'iron-lung': { base: 54322.0 },
+        'pestilence': { base: 48300.0 },
+        'bullet-king': { base: 54604.0 },
+        'bluescreen': { base: 62361.0 },
+        'pakhan': { base: 71538.0 }
+    };
+
     window.onload = function() {
         initChart();
-        addTheoryRow(); // Add one initial row for Theorycrafter
         const params = new URLSearchParams(window.location.search);
         if (params.has('b')) {
             try {
                 const compressed = params.get('b');
                 const json = LZString.decompressFromEncodedURIComponent(compressed);
                 const minifiedBuilds = JSON.parse(json);
+                
                 builds = [];
                 minifiedBuilds.forEach(minArray => {
                     let inputObj = {};
-                    INPUT_KEYS.forEach((key, index) => { if (index < minArray.length) inputObj[key] = minArray[index]; });
-                    for (const [key, val] of Object.entries(inputObj)) { const el = document.getElementById(key); if(el) el.value = val; }
+                    INPUT_KEYS.forEach((key, index) => {
+                        if (index < minArray.length) {
+                            inputObj[key] = minArray[index];
+                        }
+                    });
+
+                    for (const [key, val] of Object.entries(inputObj)) {
+                        const el = document.getElementById(key);
+                        if(el) el.value = val;
+                    }
+
                     const stats = calculate(); 
-                    builds.push({ name: inputObj['build-name'] || "Shared", stats: stats, inputs: inputObj, ui: getUIObj(stats) });
+                    builds.push({
+                        name: inputObj['build-name'] || "Shared",
+                        stats: stats,
+                        inputs: inputObj,
+                        ui: {
+                            mDmg: stats.magDmg,
+                            omk: document.getElementById('res-omk').innerText,
+                            kpm: document.getElementById('res-kpm').innerText, 
+                            burst: stats.burst,
+                            ttkb: stats.ttkb, 
+                            sustain: stats.sustain,
+                            ttks: stats.ttks, 
+                            crit: document.getElementById('st-crit').innerText
+                        }
+                    });
                 });
-                updateMatrix(); updateGraph();
-            } catch(e) { console.error("Load error", e); loadFromStorage(); }
-        } else { loadFromStorage(); }
+                updateMatrix();
+                updateGraph();
+            } catch(e) {
+                console.error("Load error", e);
+                loadFromStorage();
+            }
+        } else {
+            loadFromStorage();
+        }
     };
 
-    // --- VIEW SWITCHER ---
-    function switchView(mode) {
-        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.mode-btn').forEach(el => el.classList.remove('active'));
-        
-        document.getElementById('view-' + mode).classList.add('active');
-        document.getElementById('btn-' + mode).classList.add('active');
+    function generateShareLink() {
+        if(builds.length === 0) { alert("Add a build first."); return; }
+        const minifiedBuilds = builds.map(b => {
+            return INPUT_KEYS.map(key => b.inputs[key] || "");
+        });
+        const json = JSON.stringify(minifiedBuilds);
+        const compressed = LZString.compressToEncodedURIComponent(json);
+        const url = new URL(window.location.href);
+        url.searchParams.set('b', compressed);
+        navigator.clipboard.writeText(url.toString()).then(() => {
+            alert("Link copied!");
+        }).catch(err => {
+            prompt("Copy link:", url.toString());
+        });
     }
 
-    // --- THEORYCRAFTER LOGIC (NEW) ---
-
-    function applyTheoryPreset() {
-        const val = document.getElementById('tc_preset').value;
-        const data = theoryPresets[val];
-        if (data) {
-            document.getElementById('tc_base').value = data.dmg;
-            document.getElementById('tc_rpm').value = data.rpm;
-            document.getElementById('tc_mag').value = data.mag;
-            document.getElementById('tc_reload').value = data.reload;
-            if(val !== "") {
-                const text = document.getElementById('tc_preset').options[document.getElementById('tc_preset').selectedIndex].text;
-                document.getElementById('tc_name').value = text;
-            }
-        }
-        calcTheoryMain();
-    }
-
-    function addTheoryRow() {
-        const container = document.getElementById('theory_rows_container');
-        const div = document.createElement('div');
-        div.className = 'theory-row';
-        
-        let optionsHtml = '';
-        theoryStats.forEach(s => optionsHtml += `<option value="${s}">${s}</option>`);
-
-        div.innerHTML = `
-            <input type="text" class="t-name" placeholder="Source (e.g. Grupo / Mod)">
-            <input type="number" class="t-val" placeholder="%" oninput="calcTheoryMain()">
-            <select class="t-type" onchange="calcTheoryMain()">${optionsHtml}</select>
-            <button class="t-del" onclick="removeTheoryRow(this)">X</button>
-        `;
-        container.appendChild(div);
-    }
-
-    function removeTheoryRow(btn) {
-        btn.parentElement.remove();
-        calcTheoryMain();
-    }
-
-    function calcTheoryMain() {
-        // Base inputs
-        const baseDmg = parseFloat(document.getElementById('tc_base').value) || 0;
-        const baseRpm = parseFloat(document.getElementById('tc_rpm').value) || 0;
-        const baseMag = parseFloat(document.getElementById('tc_mag').value) || 0;
-        const baseRel = parseFloat(document.getElementById('tc_reload').value) || 0;
-
-        // SHD
-        const shdChc = parseFloat(document.getElementById('tc_shd_chc').value) || 0;
-        const shdChd = parseFloat(document.getElementById('tc_shd_chd').value) || 0;
-        const shdHsd = parseFloat(document.getElementById('tc_shd_hsd').value) || 0;
-        const shdRel = parseFloat(document.getElementById('tc_shd_rel').value) || 0;
-
-        // Dynamic Rows Aggregation
-        let bonuses = {
-            "Weapon Damage": 0, "Critical Hit Chance": 0, "Critical Hit Damage": 0,
-            "Headshot Damage": 0, "Rate of Fire": 0, "Weapon Handling": 0,
-            "Damage to Armor (DTA)": 0, "Damage to Targets Out of Cover (DTOC)": 0,
-            "Magazine Size": 0
-        };
-
-        document.querySelectorAll('.theory-row').forEach(row => {
-            const val = parseFloat(row.querySelector('.t-val').value) || 0;
-            const type = row.querySelector('.t-type').value;
-            if (bonuses.hasOwnProperty(type)) {
-                bonuses[type] += val;
+    function initChart() {
+        const ctx = document.getElementById('dpsChart').getContext('2d');
+        dpsChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: [], datasets: [] },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                hover: { mode: 'index', intersect: false },
+                elements: { point: { radius: 0, hitRadius: 10, hoverRadius: 4 } },
+                scales: { 
+                    y: { grid: { color: '#222' }, ticks: { color: '#888', callback: function(value) { return (value/1000000).toFixed(1) + 'M'; } } }, 
+                    x: { grid: { color: '#222' }, ticks: { color: '#888' } } 
+                },
+                plugins: { legend: { labels: { color: '#fff' } } }
             }
         });
-
-        // Calculations
-        // RPM
-        const finalRpm = baseRpm * (1 + (bonuses["Rate of Fire"]/100));
-        
-        // Mag
-        const finalMag = baseMag + bonuses["Magazine Size"]; // Simplified additive for mods
-
-        // Reload (Handling acts as Reload Speed here simplified)
-        // Formula: Base / (1 + (ReloadBonus + Handling + SHD)/100)
-        const totalRelBonus = bonuses["Weapon Handling"] + shdRel; // Usually separate, but mostly additive logic for ease
-        const finalRel = baseRel / (1 + totalRelBonus/100);
-
-        // Stats
-        const finalChc = shdChc + bonuses["Critical Hit Chance"];
-        const finalChd = shdChd + bonuses["Critical Hit Damage"];
-        const finalHsd = shdHsd + bonuses["Headshot Damage"];
-        
-        // Damage Per Bullet
-        // Total WD = 1 + (Sum of all WD / 100)
-        const totalWd = 1 + (bonuses["Weapon Damage"] / 100);
-        const dmgPerBullet = baseDmg * totalWd;
-
-        // DPS (Burst)
-        const rps = finalRpm / 60;
-        const burstDps = dmgPerBullet * rps; // Very raw burst, no crit included in this preview number
-
-        // Update UI Preview
-        document.getElementById('tc_res_rpm').innerText = Math.round(finalRpm);
-        document.getElementById('tc_res_mag').innerText = finalMag;
-        document.getElementById('tc_res_dps').innerText = Math.round(burstDps).toLocaleString();
-        document.getElementById('tc_res_dmg').innerText = Math.round(dmgPerBullet).toLocaleString();
-
-        document.getElementById('tc_res_chc').value = Math.min(60, finalChc).toFixed(1) + "%";
-        document.getElementById('tc_res_chd').value = finalChd.toFixed(1) + "%";
-        document.getElementById('tc_res_hsd').value = finalHsd.toFixed(1) + "%";
-        document.getElementById('tc_res_reload').value = finalRel.toFixed(2) + "s";
-
-        return {
-            base: baseDmg,
-            rpm: finalRpm,
-            mag: finalMag,
-            rel: finalRel,
-            awd: bonuses["Weapon Damage"], // Total WD %
-            chc: Math.min(60, finalChc),
-            chd: finalChd,
-            hsd: finalHsd,
-            dta: bonuses["Damage to Armor (DTA)"],
-            dtoc: bonuses["Damage to Targets Out of Cover (DTOC)"]
-        };
-    }
-
-    function addTheoryToMatrix() {
-        const data = calcTheoryMain();
-        const name = document.getElementById('tc_name').value || "Theory Build";
-        
-        // Create a fake "input" object compatible with Analyzer's calculator
-        // We set most things to 0 and inject the final calculated stats directly where possible
-        // Note: The Analyzer `calculate()` function takes raw inputs. 
-        // To make this work seamlessly, we will trick the Analyzer inputs temporarily or construct the stats object manually.
-        
-        // Better approach: Construct the `stats` object manually using the Analyzer's formula logic but with our pre-calculated totals.
-        
-        // Re-using Analyzer logic partially:
-        const amp = 1; // Default amps for Theorycrafter
-        const range_dtoc = 1 + (data.dtoc/100); 
-        // Assuming Target Elite for Matrix comparison standard
-        const range_target = 1 + (data.dta/100); 
-
-        // Important: "awd" passed from calcTheoryMain is the TOTAL sum.
-        // Base Damage * (1 + TotalWD/100)
-        const totalWpDmg = 1 + (data.awd/100); 
-        
-        const fBaseRange = data.base * totalWpDmg * range_dtoc * range_target;
-
-        const chdTotal = data.chd;
-        const hsdTotal = data.hsd;
-
-        // Standard Analyzer defaults for Rates
-        const hRate = 20; // 20% Headshot rate assumption
-        const dRate = 60; // 60% DTOC rate assumption
-        const aRate = 80; // 80% DTA rate assumption
-
-        const avgCritHead = 1 + ((data.chc/100) * (chdTotal/100)) + ((hsdTotal/100) * (hRate/100));
-        
-        // Recalculate avg multipliers based on rates
-        const avgDtoc = 1 + ((data.dtoc/100) * (dRate/100));
-        const avgArmor = 1 + ((data.dta/100) * (aRate/100)); // Simplified DTA avg
-
-        // Average Hit
-        // Base * WD * Crit/Head_Avg * Dtoc_Avg * Armor_Avg
-        const avgHit = data.base * totalWpDmg * avgCritHead * avgDtoc * avgArmor;
-
-        const rps = data.rpm / 60;
-        const magDmg = avgHit * data.mag;
-        const burstDps = rps * avgHit;
-
-        let sustainDps = 0;
-        let burstTime = 0;
-        let cycleTime = 0;
-        let ttksVal = 0;
-
-        if (rps > 0) {
-            burstTime = data.mag / rps;
-            cycleTime = data.rel + burstTime;
-            if (cycleTime > 0) sustainDps = magDmg / cycleTime;
-        }
-
-        // TTK Calculation (Standard Heroic Elite ~16.9M)
-        const hp = 16905653; 
-        const ttkb = (burstDps > 0) ? hp/burstDps : Infinity;
-        
-        if(rps > 0 && data.mag > 0) {
-            let shotsToKill = Math.ceil(hp / avgHit);
-            let magsNeeded = Math.ceil(shotsToKill / data.mag);
-            if (magsNeeded <= 1) {
-                ttksVal = shotsToKill / rps;
-            } else {
-                ttksVal = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * data.mag)) / rps);
-            }
-        }
-
-        const statsObj = {
-            avg: avgHit,
-            rps: rps,
-            mag: data.mag,
-            rel: data.rel,
-            magDmg: magDmg,
-            cycleTime: cycleTime,
-            burst: burstDps,
-            sustain: sustainDps,
-            ttkb: ttkb,
-            ttks: ttksVal
-        };
-
-        const uiObj = {
-            mDmg: magDmg,
-            omk: (magDmg/hp >= 1) ? "YES" : "NO",
-            kpm: (magDmg/hp).toFixed(2),
-            burst: burstDps,
-            ttkb: ttkb,
-            sustain: sustainDps,
-            ttks: ttksVal,
-            crit: "-" // Not showing specific crit number for Theory builds in matrix to keep it clean
-        };
-
-        // Create a dummy inputs object so saving works (even if loading back to analyzer isn't perfect)
-        const dummyInputs = { 'build-name': name };
-
-        builds.push({ name: name, stats: statsObj, inputs: dummyInputs, ui: uiObj });
-        saveToStorage();
-        updateMatrix();
-        updateGraph();
-        alert("Build added to Comparison Matrix below!");
-    }
-
-
-    // --- ANALYZER FUNCTIONS (UNCHANGED) ---
-    function showHelp(type) { 
-        const modal = document.getElementById('imageModal'); 
-        document.getElementById('modalImg').src = helpImages[type] || ''; 
-        modal.style.display = "block"; 
-    }
-    
-    function closeModal() { 
-        document.getElementById('imageModal').style.display = "none"; 
-    }
-    
-    function toggleCalc() { 
-        const c = document.getElementById('calc-content'); 
-        const a = document.getElementById('calc-arrow');
-        if (c.classList.contains('active')) {
-            c.classList.remove('active'); 
-            a.style.transform = "rotate(0deg)";
-        } else {
-            c.classList.add('active'); 
-            a.style.transform = "rotate(180deg)";
-        }
-    }
-    
-    function toggleKillEff() {
-        const c = document.getElementById('kill-content');
-        const a = document.getElementById('kill-arrow');
-        if (c.classList.contains('active')) {
-            c.classList.remove('active'); 
-            a.style.transform = "rotate(0deg)";
-        } else {
-            c.classList.add('active'); 
-            a.style.transform = "rotate(180deg)";
-        }
     }
 
     function calculateBase() {
@@ -860,9 +599,9 @@
 
     function applyPreset() {
         const v = document.getElementById('preset-select').value;
-        if (presets[v]) { 
-            document.getElementById('base').value = presets[v].base; 
-            calculate(); 
+        if (presets[v]) {
+            document.getElementById('base').value = presets[v].base;
+            calculate();
         }
     }
 
@@ -876,6 +615,7 @@
     function recalculateAll() {
         const hp = parseFloat(document.getElementById('enemy-select').value);
         calculate(); 
+
         builds.forEach(b => {
             const magDmg = b.stats.magDmg; 
             const burstDps = b.stats.burst;
@@ -907,6 +647,7 @@
                 b.ui.ttks = Infinity;
             }
         });
+
         updateMatrix();
     }
 
@@ -941,13 +682,11 @@
         const hCrit = fBaseRange * (1 + (chdTotal + hsdTotal)/100);
 
         const bodyElem = document.getElementById('st-body');
-        if(bodyElem) {
-            bodyElem.innerText = Math.round(body).toLocaleString();
-            bodyElem.style.color = currentTarget === 'elite' ? 'var(--ingame-blue)' : '#fff';
-            document.getElementById('st-crit').innerText = Math.round(crit).toLocaleString();
-            document.getElementById('st-head').innerText = Math.round(head).toLocaleString();
-            document.getElementById('st-head-crit').innerText = Math.round(hCrit).toLocaleString();
-        }
+        bodyElem.innerText = Math.round(body).toLocaleString();
+        bodyElem.style.color = currentTarget === 'elite' ? 'var(--ingame-blue)' : '#fff';
+        document.getElementById('st-crit').innerText = Math.round(crit).toLocaleString();
+        document.getElementById('st-head').innerText = Math.round(head).toLocaleString();
+        document.getElementById('st-head-crit').innerText = Math.round(hCrit).toLocaleString();
 
         const avgCritHead = 1 + ((v('chc')/100) * (chdTotal/100)) + ((hsdTotal/100) * (v('h-rate')/100));
         const avgDtoc = 1 + ((v('dttooc')/100) * (v('d-rate')/100));
@@ -976,60 +715,42 @@
         const hp = v('enemy-select');
         const kpm = hp > 0 ? magDmg / hp : 0;
 
-        const resOmk = document.getElementById('res-omk');
-        if(resOmk) {
-            resOmk.innerText = kpm >= 1 ? "YES" : "NO";
-            resOmk.style.color = kpm >= 1 ? "var(--pos)" : "var(--neg)";
-            document.getElementById('res-kpm').innerText = kpm.toFixed(2);
-            
-            if(burstDps > 0) {
-                 document.getElementById('res-ttkb').innerText = (hp / burstDps).toFixed(3) + "s";
-            } else {
-                 document.getElementById('res-ttkb').innerText = "-";
-            }
-            
-            let ttksVal = 0;
-            if(rps > 0 && mag > 0 && hp > 0) {
-                let shotsToKill = Math.ceil(hp / avgHit);
-                let magsNeeded = Math.ceil(shotsToKill / mag);
-                
-                if (magsNeeded <= 1) {
-                    ttksVal = shotsToKill / rps;
-                } else {
-                    ttksVal = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * mag)) / rps);
-                }
-                document.getElementById('res-ttks').innerText = ttksVal.toFixed(3) + "s";
-            } else {
-                document.getElementById('res-ttks').innerText = "-";
-            }
-            
-            return { 
-                avg: avgHit, 
-                rps: rps, 
-                mag: mag, 
-                rel: reload, 
-                magDmg: magDmg, 
-                cycleTime: cycleTime,
-                burst: burstDps, 
-                sustain: sustainDps,
-                ttkb: (burstDps > 0 ? hp / burstDps : Infinity), 
-                ttks: ttksVal
-            };
+        document.getElementById('res-omk').innerText = kpm >= 1 ? "YES" : "NO";
+        document.getElementById('res-omk').style.color = kpm >= 1 ? "var(--pos)" : "var(--neg)";
+        document.getElementById('res-kpm').innerText = kpm.toFixed(2);
+        
+        if(burstDps > 0) {
+             document.getElementById('res-ttkb').innerText = (hp / burstDps).toFixed(3) + "s";
+        } else {
+             document.getElementById('res-ttkb').innerText = "-";
         }
         
-        return { avg: avgHit, rps: rps, mag: mag, rel: reload, magDmg: magDmg, cycleTime: cycleTime, burst: burstDps, sustain: sustainDps, ttkb: 0, ttks: 0 };
-    }
+        let ttksVal = 0;
+        if(rps > 0 && mag > 0 && hp > 0) {
+            let shotsToKill = Math.ceil(hp / avgHit);
+            let magsNeeded = Math.ceil(shotsToKill / mag);
+            
+            if (magsNeeded <= 1) {
+                ttksVal = shotsToKill / rps;
+            } else {
+                ttksVal = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * mag)) / rps);
+            }
+            document.getElementById('res-ttks').innerText = ttksVal.toFixed(3) + "s";
+        } else {
+            document.getElementById('res-ttks').innerText = "-";
+        }
 
-    function getUIObj(stats) {
-        return {
-            mDmg: stats.magDmg,
-            omk: document.getElementById('res-omk').innerText,
-            kpm: document.getElementById('res-kpm').innerText, 
-            burst: stats.burst,
-            ttkb: stats.ttkb, 
-            sustain: stats.sustain,
-            ttks: stats.ttks, 
-            crit: document.getElementById('st-crit').innerText
+        return { 
+            avg: avgHit, 
+            rps: rps, 
+            mag: mag, 
+            rel: reload, 
+            magDmg: magDmg, 
+            cycleTime: cycleTime,
+            burst: burstDps, 
+            sustain: sustainDps,
+            ttkb: (burstDps > 0 ? hp / burstDps : Infinity), 
+            ttks: ttksVal
         };
     }
 
@@ -1045,23 +766,25 @@
             name: inputs['build-name'] || "Build " + (builds.length + 1),
             stats: stats,
             inputs: inputs,
-            ui: getUIObj(stats)
+            ui: {
+                mDmg: stats.magDmg,
+                omk: document.getElementById('res-omk').innerText,
+                kpm: document.getElementById('res-kpm').innerText, 
+                burst: stats.burst,
+                ttkb: stats.ttkb, 
+                sustain: stats.sustain,
+                ttks: stats.ttks, 
+                crit: document.getElementById('st-crit').innerText
+            }
         };
         builds.push(b);
         saveToStorage();
         updateMatrix();
         updateGraph();
     }
-    
-    function loadBuild(i) {
-        // If it's a theory build (dummy inputs), loading it into analyzer fields is messy.
-        // We just skip loading if it lacks 'base' key in inputs, or we try our best.
-        const data = builds[i].inputs;
-        if(!data['base'] && !data['menu-dmg']) {
-            alert("This is a Theorycrafter build. It cannot be fully edited in Analyzer mode yet, but stats are valid in Matrix.");
-            return;
-        }
 
+    function loadBuild(i) {
+        const data = builds[i].inputs;
         document.getElementById('preset-select').value = "";
         document.getElementById('calc-base-res').value = "";
         for (const [key, val] of Object.entries(data)) {
@@ -1081,20 +804,6 @@
         saveToStorage();
         updateMatrix();
         updateGraph();
-    }
-
-    function deleteBuild(i) { 
-        builds.splice(i, 1); 
-        saveToStorage(); 
-        updateMatrix(); 
-        updateGraph(); 
-    }
-    
-    function clearMatrix() { 
-        builds = []; 
-        saveToStorage(); 
-        updateMatrix(); 
-        updateGraph(); 
     }
 
     function updateMatrix() {
@@ -1179,6 +888,7 @@
         });
     }
 
+    // --- CLEAN GRAPH LOGIC (BURST VS SUSTAIN) ---
     function updateGraph() {
         const timeInput = document.getElementById('graph-time');
         const timeLimit = parseInt(timeInput.value) || 30; 
@@ -1195,6 +905,7 @@
                 let reloadTime = b.stats.rel;
                 let damageAccumulated = 0;
 
+                // Simple Simulation Loop
                 for (let t = 0; t <= timeLimit; t++) {
                     if (t === 0) {
                         data.push(0);
@@ -1211,6 +922,7 @@
                         let timeInCycle = exactTimeNow % cycleTime;
                         
                         if (timeInCycle < burstTime) {
+                            // SHOOTING
                             let timeToEmpty = burstTime - timeInCycle;
                             let shootTime = Math.min(timeRemainingInSecond, timeToEmpty);
                             let shotsNow = shootTime * shotsPerSec;
@@ -1218,6 +930,7 @@
                             damageAccumulated += shotsNow * b.stats.avg;
                             timeRemainingInSecond -= shootTime;
                         } else {
+                            // RELOAD
                             let timeToReloadFinish = cycleTime - timeInCycle;
                             let reloadWait = Math.min(timeRemainingInSecond, timeToReloadFinish);
                             timeRemainingInSecond -= reloadWait;
@@ -1242,47 +955,14 @@
         dpsChart.update();
     }
 
-    function initChart() {
-        const ctx = document.getElementById('dpsChart').getContext('2d');
-        dpsChart = new Chart(ctx, {
-            type: 'line',
-            data: { labels: [], datasets: [] },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                hover: { mode: 'index', intersect: false },
-                elements: { point: { radius: 0, hitRadius: 10, hoverRadius: 4 } },
-                scales: { 
-                    y: { grid: { color: '#222' }, ticks: { color: '#888', callback: function(value) { return (value/1000000).toFixed(1) + 'M'; } } }, 
-                    x: { grid: { color: '#222' }, ticks: { color: '#888' } } 
-                },
-                plugins: { legend: { labels: { color: '#fff' } } }
-            }
-        });
-    }
-
-    function generateShareLink() {
-        if(builds.length === 0) { alert("Add a build first."); return; }
-        const minifiedBuilds = builds.map(b => {
-            return INPUT_KEYS.map(key => b.inputs[key] || "");
-        });
-        const json = JSON.stringify(minifiedBuilds);
-        const compressed = LZString.compressToEncodedURIComponent(json);
-        const url = new URL(window.location.href);
-        url.searchParams.set('b', compressed);
-        navigator.clipboard.writeText(url.toString()).then(() => {
-            alert("Link copied!");
-        }).catch(err => {
-            prompt("Copy link:", url.toString());
-        });
-    }
-
     function saveToStorage() { localStorage.setItem('xsmileyy_builds', JSON.stringify(builds)); }
     function loadFromStorage() {
         const saved = localStorage.getItem('xsmileyy_builds');
         if (saved) { builds = JSON.parse(saved); updateMatrix(); updateGraph(); }
     }
+    function deleteBuild(i) { builds.splice(i, 1); saveToStorage(); updateMatrix(); updateGraph(); }
+    function clearMatrix() { builds = []; saveToStorage(); updateMatrix(); updateGraph(); }
 </script>
 </body>
 </html>
+
