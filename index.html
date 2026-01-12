@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Tool | V20 (Dual Mode)</title>
+    <title>xSmileyy's DPS Tool | V21 (Dual Mode + Mod Config)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -49,7 +49,7 @@
         .logo span { color: var(--orange); text-shadow: 0 0 15px var(--orange-glow); }
         .version-tag { font-size: 10px; color: #888; font-weight: 800; letter-spacing: 1px; }
 
-        /* --- MODE SWITCHER (NEU) --- */
+        /* --- MODE SWITCHER --- */
         .mode-switch-container {
             display: flex;
             justify-content: center;
@@ -80,11 +80,10 @@
         }
         .mode-btn i { font-size: 18px; }
 
-        /* Steuert die Sichtbarkeit der Tabs */
         .view-section { display: none; animation: fadeIn 0.3s ease-out; }
         .view-section.active { display: block; }
 
-        /* --- STANDARD STYLES (V19) --- */
+        /* --- STANDARD STYLES --- */
         .discord-info { display: flex; align-items: center; gap: 10px; background: var(--glass); padding: 8px 15px; border-radius: 50px; border: 1px solid #333; }
         .discord-info i { color: #5865F2; font-size: 18px; }
         .discord-info span { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 14px; }
@@ -117,6 +116,7 @@
 
         input, select { background: #000; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 15px; font-family: 'JetBrains Mono'; width: 100%; box-sizing: border-box; }
         input:focus { border-color: var(--orange); outline: none; }
+        input:disabled, select:disabled { background-color: #1a1a1a; color: #555; border-color: #222; cursor: not-allowed; }
         
         .hint-text { font-size: 11px; color: #888; margin-bottom: 15px; font-style: italic; line-height: 1.4; padding-left: 5px; }
         .hint-text i { color: var(--orange); margin-right: 5px; }
@@ -136,6 +136,24 @@
 
         .btn-capture { background: #fff; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px; }
         .btn-capture:hover { background: var(--orange); color: #fff; }
+
+        /* --- NEW STYLES FOR WEAPON MOD CONFIG --- */
+        .mod-row { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            margin-bottom: 8px; 
+            padding: 8px; 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid #222;
+            border-radius: 4px; 
+        }
+        .mod-label { width: 110px; font-size: 11px; font-weight: bold; color: var(--orange); }
+        .short-input { width: 80px !important; }
+        .mag-penalty { border-left: 2px solid #ff4444; padding-left: 10px; margin-left: 10px; }
+        .grid-watch { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .watch-item label { font-size: 9px; color: #aaa; margin-bottom: 2px; }
+        .watch-item input { text-align: center; color: var(--ingame-blue); border-color: #333; }
 
         .comp-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
         .comp-table th { background: rgba(255,255,255,0.05); text-align: left; padding: 10px; color: var(--orange); border-bottom: 1px solid var(--border); }
@@ -181,7 +199,7 @@
 <div class="container">
     <header class="header">
         <div class="logo">xSmileyy's <span>DPS Tool</span></div>
-        <div class="version-tag">BETA 20 (Dual Mode)</div>
+        <div class="version-tag">BETA 21 (Theory Mod Support)</div>
         <div class="discord-info"><i class="fab fa-discord"></i> <span>xsmileyy.</span></div>
     </header>
 
@@ -399,10 +417,102 @@
             <div class="card">
                 <div class="info-box-prominent" style="border-color: #3399ff; background: rgba(51, 153, 255, 0.1);">
                     <i class="fas fa-flask" style="color:#3399ff;"></i>
-                    <strong>Theorycrafter Mode:</strong> Build from scratch. Inputs calculate totals automatically.
+                    <strong>Theorycrafter Mode:</strong> Configure Watch, Weapon & Mods to calculate totals.
                 </div>
 
-                <div class="section-title">1. AWD Builder (All Weapon Dmg)</div>
+                <div class="section-title">1. SHD Watch Config</div>
+                <p style="font-size: 11px; color: #888; margin-bottom:10px;">Defaults are maxed out (Lv 1000). Edit if needed.</p>
+                <div class="grid-watch">
+                    <div class="watch-item">
+                        <label>Crit Chance</label>
+                        <input type="number" id="shd_chc" value="10" min="0" max="10" oninput="calcTheoryTotals()">
+                    </div>
+                    <div class="watch-item">
+                        <label>Crit Dmg</label>
+                        <input type="number" id="shd_chd" value="20" min="0" max="20" oninput="calcTheoryTotals()">
+                    </div>
+                    <div class="watch-item">
+                        <label>Headshot</label>
+                        <input type="number" id="shd_hsd" value="20" min="0" max="20" oninput="calcTheoryTotals()">
+                    </div>
+                    <div class="watch-item">
+                        <label>Reload</label>
+                        <input type="number" id="shd_reload" value="10" min="0" max="10" oninput="calcTheoryTotals()">
+                    </div>
+                    <div class="watch-item">
+                        <label>Ammo</label>
+                        <input type="number" id="shd_ammo" value="20" min="0" max="20" oninput="calcTheoryTotals()">
+                    </div>
+                </div>
+
+                <div class="section-title">2. Weapon & Mod Config</div>
+                <div class="input-block">
+                    <div class="group" style="grid-column: span 4;">
+                        <label>Weapon Selection</label>
+                        <select id="weapon_select" onchange="checkWeaponType()">
+                            <option value="famas" data-type="high-end">FAMAS 2010 (High-End)</option>
+                            <option value="police_m4" data-type="high-end">Police M4 (High-End)</option>
+                            <option value="mg5" data-type="high-end">MG5 (LMG - High-End)</option>
+                            <option value="st_elmo" data-type="exotic">St. Elmo's Engine (Exotic)</option>
+                            <option value="bullet_king" data-type="exotic">Bullet King (Exotic)</option>
+                            <option value="ouroboros" data-type="exotic">Ouroboros (Exotic)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="exotic_msg" class="info-box-prominent" style="display:none; border-color:var(--orange);">
+                    <i class="fas fa-exclamation-triangle"></i> EXOTIC SELECTED: Mods are fixed and cannot be changed.
+                </div>
+
+                <div id="mods_container">
+                    <div class="mod-row">
+                        <div class="mod-label">Visier (Optic)</div>
+                        <input type="number" id="mod_optic_val" class="short-input" placeholder="%" step="0.1" oninput="calcTheoryTotals()">
+                        <select id="mod_optic_attr" onchange="calcTheoryTotals()">
+                            <option value="chc">Crit Chance (CHC)</option>
+                            <option value="chd">Crit Dmg (CHD)</option>
+                            <option value="hsd">Headshot (HSD)</option>
+                            <option value="range">Range</option>
+                            <option value="stability">Stability</option>
+                        </select>
+                    </div>
+                    <div class="mod-row">
+                        <div class="mod-label">Mündung (Muzzle)</div>
+                        <input type="number" id="mod_muzzle_val" class="short-input" placeholder="%" step="0.1" oninput="calcTheoryTotals()">
+                        <select id="mod_muzzle_attr" onchange="calcTheoryTotals()">
+                            <option value="chc">Crit Chance (CHC)</option>
+                            <option value="chd">Crit Dmg (CHD)</option>
+                            <option value="hsd">Headshot (HSD)</option>
+                            <option value="stability">Stability</option>
+                        </select>
+                    </div>
+                    <div class="mod-row">
+                        <div class="mod-label">Unterlauf</div>
+                        <input type="number" id="mod_under_val" class="short-input" placeholder="%" step="0.1" oninput="calcTheoryTotals()">
+                        <select id="mod_under_attr" onchange="calcTheoryTotals()">
+                            <option value="chc">Crit Chance (CHC)</option>
+                            <option value="chd">Crit Dmg (CHD)</option>
+                            <option value="stability">Stability</option>
+                            <option value="accuracy">Accuracy</option>
+                        </select>
+                    </div>
+                    <div class="mod-row" style="border: 1px solid #555;">
+                        <div class="mod-label">Magazin / Belt</div>
+                        <input type="number" id="mod_mag_val" class="short-input" placeholder="Value" oninput="calcTheoryTotals()">
+                        <select id="mod_mag_attr" onchange="calcTheoryTotals()">
+                            <option value="rounds">Patronen (+Rounds)</option>
+                            <option value="rof">Feuerrate (RoF %)</option>
+                            <option value="chd">Crit Dmg (CHD)</option>
+                            <option value="reload">Reload Spd (+)</option>
+                        </select>
+                        <div class="mag-penalty">
+                            <label style="color:#ff6666; font-size:9px;">Reload Malus</label>
+                            <input type="number" id="mod_mag_malus" class="short-input" value="0" placeholder="-10" oninput="calcTheoryTotals()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">3. AWD Builder (Core Attributes)</div>
                 <div class="input-block">
                     <div class="group">
                         <label>Red Cores (15%)</label>
@@ -417,13 +527,6 @@
                         </select>
                     </div>
                     <div class="group">
-                        <label>SHD Watch</label>
-                        <div style="display:flex; align-items:center; height:35px; background:#000; border:1px solid #333; border-radius:6px; padding:0 10px;">
-                            <input type="checkbox" id="tc-watch" style="width:auto; margin-right:10px;" onchange="calcTheoryAWD()">
-                            <span style="font-size:12px; color:#888;">+10% AWD</span>
-                        </div>
-                    </div>
-                    <div class="group">
                         <label>Brand/Gear %</label>
                         <input type="number" id="tc-brand-awd" placeholder="e.g. 10 (Fenris)" oninput="calcTheoryAWD()">
                     </div>
@@ -433,36 +536,28 @@
                     </div>
                 </div>
 
-                <div class="section-title">2. RPM Builder (Rate of Fire)</div>
-                <div class="input-block" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="section-title">4. RPM Builder</div>
+                <div class="input-block">
                     <div class="group">
-                        <label>Base RPM</label>
-                        <input type="number" id="tc-base-rpm" placeholder="e.g. 850" oninput="calcTheoryRPM()">
-                    </div>
-                    <div class="group">
-                        <label>Bonus ROF %</label>
-                        <input type="number" id="tc-bonus-rpm" placeholder="e.g. 15 (Striker)" oninput="calcTheoryRPM()">
-                    </div>
-                    <div class="group">
-                        <label style="color:#3399ff">Total RPM</label>
-                        <input type="number" id="tc-total-rpm" readonly style="border-color:#3399ff; color:#3399ff; font-weight:bold;">
+                        <label>Bonus ROF % (Gear)</label>
+                        <input type="number" id="tc-bonus-rpm" placeholder="e.g. 15 (Striker)" oninput="calcTheoryTotals()">
                     </div>
                 </div>
 
-                <div style="margin-top:20px; text-align:center; color:#555; font-style:italic;">
-                    More detailed theory modules (Crit, Headshot, etc.) coming soon based on feedback!
-                    <br>For now, use the calculated values above in the Analyzer.
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="section-title">Instructions</div>
+                <div class="section-title">SUMMARY / RESULT (For Analyzer)</div>
                 <div class="hint-text">
-                    This mode helps you calculate the inputs for the main analyzer without doing math in your head.
-                    <br><br>
-                    1. Use the builders on the left to calculate <strong>Total AWD</strong> or <strong>Total RPM</strong>.
-                    <br>2. Copy the blue result values into the <strong>Simple Analyzer</strong> tab.
+                    These are the values calculated from Base Weapon + SHD + Mods + Gear inputs above.
+                    <br>Copy these into the "Simple Analyzer" tab.
                 </div>
+                <div class="input-block" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="group"><label style="color:var(--ingame-blue)">Total RPM</label><input type="text" id="res-total-rpm" readonly></div>
+                    <div class="group"><label style="color:var(--ingame-blue)">Total Mag</label><input type="text" id="res-total-mag" readonly></div>
+                    <div class="group"><label style="color:var(--ingame-blue)">Total CHC %</label><input type="text" id="res-total-chc" readonly></div>
+                    <div class="group"><label style="color:var(--ingame-blue)">Total CHD %</label><input type="text" id="res-total-chd" readonly></div>
+                    <div class="group"><label style="color:var(--ingame-blue)">Total HSD %</label><input type="text" id="res-total-hsd" readonly></div>
+                    <div class="group"><label style="color:var(--ingame-blue)">Total Reload (s)</label><input type="text" id="res-total-rel" readonly></div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -495,6 +590,17 @@
         'bluescreen': { base: 62361.0 }, 'pakhan': { base: 71538.0 }
     };
 
+    // Datenbasis für die Theorycrafter Waffenauswahl (Base Stats)
+    const weaponBaseData = {
+        'famas': { rpm: 900, mag: 30, reload: 2.1, chc: 0, chd: 0, hsd: 0 },
+        'police_m4': { rpm: 850, mag: 30, reload: 2.2, chc: 0, chd: 0, hsd: 0 },
+        'mg5': { rpm: 800, mag: 50, reload: 5.5, chc: 0, chd: 0, hsd: 0 },
+        // Exotics have fixed hidden mods usually, simplified here:
+        'st_elmo': { rpm: 850, mag: 70, reload: 2.1, chc: 20, chd: 20, hsd: 0 }, 
+        'bullet_king': { rpm: 850, mag: 1000, reload: 0, chc: 0, chd: 0, hsd: 0 }, 
+        'ouroboros': { rpm: 1485, mag: 50, reload: 1.9, chc: 0, chd: 0, hsd: 0 }
+    };
+
     const helpImages = {
         'dmg': 'https://i.imgur.com/NBsyfoh.png',
         'awd': 'https://i.imgur.com/4SN8wG5.png',
@@ -503,6 +609,7 @@
 
     window.onload = function() {
         initChart();
+        checkWeaponType(); // Initial check for UI
         const params = new URLSearchParams(window.location.search);
         if (params.has('b')) {
             try {
@@ -531,23 +638,126 @@
         document.getElementById('btn-' + mode).classList.add('active');
     }
 
-    // --- THEORYCRAFTER LOGIC ---
+    // --- THEORYCRAFTER LOGIC (NEU + ALT) ---
+    
+    // 1. Check Exotic Type & Toggle Mods
+    function checkWeaponType() {
+        const select = document.getElementById('weapon_select');
+        const selectedOption = select.options[select.selectedIndex];
+        const type = selectedOption.getAttribute('data-type');
+        const isExotic = (type === 'exotic');
+        
+        const modInputs = document.querySelectorAll('#mods_container input, #mods_container select');
+        const exoticMsg = document.getElementById('exotic_msg');
+
+        if (isExotic) {
+            modInputs.forEach(input => { input.disabled = true; });
+            exoticMsg.style.display = 'block';
+        } else {
+            modInputs.forEach(input => { input.disabled = false; });
+            exoticMsg.style.display = 'none';
+        }
+        calcTheoryTotals(); // Recalculate based on change
+    }
+
     function calcTheoryAWD() {
         let cores = parseInt(document.getElementById('tc-red-cores').value) || 0;
-        let watch = document.getElementById('tc-watch').checked ? 10 : 0;
+        // SHD Watch is now handled in the SHD section, so we remove it from here OR we just add 10 flat
+        // For AWD specific:
         let brand = parseFloat(document.getElementById('tc-brand-awd').value) || 0;
         
-        let total = (cores * 15) + watch + brand;
+        // Note: SHD Watch AWD (10%) is usually separate. Assuming user adds it here or we hardcode.
+        // Let's assume Standard SHD Watch includes 10% Weapon Dmg.
+        let total = (cores * 15) + 10 + brand; 
         document.getElementById('tc-total-awd').value = total;
     }
 
-    function calcTheoryRPM() {
-        let base = parseFloat(document.getElementById('tc-base-rpm').value) || 0;
-        let bonus = parseFloat(document.getElementById('tc-bonus-rpm').value) || 0;
+    // NEW: Calculate Total Stats from Watch + Mods + Weapon Base
+    function calcTheoryTotals() {
+        // 1. Get Base Weapon Stats
+        const wKey = document.getElementById('weapon_select').value;
+        const base = weaponBaseData[wKey] || { rpm: 800, mag: 30, reload: 2.0, chc:0, chd:0, hsd:0 };
+
+        // 2. Get SHD Watch Stats
+        const shd = {
+            chc: parseFloat(document.getElementById('shd_chc').value) || 0,
+            chd: parseFloat(document.getElementById('shd_chd').value) || 0,
+            hsd: parseFloat(document.getElementById('shd_hsd').value) || 0,
+            reload: parseFloat(document.getElementById('shd_reload').value) || 0,
+            ammo: parseFloat(document.getElementById('shd_ammo').value) || 0
+        };
+
+        // 3. Get Mods (Only if not Exotic)
+        const isExotic = document.getElementById('weapon_select').options[document.getElementById('weapon_select').selectedIndex].getAttribute('data-type') === 'exotic';
         
-        let total = base * (1 + bonus/100);
-        document.getElementById('tc-total-rpm').value = Math.round(total);
+        let modStats = { chc: 0, chd: 0, hsd: 0, reload: 0, mag: 0, rof: 0 };
+        
+        if (!isExotic) {
+            // Helper to add stats
+            const addMod = (valId, typeId) => {
+                let val = parseFloat(document.getElementById(valId).value) || 0;
+                let type = document.getElementById(typeId).value;
+                if(type === 'chc') modStats.chc += val;
+                if(type === 'chd') modStats.chd += val;
+                if(type === 'hsd') modStats.hsd += val;
+            };
+            
+            addMod('mod_optic_val', 'mod_optic_attr');
+            addMod('mod_muzzle_val', 'mod_muzzle_attr');
+            addMod('mod_under_val', 'mod_under_attr');
+
+            // Magazine Special Logic
+            let magVal = parseFloat(document.getElementById('mod_mag_val').value) || 0;
+            let magType = document.getElementById('mod_mag_attr').value;
+            let magMalus = parseFloat(document.getElementById('mod_mag_malus').value) || 0;
+
+            if (magType === 'rounds') modStats.mag += magVal;
+            if (magType === 'rof') modStats.rof += magVal;
+            if (magType === 'chd') modStats.chd += magVal;
+            if (magType === 'reload') modStats.reload += magVal;
+
+            modStats.reload += magMalus; // Usually negative input, so we add it (e.g. -10)
+        }
+
+        // 4. Get Gear Bonuses (from Builder inputs below)
+        let gearRof = parseFloat(document.getElementById('tc-bonus-rpm').value) || 0;
+
+        // 5. Calculate Final Totals
+        // CHC
+        let finalCHC = base.chc + shd.chc + modStats.chc;
+        if(finalCHC > 60) finalCHC = 60; // Cap
+
+        // CHD
+        let finalCHD = base.chd + shd.chd + modStats.chd;
+
+        // HSD
+        let finalHSD = base.hsd + shd.hsd + modStats.hsd; // Note: Base headshot mult (e.g. 55% AR) is usually separate from additive HSD. This tool assumes additive Bonus HSD.
+
+        // RPM
+        let totalRofBonus = modStats.rof + gearRof;
+        let finalRPM = base.rpm * (1 + totalRofBonus/100);
+
+        // Mag
+        let ammoBonus = 1 + (shd.ammo / 100); // SHD ammo applies to base inventory, not mag size usually, BUT distinct mechanics apply. 
+        // In Div2, SHD Ammo is reserve ammo. Mag size is strictly Mag Mod + Base.
+        // Let's stick to Mag Mod + Base for Mag Size.
+        let finalMag = base.mag + modStats.mag;
+        if (wKey === 'st_elmo') finalMag = 70; // Exotic override
+
+        // Reload Speed
+        // Formula: Base / (1 + ReloadBonus)
+        let totalReloadBonusPercent = shd.reload + modStats.reload;
+        let finalReload = base.reload / (1 + totalReloadBonusPercent/100);
+
+        // 6. Output to Summary
+        document.getElementById('res-total-rpm').value = Math.round(finalRPM);
+        document.getElementById('res-total-mag').value = finalMag;
+        document.getElementById('res-total-chc').value = finalCHC.toFixed(1);
+        document.getElementById('res-total-chd').value = finalCHD.toFixed(1);
+        document.getElementById('res-total-hsd').value = finalHSD.toFixed(1);
+        document.getElementById('res-total-rel').value = finalReload.toFixed(2);
     }
+
 
     // --- ANALYZER FUNCTIONS (FULL V19 LOGIC) ---
     function showHelp(type) { 
