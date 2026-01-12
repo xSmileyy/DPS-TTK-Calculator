@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xSmileyy's DPS Tool | V21 (Dual Mode + Mod Config)</title>
+    <title>xSmileyy's DPS Tool | V22 (Flexible Gear Engine)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -137,7 +137,7 @@
         .btn-capture { background: #fff; color: #000; border: none; padding: 14px; border-radius: 8px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px; }
         .btn-capture:hover { background: var(--orange); color: #fff; }
 
-        /* --- NEW STYLES FOR WEAPON MOD CONFIG --- */
+        /* --- STYLES FOR THEORYCRAFTER --- */
         .mod-row { 
             display: flex; 
             align-items: center; 
@@ -151,9 +151,24 @@
         .mod-label { width: 110px; font-size: 11px; font-weight: bold; color: var(--orange); }
         .short-input { width: 80px !important; }
         .mag-penalty { border-left: 2px solid #ff4444; padding-left: 10px; margin-left: 10px; }
+        
         .grid-watch { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px; }
         .watch-item label { font-size: 9px; color: #aaa; margin-bottom: 2px; }
         .watch-item input { text-align: center; color: var(--ingame-blue); border-color: #333; }
+
+        /* GEAR FLEX ROWS */
+        .gear-row { 
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 8px; 
+            background: #222; 
+            padding: 5px; 
+            border-radius: 4px; 
+            border: 1px solid #333;
+        }
+        .gear-row input[type="text"] { width: 180px; color: #ddd; font-weight:bold; }
+        .gear-row input[type="number"] { width: 80px; text-align: center; }
+        .gear-row select { flex-grow: 1; color: #fff; }
 
         .comp-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
         .comp-table th { background: rgba(255,255,255,0.05); text-align: left; padding: 10px; color: var(--orange); border-bottom: 1px solid var(--border); }
@@ -199,7 +214,7 @@
 <div class="container">
     <header class="header">
         <div class="logo">xSmileyy's <span>DPS Tool</span></div>
-        <div class="version-tag">BETA 21 (Theory Mod Support)</div>
+        <div class="version-tag">BETA 22 (Flexible Gear)</div>
         <div class="discord-info"><i class="fab fa-discord"></i> <span>xsmileyy.</span></div>
     </header>
 
@@ -218,8 +233,7 @@
                 
                 <div class="info-box-prominent">
                     <i class="fas fa-info-circle"></i>
-                    <strong>Standard Mode:</strong> Ideal for comparing builds you already have (Screenshots).
-                    <br>If your weapon is in the "Weapon Presets" list, you can <strong>skip step 0</strong>.
+                    <strong>Standard Mode:</strong> Ideal for comparing builds you already have.
                 </div>
 
                 <div class="accordion-header" onclick="toggleCalc()">
@@ -229,8 +243,7 @@
 
                 <div id="calc-content" class="accordion-content">
                     <div class="hint-text">
-                        <strong>Guide:</strong> Enter stats from Inventory to find Base Damage.<br>
-                        <i class="fas fa-hand-pointer"></i> Tap <i class="fas fa-question-circle" style="color:var(--orange)"></i> icons for screenshots.
+                        <strong>Guide:</strong> Enter stats from Inventory to find Base Damage.
                     </div>
                     <div class="input-block" style="grid-template-columns: repeat(3, 1fr);">
                         <div class="group">
@@ -264,14 +277,11 @@
                                 <option value="the-bighorn">The Bighorn</option>
                                 <option value="capacitor">Capacitor</option>
                                 <option value="chameleon">Chameleon</option>
-                                <option value="strega">Strega</option>
-                                <option value="oxpecker">Oxpecker</option>
                             </optgroup>
                             <optgroup label="SMGs">
                                 <option value="ouroboros">Ouroboros</option>
                                 <option value="lady-death">Lady Death</option>
                                 <option value="backfire">Backfire</option>
-                                <option value="chatterbox">The Chatterbox</option>
                             </optgroup>
                             <optgroup label="LMGs & Rifles">
                                 <option value="iron-lung">Iron Lung</option>
@@ -295,12 +305,7 @@
                     <div class="group"><label>SWD %</label><input type="number" id="swd" oninput="calculate()"></div>
                     
                     <div class="group">
-                        <label>
-                            Expertise 
-                            <i class="fas fa-exclamation-triangle" style="color:var(--crit); margin-left:5px; cursor:pointer;" 
-                               title="Note: If you enter Expertise here, remove it from AWD to avoid double counting!"
-                               onclick="alert('IMPORTANT:\nIf you enter a value here (e.g. 20 for Grade 20), make sure you subtract that amount from your AWD % field.\n\nDo not count it twice!')"></i>
-                        </label>
+                        <label>Expertise</label>
                         <input type="number" id="grade" oninput="calculate()">
                     </div>
 
@@ -318,7 +323,6 @@
                 </div>
 
                 <div class="section-title">3. %-Rate Uptime</div>
-                <div class="hint-text"><i class="fas fa-info-circle"></i> Recommended: HS 20% | DTOC 60% | DTA 80%</div>
                 <div class="input-block">
                     <div class="group"><label>HS-Rate %</label><input type="number" id="h-rate" value="20" oninput="calculate()"></div>
                     <div class="group"><label>DTOC-Rate %</label><input type="number" id="d-rate" value="60" oninput="calculate()"></div>
@@ -326,7 +330,6 @@
                 </div>
 
                 <div class="section-title">4. Amplifiers</div>
-                <div class="hint-text"><i class="fas fa-info-circle"></i> e.g. Striker Stacks in %, Glass Cannon %</div>
                 <div class="input-block">
                     <div class="group"><label>AMP %</label><input type="number" id="m1" oninput="calculate()"></div>
                     <div class="group"><label>AMP %</label><input type="number" id="m2" oninput="calculate()"></div>
@@ -385,7 +388,7 @@
                 </div>
                 
                 <div class="chart-header">
-                    <div class="section-title" style="margin:0;">Total Damage Timeline (Burst vs. Sustain)</div>
+                    <div class="section-title" style="margin:0;">Total Damage Timeline</div>
                     <div class="chart-controls">
                         <label style="margin:0;">Graph Time (s):</label>
                         <input type="number" id="graph-time" class="chart-input" value="15" min="1" max="300" oninput="updateGraph()">
@@ -417,87 +420,79 @@
             <div class="card">
                 <div class="info-box-prominent" style="border-color: #3399ff; background: rgba(51, 153, 255, 0.1);">
                     <i class="fas fa-flask" style="color:#3399ff;"></i>
-                    <strong>Theorycrafter Mode:</strong> Configure Watch, Weapon & Mods to calculate totals.
+                    <strong>Theorycrafter V2:</strong> Build from scratch. Add Base stats, Watch, Mods and Gear Sets.
                 </div>
 
                 <div class="section-title">1. SHD Watch Config</div>
                 <p style="font-size: 11px; color: #888; margin-bottom:10px;">Defaults are maxed out (Lv 1000). Edit if needed.</p>
                 <div class="grid-watch">
-                    <div class="watch-item">
-                        <label>Crit Chance</label>
-                        <input type="number" id="shd_chc" value="10" min="0" max="10" oninput="calcTheoryTotals()">
-                    </div>
-                    <div class="watch-item">
-                        <label>Crit Dmg</label>
-                        <input type="number" id="shd_chd" value="20" min="0" max="20" oninput="calcTheoryTotals()">
-                    </div>
-                    <div class="watch-item">
-                        <label>Headshot</label>
-                        <input type="number" id="shd_hsd" value="20" min="0" max="20" oninput="calcTheoryTotals()">
-                    </div>
-                    <div class="watch-item">
-                        <label>Reload</label>
-                        <input type="number" id="shd_reload" value="10" min="0" max="10" oninput="calcTheoryTotals()">
-                    </div>
-                    <div class="watch-item">
-                        <label>Ammo</label>
-                        <input type="number" id="shd_ammo" value="20" min="0" max="20" oninput="calcTheoryTotals()">
-                    </div>
+                    <div class="watch-item"><label>Crit Chance</label><input type="number" id="shd_chc" value="10" oninput="calcTheoryTotals()"></div>
+                    <div class="watch-item"><label>Crit Dmg</label><input type="number" id="shd_chd" value="20" oninput="calcTheoryTotals()"></div>
+                    <div class="watch-item"><label>Headshot</label><input type="number" id="shd_hsd" value="20" oninput="calcTheoryTotals()"></div>
+                    <div class="watch-item"><label>Reload</label><input type="number" id="shd_reload" value="10" oninput="calcTheoryTotals()"></div>
+                    <div class="watch-item"><label>Ammo</label><input type="number" id="shd_ammo" value="20" oninput="calcTheoryTotals()"></div>
                 </div>
 
-                <div class="section-title">2. Weapon & Mod Config</div>
+                <div class="section-title">2. Weapon & Mods</div>
                 <div class="input-block">
                     <div class="group" style="grid-column: span 4;">
-                        <label>Weapon Selection</label>
-                        <select id="weapon_select" onchange="checkWeaponType()">
+                        <label>Preset (Optional - Auto-fills fields below)</label>
+                        <select id="tc_preset" onchange="applyTheoryPreset()">
+                            <option value="">-- Choose Preset or Enter Manually --</option>
                             <option value="famas" data-type="high-end">FAMAS 2010 (High-End)</option>
                             <option value="police_m4" data-type="high-end">Police M4 (High-End)</option>
-                            <option value="mg5" data-type="high-end">MG5 (LMG - High-End)</option>
                             <option value="st_elmo" data-type="exotic">St. Elmo's Engine (Exotic)</option>
-                            <option value="bullet_king" data-type="exotic">Bullet King (Exotic)</option>
                             <option value="ouroboros" data-type="exotic">Ouroboros (Exotic)</option>
+                            <option value="bullet_king" data-type="exotic">Bullet King (Exotic)</option>
                         </select>
                     </div>
                 </div>
+                
+                <div class="input-block">
+                    <div class="group"><label>Base Dmg</label><input type="number" id="tc_base_dmg" placeholder="50000" oninput="calcTheoryTotals()"></div>
+                    <div class="group"><label>Base RPM</label><input type="number" id="tc_base_rpm" placeholder="850" oninput="calcTheoryTotals()"></div>
+                    <div class="group"><label>Base Mag</label><input type="number" id="tc_base_mag" placeholder="30" oninput="calcTheoryTotals()"></div>
+                    <div class="group"><label>Base Reload (s)</label><input type="number" id="tc_base_rel" placeholder="2.0" step="0.1" oninput="calcTheoryTotals()"></div>
+                </div>
 
                 <div id="exotic_msg" class="info-box-prominent" style="display:none; border-color:var(--orange);">
-                    <i class="fas fa-exclamation-triangle"></i> EXOTIC SELECTED: Mods are fixed and cannot be changed.
+                    <i class="fas fa-exclamation-triangle"></i> EXOTIC PRESET: Mods are locked/hidden. Uncheck preset to edit manually.
                 </div>
 
                 <div id="mods_container">
                     <div class="mod-row">
-                        <div class="mod-label">Visier (Optic)</div>
+                        <div class="mod-label">Optic</div>
                         <input type="number" id="mod_optic_val" class="short-input" placeholder="%" step="0.1" oninput="calcTheoryTotals()">
                         <select id="mod_optic_attr" onchange="calcTheoryTotals()">
-                            <option value="chc">Crit Chance (CHC)</option>
-                            <option value="chd">Crit Dmg (CHD)</option>
-                            <option value="hsd">Headshot (HSD)</option>
+                            <option value="chc">Crit Chance</option>
+                            <option value="chd">Crit Dmg</option>
+                            <option value="hsd">Headshot</option>
                             <option value="range">Range</option>
                             <option value="stability">Stability</option>
                         </select>
                     </div>
                     <div class="mod-row">
-                        <div class="mod-label">Mündung (Muzzle)</div>
+                        <div class="mod-label">Muzzle</div>
                         <input type="number" id="mod_muzzle_val" class="short-input" placeholder="%" step="0.1" oninput="calcTheoryTotals()">
                         <select id="mod_muzzle_attr" onchange="calcTheoryTotals()">
-                            <option value="chc">Crit Chance (CHC)</option>
-                            <option value="chd">Crit Dmg (CHD)</option>
-                            <option value="hsd">Headshot (HSD)</option>
+                            <option value="chc">Crit Chance</option>
+                            <option value="chd">Crit Dmg</option>
+                            <option value="hsd">Headshot</option>
                             <option value="stability">Stability</option>
                         </select>
                     </div>
                     <div class="mod-row">
-                        <div class="mod-label">Unterlauf</div>
+                        <div class="mod-label">Underbarrel</div>
                         <input type="number" id="mod_under_val" class="short-input" placeholder="%" step="0.1" oninput="calcTheoryTotals()">
                         <select id="mod_under_attr" onchange="calcTheoryTotals()">
-                            <option value="chc">Crit Chance (CHC)</option>
-                            <option value="chd">Crit Dmg (CHD)</option>
+                            <option value="chc">Crit Chance</option>
+                            <option value="chd">Crit Dmg</option>
                             <option value="stability">Stability</option>
                             <option value="accuracy">Accuracy</option>
                         </select>
                     </div>
                     <div class="mod-row" style="border: 1px solid #555;">
-                        <div class="mod-label">Magazin / Belt</div>
+                        <div class="mod-label">Magazine</div>
                         <input type="number" id="mod_mag_val" class="short-input" placeholder="Value" oninput="calcTheoryTotals()">
                         <select id="mod_mag_attr" onchange="calcTheoryTotals()">
                             <option value="rounds">Patronen (+Rounds)</option>
@@ -512,50 +507,116 @@
                     </div>
                 </div>
 
-                <div class="section-title">3. AWD Builder (Core Attributes)</div>
-                <div class="input-block">
-                    <div class="group">
-                        <label>Red Cores (15%)</label>
-                        <select id="tc-red-cores" onchange="calcTheoryAWD()">
-                            <option value="0">0 Cores</option>
-                            <option value="1">1 Core (15%)</option>
-                            <option value="2">2 Cores (30%)</option>
-                            <option value="3">3 Cores (45%)</option>
-                            <option value="4">4 Cores (60%)</option>
-                            <option value="5">5 Cores (75%)</option>
-                            <option value="6">6 Cores (90%)</option>
+                <div class="section-title">3. Gear / Brand Sets & Attributes</div>
+                <div class="hint-text">Add your gear bonuses here. Example: Name: "Grupo", Val: 15, Type: "Crit Dmg".<br>
+                <strong>Note:</strong> Weapon Handling automatically adds to Reload Speed.</div>
+                
+                <div id="gear-container">
+                    <div class="gear-row">
+                        <input type="text" placeholder="Set/Attr Name (Optional)">
+                        <input type="number" class="gear-val" placeholder="%" oninput="calcTheoryTotals()">
+                        <select class="gear-type" onchange="calcTheoryTotals()">
+                            <option value="awd">Weapon Dmg (AWD)</option>
+                            <option value="swd">Specific Wpn Dmg (SWD)</option>
+                            <option value="chd">Crit Dmg</option>
+                            <option value="chc">Crit Chance</option>
+                            <option value="hsd">Headshot Dmg</option>
+                            <option value="rof">Rate of Fire</option>
+                            <option value="wh">Weapon Handling</option>
+                            <option value="dtoc">Dmg to Out of Cover</option>
+                            <option value="dta">Dmg to Armor</option>
+                            <option value="mag">Mag Size %</option>
                         </select>
                     </div>
-                    <div class="group">
-                        <label>Brand/Gear %</label>
-                        <input type="number" id="tc-brand-awd" placeholder="e.g. 10 (Fenris)" oninput="calcTheoryAWD()">
+                    <div class="gear-row">
+                        <input type="text" placeholder="Set/Attr Name">
+                        <input type="number" class="gear-val" placeholder="%" oninput="calcTheoryTotals()">
+                        <select class="gear-type" onchange="calcTheoryTotals()">
+                            <option value="awd">Weapon Dmg (AWD)</option>
+                            <option value="swd">Specific Wpn Dmg (SWD)</option>
+                            <option value="chd" selected>Crit Dmg</option>
+                            <option value="chc">Crit Chance</option>
+                            <option value="hsd">Headshot Dmg</option>
+                            <option value="rof">Rate of Fire</option>
+                            <option value="wh">Weapon Handling</option>
+                            <option value="dtoc">Dmg to Out of Cover</option>
+                        </select>
                     </div>
-                    <div class="group">
-                        <label style="color:#3399ff">Total AWD %</label>
-                        <input type="number" id="tc-total-awd" readonly style="border-color:#3399ff; color:#3399ff; font-weight:bold;">
+                    <div class="gear-row">
+                        <input type="text" placeholder="Set/Attr Name">
+                        <input type="number" class="gear-val" placeholder="%" oninput="calcTheoryTotals()">
+                        <select class="gear-type" onchange="calcTheoryTotals()">
+                            <option value="awd">Weapon Dmg (AWD)</option>
+                            <option value="swd">Specific Wpn Dmg (SWD)</option>
+                            <option value="chd">Crit Dmg</option>
+                            <option value="chc" selected>Crit Chance</option>
+                            <option value="hsd">Headshot Dmg</option>
+                            <option value="rof">Rate of Fire</option>
+                            <option value="wh">Weapon Handling</option>
+                            <option value="dtoc">Dmg to Out of Cover</option>
+                        </select>
                     </div>
-                </div>
-
-                <div class="section-title">4. RPM Builder</div>
-                <div class="input-block">
-                    <div class="group">
-                        <label>Bonus ROF % (Gear)</label>
-                        <input type="number" id="tc-bonus-rpm" placeholder="e.g. 15 (Striker)" oninput="calcTheoryTotals()">
+                    <div class="gear-row">
+                        <input type="text" placeholder="Set/Attr Name">
+                        <input type="number" class="gear-val" placeholder="%" oninput="calcTheoryTotals()">
+                        <select class="gear-type" onchange="calcTheoryTotals()">
+                            <option value="awd">Weapon Dmg (AWD)</option>
+                            <option value="swd">Specific Wpn Dmg (SWD)</option>
+                            <option value="chd">Crit Dmg</option>
+                            <option value="chc">Crit Chance</option>
+                            <option value="hsd">Headshot Dmg</option>
+                            <option value="rof">Rate of Fire</option>
+                            <option value="wh" selected>Weapon Handling</option>
+                            <option value="dtoc">Dmg to Out of Cover</option>
+                        </select>
+                    </div>
+                    <div class="gear-row">
+                        <input type="text" placeholder="Set/Attr Name">
+                        <input type="number" class="gear-val" placeholder="%" oninput="calcTheoryTotals()">
+                        <select class="gear-type" onchange="calcTheoryTotals()">
+                            <option value="awd">Weapon Dmg (AWD)</option>
+                            <option value="swd">Specific Wpn Dmg (SWD)</option>
+                            <option value="chd">Crit Dmg</option>
+                            <option value="chc">Crit Chance</option>
+                            <option value="hsd">Headshot Dmg</option>
+                            <option value="rof" selected>Rate of Fire</option>
+                            <option value="wh">Weapon Handling</option>
+                            <option value="dtoc">Dmg to Out of Cover</option>
+                        </select>
+                    </div>
+                    <div class="gear-row">
+                        <input type="text" placeholder="Set/Attr Name">
+                        <input type="number" class="gear-val" placeholder="%" oninput="calcTheoryTotals()">
+                        <select class="gear-type" onchange="calcTheoryTotals()">
+                            <option value="awd">Weapon Dmg (AWD)</option>
+                            <option value="swd">Specific Wpn Dmg (SWD)</option>
+                            <option value="chd">Crit Dmg</option>
+                            <option value="chc">Crit Chance</option>
+                            <option value="hsd">Headshot Dmg</option>
+                            <option value="rof">Rate of Fire</option>
+                            <option value="wh">Weapon Handling</option>
+                            <option value="dtoc" selected>Dmg to Out of Cover</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="section-title">SUMMARY / RESULT (For Analyzer)</div>
                 <div class="hint-text">
-                    These are the values calculated from Base Weapon + SHD + Mods + Gear inputs above.
-                    <br>Copy these into the "Simple Analyzer" tab.
+                    Copy these Calculated Totals into the "Simple Analyzer" tab.
                 </div>
                 <div class="input-block" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="group"><label style="color:var(--ingame-blue)">Base Dmg</label><input type="text" id="res-base-dmg" readonly></div>
                     <div class="group"><label style="color:var(--ingame-blue)">Total RPM</label><input type="text" id="res-total-rpm" readonly></div>
                     <div class="group"><label style="color:var(--ingame-blue)">Total Mag</label><input type="text" id="res-total-mag" readonly></div>
+                    <div class="group"><label style="color:var(--ingame-blue)">Total Reload</label><input type="text" id="res-total-rel" readonly></div>
+                    
                     <div class="group"><label style="color:var(--ingame-blue)">Total CHC %</label><input type="text" id="res-total-chc" readonly></div>
                     <div class="group"><label style="color:var(--ingame-blue)">Total CHD %</label><input type="text" id="res-total-chd" readonly></div>
                     <div class="group"><label style="color:var(--ingame-blue)">Total HSD %</label><input type="text" id="res-total-hsd" readonly></div>
-                    <div class="group"><label style="color:var(--ingame-blue)">Total Reload (s)</label><input type="text" id="res-total-rel" readonly></div>
+                    <div class="group"><label style="color:var(--ingame-blue)">Total DTOC %</label><input type="text" id="res-total-dtoc" readonly></div>
+                    
+                    <div class="group"><label style="color:var(--ingame-blue)">Total AWD %</label><input type="text" id="res-total-awd" readonly></div>
+                    <div class="group"><label style="color:var(--ingame-blue)">Total SWD %</label><input type="text" id="res-total-swd" readonly></div>
                 </div>
 
             </div>
@@ -584,21 +645,18 @@
     const presets = {
         'lexington': { base: 48699.5 }, 'st-elmos': { base: 46917.5 }, 'eagle-bearer': { base: 47364.5 },
         'the-bighorn': { base: 57218.0 }, 'capacitor': { base: 57617.5 }, 'chameleon': { base: 44670.5 },
-        'strega': { base: 57646.0 }, 'oxpecker': { base: 46405.5 }, 'ouroboros': { base: 38300.5 },
-        'lady-death': { base: 35409.0 }, 'backfire': { base: 50998.5 }, 'chatterbox': { base: 39457.0 },
+        'ouroboros': { base: 38300.5 }, 'lady-death': { base: 35409.0 }, 'backfire': { base: 50998.5 }, 
         'iron-lung': { base: 54322.0 }, 'pestilence': { base: 48300.0 }, 'bullet-king': { base: 54604.0 },
         'bluescreen': { base: 62361.0 }, 'pakhan': { base: 71538.0 }
     };
 
-    // Datenbasis für die Theorycrafter Waffenauswahl (Base Stats)
-    const weaponBaseData = {
-        'famas': { rpm: 900, mag: 30, reload: 2.1, chc: 0, chd: 0, hsd: 0 },
-        'police_m4': { rpm: 850, mag: 30, reload: 2.2, chc: 0, chd: 0, hsd: 0 },
-        'mg5': { rpm: 800, mag: 50, reload: 5.5, chc: 0, chd: 0, hsd: 0 },
-        // Exotics have fixed hidden mods usually, simplified here:
-        'st_elmo': { rpm: 850, mag: 70, reload: 2.1, chc: 20, chd: 20, hsd: 0 }, 
-        'bullet_king': { rpm: 850, mag: 1000, reload: 0, chc: 0, chd: 0, hsd: 0 }, 
-        'ouroboros': { rpm: 1485, mag: 50, reload: 1.9, chc: 0, chd: 0, hsd: 0 }
+    // Database for Theorycrafter Presets (Approx Stats)
+    const theoryPresets = {
+        'famas': { dmg: 50000, rpm: 900, mag: 30, reload: 2.1 },
+        'police_m4': { dmg: 48000, rpm: 850, mag: 30, reload: 2.2 },
+        'st_elmo': { dmg: 47000, rpm: 850, mag: 70, reload: 2.1, modsFixed: true }, 
+        'bullet_king': { dmg: 54000, rpm: 850, mag: 1000, reload: 0, modsFixed: true }, 
+        'ouroboros': { dmg: 38000, rpm: 1485, mag: 50, reload: 1.9, modsFixed: true }
     };
 
     const helpImages = {
@@ -609,7 +667,6 @@
 
     window.onload = function() {
         initChart();
-        checkWeaponType(); // Initial check for UI
         const params = new URLSearchParams(window.location.search);
         if (params.has('b')) {
             try {
@@ -629,56 +686,53 @@
         } else { loadFromStorage(); }
     };
 
-    // --- VIEW SWITCHER ---
     function switchView(mode) {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.mode-btn').forEach(el => el.classList.remove('active'));
-        
         document.getElementById('view-' + mode).classList.add('active');
         document.getElementById('btn-' + mode).classList.add('active');
     }
 
-    // --- THEORYCRAFTER LOGIC (NEU + ALT) ---
-    
-    // 1. Check Exotic Type & Toggle Mods
-    function checkWeaponType() {
-        const select = document.getElementById('weapon_select');
-        const selectedOption = select.options[select.selectedIndex];
-        const type = selectedOption.getAttribute('data-type');
-        const isExotic = (type === 'exotic');
+    // --- THEORYCRAFTER FUNCTIONS ---
+
+    function applyTheoryPreset() {
+        const select = document.getElementById('tc_preset');
+        const val = select.value;
+        const type = select.options[select.selectedIndex].getAttribute('data-type');
+        const data = theoryPresets[val];
         
         const modInputs = document.querySelectorAll('#mods_container input, #mods_container select');
         const exoticMsg = document.getElementById('exotic_msg');
 
-        if (isExotic) {
-            modInputs.forEach(input => { input.disabled = true; });
-            exoticMsg.style.display = 'block';
+        if(data) {
+            document.getElementById('tc_base_dmg').value = data.dmg;
+            document.getElementById('tc_base_rpm').value = data.rpm;
+            document.getElementById('tc_base_mag').value = data.mag;
+            document.getElementById('tc_base_rel').value = data.reload;
+            
+            if(data.modsFixed || type === 'exotic') {
+                modInputs.forEach(input => input.disabled = true);
+                exoticMsg.style.display = 'block';
+            } else {
+                modInputs.forEach(input => input.disabled = false);
+                exoticMsg.style.display = 'none';
+            }
         } else {
-            modInputs.forEach(input => { input.disabled = false; });
+            // Manual / Reset
+            modInputs.forEach(input => input.disabled = false);
             exoticMsg.style.display = 'none';
         }
-        calcTheoryTotals(); // Recalculate based on change
+        calcTheoryTotals();
     }
 
-    function calcTheoryAWD() {
-        let cores = parseInt(document.getElementById('tc-red-cores').value) || 0;
-        // SHD Watch is now handled in the SHD section, so we remove it from here OR we just add 10 flat
-        // For AWD specific:
-        let brand = parseFloat(document.getElementById('tc-brand-awd').value) || 0;
-        
-        // Note: SHD Watch AWD (10%) is usually separate. Assuming user adds it here or we hardcode.
-        // Let's assume Standard SHD Watch includes 10% Weapon Dmg.
-        let total = (cores * 15) + 10 + brand; 
-        document.getElementById('tc-total-awd').value = total;
-    }
-
-    // NEW: Calculate Total Stats from Watch + Mods + Weapon Base
     function calcTheoryTotals() {
-        // 1. Get Base Weapon Stats
-        const wKey = document.getElementById('weapon_select').value;
-        const base = weaponBaseData[wKey] || { rpm: 800, mag: 30, reload: 2.0, chc:0, chd:0, hsd:0 };
+        // 1. Base Stats
+        let baseDmg = parseFloat(document.getElementById('tc_base_dmg').value) || 0;
+        let baseRPM = parseFloat(document.getElementById('tc_base_rpm').value) || 0;
+        let baseMag = parseFloat(document.getElementById('tc_base_mag').value) || 0;
+        let baseRel = parseFloat(document.getElementById('tc_base_rel').value) || 0;
 
-        // 2. Get SHD Watch Stats
+        // 2. SHD Watch
         const shd = {
             chc: parseFloat(document.getElementById('shd_chc').value) || 0,
             chd: parseFloat(document.getElementById('shd_chd').value) || 0,
@@ -687,13 +741,12 @@
             ammo: parseFloat(document.getElementById('shd_ammo').value) || 0
         };
 
-        // 3. Get Mods (Only if not Exotic)
-        const isExotic = document.getElementById('weapon_select').options[document.getElementById('weapon_select').selectedIndex].getAttribute('data-type') === 'exotic';
-        
+        // 3. Mods (Only if enabled)
         let modStats = { chc: 0, chd: 0, hsd: 0, reload: 0, mag: 0, rof: 0 };
+        const isExotic = document.getElementById('exotic_msg').style.display === 'block';
         
         if (!isExotic) {
-            // Helper to add stats
+            // Generic function for optic, muzzle, underbarrel
             const addMod = (valId, typeId) => {
                 let val = parseFloat(document.getElementById(valId).value) || 0;
                 let type = document.getElementById(typeId).value;
@@ -701,197 +754,138 @@
                 if(type === 'chd') modStats.chd += val;
                 if(type === 'hsd') modStats.hsd += val;
             };
-            
             addMod('mod_optic_val', 'mod_optic_attr');
             addMod('mod_muzzle_val', 'mod_muzzle_attr');
             addMod('mod_under_val', 'mod_under_attr');
 
-            // Magazine Special Logic
+            // Magazine
             let magVal = parseFloat(document.getElementById('mod_mag_val').value) || 0;
             let magType = document.getElementById('mod_mag_attr').value;
             let magMalus = parseFloat(document.getElementById('mod_mag_malus').value) || 0;
-
+            
             if (magType === 'rounds') modStats.mag += magVal;
             if (magType === 'rof') modStats.rof += magVal;
             if (magType === 'chd') modStats.chd += magVal;
             if (magType === 'reload') modStats.reload += magVal;
-
-            modStats.reload += magMalus; // Usually negative input, so we add it (e.g. -10)
+            modStats.reload += magMalus; // Add negative penalty
         }
 
-        // 4. Get Gear Bonuses (from Builder inputs below)
-        let gearRof = parseFloat(document.getElementById('tc-bonus-rpm').value) || 0;
+        // 4. Gear Rows Loop
+        let gearStats = { awd: 0, swd: 0, chc: 0, chd: 0, hsd: 0, rof: 0, wh: 0, dtoc: 0, dta: 0, mag: 0 };
+        
+        document.querySelectorAll('.gear-row').forEach(row => {
+            let val = parseFloat(row.querySelector('.gear-val').value) || 0;
+            let type = row.querySelector('.gear-type').value;
+            if(gearStats[type] !== undefined) {
+                gearStats[type] += val;
+            }
+        });
 
-        // 5. Calculate Final Totals
-        // CHC
-        let finalCHC = base.chc + shd.chc + modStats.chc;
-        if(finalCHC > 60) finalCHC = 60; // Cap
+        // 5. Final Calculations
+        
+        // CHC (Cap at 60)
+        let totalCHC = baseMag > 0 ? (0 + shd.chc + modStats.chc + gearStats.chc) : 0; // Simplified base 0
+        // NOTE: Some weapons have native CHC (SMGs). Since user enters "Base" manualy, 
+        // we assume Base inputs are raw numbers, but weapons usually have Core Attributes separate.
+        // For simplicity: Add user Gear input for "Weapon Core CHC" if needed.
+        if (totalCHC > 60) totalCHC = 60;
 
-        // CHD
-        let finalCHD = base.chd + shd.chd + modStats.chd;
-
-        // HSD
-        let finalHSD = base.hsd + shd.hsd + modStats.hsd; // Note: Base headshot mult (e.g. 55% AR) is usually separate from additive HSD. This tool assumes additive Bonus HSD.
-
+        let totalCHD = shd.chd + modStats.chd + gearStats.chd;
+        let totalHSD = shd.hsd + modStats.hsd + gearStats.hsd;
+        let totalDTOC = gearStats.dtoc;
+        
         // RPM
-        let totalRofBonus = modStats.rof + gearRof;
-        let finalRPM = base.rpm * (1 + totalRofBonus/100);
+        let totalRPM = baseRPM * (1 + (modStats.rof + gearStats.rof)/100);
+        
+        // Mag Size
+        // SHD ammo is reserve, Gear Mag is usually % size (e.g. Brazos)
+        let finalMag = baseMag + modStats.mag;
+        if(gearStats.mag > 0) {
+            finalMag = finalMag * (1 + gearStats.mag/100);
+        }
 
-        // Mag
-        let ammoBonus = 1 + (shd.ammo / 100); // SHD ammo applies to base inventory, not mag size usually, BUT distinct mechanics apply. 
-        // In Div2, SHD Ammo is reserve ammo. Mag size is strictly Mag Mod + Base.
-        // Let's stick to Mag Mod + Base for Mag Size.
-        let finalMag = base.mag + modStats.mag;
-        if (wKey === 'st_elmo') finalMag = 70; // Exotic override
+        // Reload Speed Logic
+        // Weapon Handling (WH) gives 1% Reload Speed per 1% WH
+        let totalReloadPercent = shd.reload + modStats.reload + gearStats.wh; 
+        let finalReload = baseRel > 0 ? (baseRel / (1 + totalReloadPercent/100)) : 0;
 
-        // Reload Speed
-        // Formula: Base / (1 + ReloadBonus)
-        let totalReloadBonusPercent = shd.reload + modStats.reload;
-        let finalReload = base.reload / (1 + totalReloadBonusPercent/100);
+        // Damage Totals
+        // Assume SHD 10% is already in Gear Inputs or Base? 
+        // Let's assume user puts SHD Watch AWD in Gear Rows if they want, OR we add 10 flat?
+        // User requested manual inputs. Let's output raw Gear sums.
+        // Usually Watch gives +10% AWD. Let's add that automatically if SHD is considered "Active"
+        let totalAWD = gearStats.awd + 10; // +10 from Watch
+        let totalSWD = gearStats.swd;
 
-        // 6. Output to Summary
-        document.getElementById('res-total-rpm').value = Math.round(finalRPM);
-        document.getElementById('res-total-mag').value = finalMag;
-        document.getElementById('res-total-chc').value = finalCHC.toFixed(1);
-        document.getElementById('res-total-chd').value = finalCHD.toFixed(1);
-        document.getElementById('res-total-hsd').value = finalHSD.toFixed(1);
+        // 6. Outputs
+        document.getElementById('res-base-dmg').value = baseDmg;
+        document.getElementById('res-total-rpm').value = Math.round(totalRPM);
+        document.getElementById('res-total-mag').value = Math.floor(finalMag);
         document.getElementById('res-total-rel').value = finalReload.toFixed(2);
+        
+        document.getElementById('res-total-chc').value = totalCHC.toFixed(1);
+        document.getElementById('res-total-chd').value = totalCHD.toFixed(1);
+        document.getElementById('res-total-hsd').value = totalHSD.toFixed(1);
+        document.getElementById('res-total-dtoc').value = totalDTOC.toFixed(1);
+        
+        document.getElementById('res-total-awd').value = totalAWD.toFixed(1);
+        document.getElementById('res-total-swd').value = totalSWD.toFixed(1);
     }
 
-
-    // --- ANALYZER FUNCTIONS (FULL V19 LOGIC) ---
+    // --- ANALYZER FUNCTIONS (EXISTING) ---
     function showHelp(type) { 
         const modal = document.getElementById('imageModal'); 
         document.getElementById('modalImg').src = helpImages[type] || ''; 
         modal.style.display = "block"; 
     }
-    
-    function closeModal() { 
-        document.getElementById('imageModal').style.display = "none"; 
-    }
-    
+    function closeModal() { document.getElementById('imageModal').style.display = "none"; }
     function toggleCalc() { 
         const c = document.getElementById('calc-content'); 
         const a = document.getElementById('calc-arrow');
-        if (c.classList.contains('active')) {
-            c.classList.remove('active'); 
-            a.style.transform = "rotate(0deg)";
-        } else {
-            c.classList.add('active'); 
-            a.style.transform = "rotate(180deg)";
-        }
+        c.classList.toggle('active'); 
+        a.style.transform = c.classList.contains('active') ? "rotate(180deg)" : "rotate(0deg)";
     }
-    
     function toggleKillEff() {
         const c = document.getElementById('kill-content');
         const a = document.getElementById('kill-arrow');
-        if (c.classList.contains('active')) {
-            c.classList.remove('active'); 
-            a.style.transform = "rotate(0deg)";
-        } else {
-            c.classList.add('active'); 
-            a.style.transform = "rotate(180deg)";
-        }
+        c.classList.toggle('active'); 
+        a.style.transform = c.classList.contains('active') ? "rotate(180deg)" : "rotate(0deg)";
     }
-
     function calculateBase() {
-        const rawD = document.getElementById('menu-dmg').value;
-        const rawA = document.getElementById('menu-awd').value;
-        const rawS = document.getElementById('menu-swd').value;
-        const d = parseFloat(rawD) || 0;
-        const a = parseFloat(rawA) || 0;
-        const s = parseFloat(rawS) || 0;
-        
+        const d = parseFloat(document.getElementById('menu-dmg').value) || 0;
+        const a = parseFloat(document.getElementById('menu-awd').value) || 0;
+        const s = parseFloat(document.getElementById('menu-swd').value) || 0;
         document.getElementById('awd').value = a;
         document.getElementById('swd').value = s;
-
         if (d > 0) {
             const b = d / (1 + (a/100) + (s/100));
             document.getElementById('calc-base-res').value = b.toFixed(1); 
             document.getElementById('base').value = b.toFixed(1); 
-        } else {
-            document.getElementById('calc-base-res').value = "";
         }
         calculate();
     }
-
     function applyPreset() {
         const v = document.getElementById('preset-select').value;
-        if (presets[v]) { 
-            document.getElementById('base').value = presets[v].base; 
-            calculate(); 
-        }
+        if (presets[v]) { document.getElementById('base').value = presets[v].base; calculate(); }
     }
-
     function setTarget(t) {
         currentTarget = t;
         document.getElementById('t-elite').classList.toggle('active', t === 'elite');
         document.getElementById('t-health').classList.toggle('active', t === 'health');
         calculate();
     }
-
-    function recalculateAll() {
-        const hp = parseFloat(document.getElementById('enemy-select').value);
-        calculate(); 
-        builds.forEach(b => {
-            const magDmg = b.stats.magDmg; 
-            const burstDps = b.stats.burst;
-            const rps = b.stats.rps;
-            const mag = b.stats.mag;
-            const cycleTime = b.stats.cycleTime;
-            const kpm = magDmg / hp;
-            
-            b.ui.kpm = kpm.toFixed(2);
-            b.ui.omk = (kpm >= 1) ? "YES" : "NO";
-            
-            if(isFinite(burstDps) && burstDps > 0) {
-                b.ui.ttkb = hp / burstDps; 
-            } else {
-                b.ui.ttkb = Infinity;
-            }
-
-            if(isFinite(rps) && rps > 0 && mag > 0) {
-                let shotsToKill = Math.ceil(hp / b.stats.avg);
-                let magsNeeded = Math.ceil(shotsToKill / mag);
-                let ttks = 0;
-                if (magsNeeded <= 1) {
-                    ttks = shotsToKill / rps;
-                } else {
-                    ttks = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * mag)) / rps);
-                }
-                b.ui.ttks = ttks; 
-            } else {
-                b.ui.ttks = Infinity;
-            }
-        });
-        updateMatrix();
-    }
-
     function calculate() {
         const v = (id) => parseFloat(document.getElementById(id).value) || 0;
-        
-        const base = v('base');
-        const rpm = v('rpm');
-        const mag = v('mag');
-        const reload = v('rel');
-
-        // SECTION 4 - STANDARD AMPS
+        const base = v('base'), rpm = v('rpm'), mag = v('mag'), reload = v('rel');
         const amp = (1 + v('m1')/100) * (1 + v('m2')/100) * (1 + v('m3')/100) * (1 + v('m4')/100);
-
-        // FORMULAS
         const totalWpDmg = 1 + (v('awd')/100) + (v('swd')/100) + (v('grade')/100); 
         const twdFactor = 1 + (v('twd')/100);
-        
         const range_dtoc = 1 + (v('dttooc')/100); 
-        const dtaVal = v('dta');
-        const dthVal = v('dth');
+        const dtaVal = v('dta'), dthVal = v('dth');
         const range_target = currentTarget === 'elite' ? (1 + dtaVal/100) : (1 + dthVal/100); 
         
         const fBaseRange = base * totalWpDmg * twdFactor * range_dtoc * range_target * amp;
-        
-        const chdTotal = v('chd');
-        const hsdTotal = v('hsd');
-
+        const chdTotal = v('chd'), hsdTotal = v('hsd');
         const body = fBaseRange;
         const crit = fBaseRange * (1 + chdTotal/100);
         const head = fBaseRange * (1 + hsdTotal/100);
@@ -910,24 +904,17 @@
         const avgDtoc = 1 + ((v('dttooc')/100) * (v('d-rate')/100));
         const aRateDec = v('a-rate')/100;
         const avgArmorHealth = 1 + ((dtaVal/100) * aRateDec) + ((dthVal/100) * (1 - aRateDec));
-
-        // Average Hit (Max Potential)
         const avgHit = base * totalWpDmg * twdFactor * avgCritHead * avgDtoc * avgArmorHealth * amp;
 
         const rps = rpm > 0 ? (rpm / 60) : 0;
         const magDmg = avgHit * mag;
         const burstDps = rps * avgHit;
 
-        let sustainDps = 0;
-        let burstTime = 0;
-        let cycleTime = 0;
-
+        let sustainDps = 0, cycleTime = 0, ttksVal = 0;
         if (rps > 0) {
-            burstTime = mag / rps;
+            let burstTime = mag / rps;
             cycleTime = reload + burstTime;
-            if (cycleTime > 0) {
-                sustainDps = magDmg / cycleTime;
-            }
+            if (cycleTime > 0) sustainDps = magDmg / cycleTime;
         }
 
         const hp = v('enemy-select');
@@ -938,44 +925,37 @@
             resOmk.innerText = kpm >= 1 ? "YES" : "NO";
             resOmk.style.color = kpm >= 1 ? "var(--pos)" : "var(--neg)";
             document.getElementById('res-kpm').innerText = kpm.toFixed(2);
+            document.getElementById('res-ttkb').innerText = (burstDps > 0) ? (hp / burstDps).toFixed(3) + "s" : "-";
             
-            if(burstDps > 0) {
-                 document.getElementById('res-ttkb').innerText = (hp / burstDps).toFixed(3) + "s";
-            } else {
-                 document.getElementById('res-ttkb').innerText = "-";
-            }
-            
-            let ttksVal = 0;
             if(rps > 0 && mag > 0 && hp > 0) {
                 let shotsToKill = Math.ceil(hp / avgHit);
                 let magsNeeded = Math.ceil(shotsToKill / mag);
-                
-                if (magsNeeded <= 1) {
-                    ttksVal = shotsToKill / rps;
-                } else {
-                    ttksVal = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * mag)) / rps);
-                }
+                if (magsNeeded <= 1) ttksVal = shotsToKill / rps;
+                else ttksVal = ((magsNeeded - 1) * cycleTime) + ((shotsToKill - ((magsNeeded - 1) * mag)) / rps);
                 document.getElementById('res-ttks').innerText = ttksVal.toFixed(3) + "s";
-            } else {
-                document.getElementById('res-ttks').innerText = "-";
-            }
+            } else document.getElementById('res-ttks').innerText = "-";
             
-            return { 
-                avg: avgHit, 
-                rps: rps, 
-                mag: mag, 
-                rel: reload, 
-                magDmg: magDmg, 
-                cycleTime: cycleTime,
-                burst: burstDps, 
-                sustain: sustainDps,
-                ttkb: (burstDps > 0 ? hp / burstDps : Infinity), 
-                ttks: ttksVal
-            };
+            return { avg: avgHit, rps: rps, mag: mag, rel: reload, magDmg: magDmg, cycleTime: cycleTime, burst: burstDps, sustain: sustainDps, ttkb: (burstDps > 0 ? hp/burstDps : Infinity), ttks: ttksVal };
         }
-        
-        // Fallback return if elements not found (e.g. initial load)
         return { avg: avgHit, rps: rps, mag: mag, rel: reload, magDmg: magDmg, cycleTime: cycleTime, burst: burstDps, sustain: sustainDps, ttkb: 0, ttks: 0 };
+    }
+
+    function recalculateAll() {
+        calculate(); 
+        const hp = parseFloat(document.getElementById('enemy-select').value);
+        builds.forEach(b => {
+            const burstDps = b.stats.burst;
+            b.ui.kpm = (b.stats.magDmg / hp).toFixed(2);
+            b.ui.omk = (b.stats.magDmg / hp >= 1) ? "YES" : "NO";
+            b.ui.ttkb = (isFinite(burstDps) && burstDps > 0) ? hp / burstDps : Infinity;
+            // Simplified recalc logic for sustain TTK:
+            if(b.stats.rps > 0 && b.stats.mag > 0) {
+                let shotsToKill = Math.ceil(hp / b.stats.avg);
+                let magsNeeded = Math.ceil(shotsToKill / b.stats.mag);
+                b.ui.ttks = (magsNeeded <= 1) ? (shotsToKill / b.stats.rps) : ((magsNeeded - 1) * b.stats.cycleTime) + ((shotsToKill - ((magsNeeded - 1) * b.stats.mag)) / b.stats.rps);
+            } else b.ui.ttks = Infinity;
+        });
+        updateMatrix();
     }
 
     function getUIObj(stats) {
@@ -990,249 +970,100 @@
             crit: document.getElementById('st-crit').innerText
         };
     }
-
     function captureBuild() {
         const stats = calculate();
         let inputs = {};
-        INPUT_KEYS.forEach(k => {
-            const el = document.getElementById(k);
-            if(el) inputs[k] = el.value;
-        });
-        
-        const b = {
-            name: inputs['build-name'] || "Build " + (builds.length + 1),
-            stats: stats,
-            inputs: inputs,
-            ui: getUIObj(stats)
-        };
-        builds.push(b);
-        saveToStorage();
-        updateMatrix();
-        updateGraph();
+        INPUT_KEYS.forEach(k => { const el = document.getElementById(k); if(el) inputs[k] = el.value; });
+        builds.push({ name: inputs['build-name'] || "Build " + (builds.length + 1), stats: stats, inputs: inputs, ui: getUIObj(stats) });
+        saveToStorage(); updateMatrix(); updateGraph();
     }
-    
     function loadBuild(i) {
         const data = builds[i].inputs;
         document.getElementById('preset-select').value = "";
         document.getElementById('calc-base-res').value = "";
-        for (const [key, val] of Object.entries(data)) {
-            const el = document.getElementById(key);
-            if(el) el.value = val;
-        }
+        for (const [key, val] of Object.entries(data)) { const el = document.getElementById(key); if(el) el.value = val; }
         if(data['base']) document.getElementById('base').value = data['base'];
         calculate();
     }
-
-    function moveBuild(index, direction) {
-        const newIndex = index + direction;
-        if (newIndex < 0 || newIndex >= builds.length) return;
-        const temp = builds[index];
-        builds[index] = builds[newIndex];
-        builds[newIndex] = temp;
-        saveToStorage();
-        updateMatrix();
-        updateGraph();
+    function moveBuild(i, d) {
+        const n = i + d; if (n < 0 || n >= builds.length) return;
+        [builds[i], builds[n]] = [builds[n], builds[i]];
+        saveToStorage(); updateMatrix(); updateGraph();
     }
-
-    function deleteBuild(i) { 
-        builds.splice(i, 1); 
-        saveToStorage(); 
-        updateMatrix(); 
-        updateGraph(); 
-    }
-    
-    function clearMatrix() { 
-        builds = []; 
-        saveToStorage(); 
-        updateMatrix(); 
-        updateGraph(); 
-    }
+    function deleteBuild(i) { builds.splice(i, 1); saveToStorage(); updateMatrix(); updateGraph(); }
+    function clearMatrix() { builds = []; saveToStorage(); updateMatrix(); updateGraph(); }
+    function saveToStorage() { localStorage.setItem('xsmileyy_builds', JSON.stringify(builds)); }
+    function loadFromStorage() { const s = localStorage.getItem('xsmileyy_builds'); if (s) { builds = JSON.parse(s); updateMatrix(); updateGraph(); } }
 
     function updateMatrix() {
-        const h = document.getElementById('comp-header');
-        const b = document.getElementById('comp-body');
+        const h = document.getElementById('comp-header'), b = document.getElementById('comp-body');
         h.innerHTML = '<th>Metric</th>';
-        
         builds.forEach((x, i) => {
-            let leftBtn = i > 0 ? `<span class="move-btn" onclick="moveBuild(${i}, -1)">&lt;</span>` : '';
-            let rightBtn = i < builds.length - 1 ? `<span class="move-btn" onclick="moveBuild(${i}, 1)">&gt;</span>` : '';
-
-            h.innerHTML += `<th>
-                ${x.name} 
-                <div class="action-cell">
-                    ${leftBtn}
-                    ${rightBtn}
-                    <span class="edit-btn" onclick="loadBuild(${i})">LOAD</span>
-                    <span class="del-btn" onclick="deleteBuild(${i})">X</span>
-                </div>
-            </th>`;
+            h.innerHTML += `<th>${x.name} <div class="action-cell">${i>0?`<span class="move-btn" onclick="moveBuild(${i},-1)">&lt;</span>`:''}${i<builds.length-1?`<span class="move-btn" onclick="moveBuild(${i},1)">&gt;</span>`:''}<span class="edit-btn" onclick="loadBuild(${i})">LOAD</span><span class="del-btn" onclick="deleteBuild(${i})">X</span></div></th>`;
         });
-
-        let rows = [
-            {l:'MAG Damage', k:'mDmg', type:'max'}, 
-            {l:'One Mag-Kill?', k:'omk', type:'string'}, 
-            {l:'Kills / Mag', k:'kpm', type:'max'}, 
-            {l:'Burst DPS', k:'burst', type:'max'}, 
-            {l:'TTK Burst', k:'ttkb', type:'min'}, 
-            {l:'Sustain DPS', k:'sustain', type:'max'}, 
-            {l:'TTK Sustain', k:'ttks', type:'min'}
-        ];
-
+        const rows = [ {l:'MAG Damage', k:'mDmg', type:'max'}, {l:'One Mag-Kill?', k:'omk', type:'string'}, {l:'Kills / Mag', k:'kpm', type:'max'}, {l:'Burst DPS', k:'burst', type:'max'}, {l:'TTK Burst', k:'ttkb', type:'min'}, {l:'Sustain DPS', k:'sustain', type:'max'}, {l:'TTK Sustain', k:'ttks', type:'min'} ];
         b.innerHTML = '';
         rows.forEach(r => {
             let bestVal = (r.type === 'min') ? Infinity : -Infinity;
-            if (r.type !== 'string') {
-                builds.forEach(x => {
-                    let val = parseFloat(x.ui[r.k]);
-                    if (!isNaN(val) && val > 0 && val !== Infinity) {
-                        if (r.type === 'min') bestVal = Math.min(bestVal, val);
-                        else bestVal = Math.max(bestVal, val);
-                    }
-                });
-            }
-
+            if (r.type !== 'string') builds.forEach(x => { let v = parseFloat(x.ui[r.k]); if (!isNaN(v) && v > 0 && v !== Infinity) bestVal = r.type === 'min' ? Math.min(bestVal, v) : Math.max(bestVal, v); });
             let tr = `<tr><td><strong>${r.l}</strong></td>`;
             builds.forEach(x => {
-                let val = x.ui[r.k];
-                let numVal = parseFloat(val);
-                let displayHTML = "";
-                let style = "";
-                
-                if (r.type === 'string') {
-                    style = (val === 'YES') ? 'color:var(--pos); font-weight:800;' : 'color:var(--neg);';
-                    displayHTML = val;
-                } else {
-                    if(!isFinite(numVal) || isNaN(numVal)) {
-                        displayHTML = "-";
-                    } else {
+                let val = x.ui[r.k], numVal = parseFloat(val), style = '', disp = '';
+                if (r.type === 'string') { style = (val === 'YES') ? 'color:var(--pos);font-weight:800;' : 'color:var(--neg);'; disp = val; }
+                else {
+                    if(!isFinite(numVal) || isNaN(numVal)) disp = "-";
+                    else {
                         let isBest = (Math.abs(numVal - bestVal) < 0.001);
-                        if (isBest) {
-                            style = 'color:var(--pos); font-weight:800;';
-                            if (r.l.includes('TTK')) displayHTML = numVal.toFixed(3) + 's';
-                            else displayHTML = Math.round(numVal).toLocaleString();
-                        } else {
-                            style = 'color:var(--neg);';
-                            let diffPct = 0, diffAbs = 0;
-                            if (r.type === 'max') {
-                                diffPct = ((numVal - bestVal) / bestVal) * 100;
-                                displayHTML = Math.round(numVal).toLocaleString() + ` <span class="diff-text">(${diffPct.toFixed(1)}%)</span>`;
-                            } else {
-                                diffAbs = numVal - bestVal;
-                                diffPct = ((numVal - bestVal) / bestVal) * 100;
-                                displayHTML = numVal.toFixed(3) + 's' + ` <span class="diff-text">(+${diffAbs.toFixed(2)}s / +${diffPct.toFixed(0)}%)</span>`;
-                            }
+                        style = isBest ? 'color:var(--pos);font-weight:800;' : 'color:var(--neg);';
+                        if (isBest) disp = r.l.includes('TTK') ? numVal.toFixed(3) + 's' : Math.round(numVal).toLocaleString();
+                        else {
+                            let diff = r.type === 'max' ? ((numVal - bestVal) / bestVal) * 100 : ((numVal - bestVal) / bestVal) * 100;
+                            disp = r.l.includes('TTK') ? numVal.toFixed(3) + 's' : Math.round(numVal).toLocaleString();
+                            disp += ` <span class="diff-text">(${diff.toFixed(0)}%)</span>`;
                         }
                     }
                 }
-                tr += `<td style="${style}">${displayHTML}</td>`;
+                tr += `<td style="${style}">${disp}</td>`;
             });
             b.innerHTML += tr + '</tr>';
         });
     }
-
     function updateGraph() {
-        const timeInput = document.getElementById('graph-time');
-        const timeLimit = parseInt(timeInput.value) || 30; 
+        const timeLimit = parseInt(document.getElementById('graph-time').value) || 30; 
         const labels = Array.from({length: timeLimit + 1}, (_, i) => i + "s");
-
-        const datasets = builds.map((b, idx) => {
-            let data = [];
-            let shotsPerSec = b.stats.rps;
-            
-            if(shotsPerSec <= 0) {
-                for(let t=0; t<=timeLimit; t++) data.push(0);
-            } else {
-                let magSize = b.stats.mag;
-                let reloadTime = b.stats.rel;
-                let damageAccumulated = 0;
-
-                for (let t = 0; t <= timeLimit; t++) {
-                    if (t === 0) {
-                        data.push(0);
-                        continue;
-                    }
-                    
-                    let timeRemainingInSecond = 1.0;
-                    
-                    while (timeRemainingInSecond > 0) {
-                        let burstTime = magSize / shotsPerSec;
-                        let cycleTime = burstTime + reloadTime;
-                        
-                        let exactTimeNow = (t - 1) + (1.0 - timeRemainingInSecond);
-                        let timeInCycle = exactTimeNow % cycleTime;
-                        
-                        if (timeInCycle < burstTime) {
-                            let timeToEmpty = burstTime - timeInCycle;
-                            let shootTime = Math.min(timeRemainingInSecond, timeToEmpty);
-                            let shotsNow = shootTime * shotsPerSec;
-                            
-                            damageAccumulated += shotsNow * b.stats.avg;
-                            timeRemainingInSecond -= shootTime;
-                        } else {
-                            let timeToReloadFinish = cycleTime - timeInCycle;
-                            let reloadWait = Math.min(timeRemainingInSecond, timeToReloadFinish);
-                            timeRemainingInSecond -= reloadWait;
-                        }
-                    }
-                    data.push(damageAccumulated);
-                }
-            }
-
-            const colors = ['#ff6600', '#00ff88', '#3399ff', '#ffcc00', '#ff4444'];
-            return {
-                label: b.name,
-                data: data,
-                borderColor: colors[idx % colors.length],
-                fill: false,
-                tension: 0.1
-            };
-        });
-        
         dpsChart.data.labels = labels;
-        dpsChart.data.datasets = datasets;
+        dpsChart.data.datasets = builds.map((b, idx) => {
+            let data = [], sps = b.stats.rps, dmgAcc = 0;
+            if(sps > 0) {
+                let burstT = b.stats.mag / sps, cycleT = burstT + b.stats.rel;
+                for (let t = 0; t <= timeLimit; t++) {
+                    if (t === 0) { data.push(0); continue; }
+                    let rem = 1.0;
+                    while (rem > 0) {
+                        let timeInCycle = ((t - 1) + (1.0 - rem)) % cycleT;
+                        if (timeInCycle < burstT) {
+                            let shoot = Math.min(rem, burstT - timeInCycle);
+                            dmgAcc += shoot * sps * b.stats.avg;
+                            rem -= shoot;
+                        } else rem -= Math.min(rem, cycleT - timeInCycle);
+                    }
+                    data.push(dmgAcc);
+                }
+            } else for(let t=0; t<=timeLimit; t++) data.push(0);
+            return { label: b.name, data: data, borderColor: ['#ff6600', '#00ff88', '#3399ff', '#ffcc00', '#ff4444'][idx%5], fill: false, tension: 0.1 };
+        });
         dpsChart.update();
     }
-
     function initChart() {
         const ctx = document.getElementById('dpsChart').getContext('2d');
-        dpsChart = new Chart(ctx, {
-            type: 'line',
-            data: { labels: [], datasets: [] },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                hover: { mode: 'index', intersect: false },
-                elements: { point: { radius: 0, hitRadius: 10, hoverRadius: 4 } },
-                scales: { 
-                    y: { grid: { color: '#222' }, ticks: { color: '#888', callback: function(value) { return (value/1000000).toFixed(1) + 'M'; } } }, 
-                    x: { grid: { color: '#222' }, ticks: { color: '#888' } } 
-                },
-                plugins: { legend: { labels: { color: '#fff' } } }
-            }
-        });
+        dpsChart = new Chart(ctx, { type: 'line', data: { labels: [], datasets: [] }, options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, elements: { point: { radius: 0 } }, scales: { y: { grid: { color: '#222' }, ticks: { color: '#888', callback: v => (v/1000000).toFixed(1) + 'M' } }, x: { grid: { color: '#222' }, ticks: { color: '#888' } } }, plugins: { legend: { labels: { color: '#fff' } } } } });
     }
-
     function generateShareLink() {
         if(builds.length === 0) { alert("Add a build first."); return; }
-        const minifiedBuilds = builds.map(b => {
-            return INPUT_KEYS.map(key => b.inputs[key] || "");
-        });
-        const json = JSON.stringify(minifiedBuilds);
-        const compressed = LZString.compressToEncodedURIComponent(json);
+        const minified = builds.map(b => INPUT_KEYS.map(k => b.inputs[k] || ""));
         const url = new URL(window.location.href);
-        url.searchParams.set('b', compressed);
-        navigator.clipboard.writeText(url.toString()).then(() => {
-            alert("Link copied!");
-        }).catch(err => {
-            prompt("Copy link:", url.toString());
-        });
-    }
-
-    function saveToStorage() { localStorage.setItem('xsmileyy_builds', JSON.stringify(builds)); }
-    function loadFromStorage() {
-        const saved = localStorage.getItem('xsmileyy_builds');
-        if (saved) { builds = JSON.parse(saved); updateMatrix(); updateGraph(); }
+        url.searchParams.set('b', LZString.compressToEncodedURIComponent(JSON.stringify(minified)));
+        navigator.clipboard.writeText(url.toString()).then(() => alert("Link copied!")).catch(() => prompt("Copy link:", url.toString()));
     }
 </script>
 </body>
